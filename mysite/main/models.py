@@ -16,13 +16,13 @@ class Residencia(models.Model):
 	def __str__(self):
 		return self.nombre
 
-	def semanaDisponible(self,fecha):
-		disponible = True
-		for semana in (self.subastas + self.hotsales):
-			if semana.coincide(fecha):
-				disponible = False
-				break
-		return disponible
+#	def semanaDisponible(self,fecha):
+#		disponible = True
+#		for semana in (self.subastas + self.hotsales):
+#			if semana.coincide(fecha):
+#				disponible = False
+#				break
+#		return disponible
 
 class Semana(models.Model):
 	dia_inicial = models.DateField() 
@@ -35,7 +35,7 @@ class Semana(models.Model):
 		return self.dia_inicial + timedelta(days=7)
 
 	def coincide(self,fecha):
-		return fecha <= self.dia_inicial - timedelta(days=7) and fecha >= self.dia_final()
+		return ((fecha > self.dia_inicial - timedelta(days=7)) and (fecha < self.dia_final()))
 
 	class Meta:
 		abstract = True
