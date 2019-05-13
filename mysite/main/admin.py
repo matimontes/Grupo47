@@ -10,16 +10,21 @@ class SemanaAdminForm(forms.ModelForm):
 		cleaned_data = super().clean()
 		dia_inicial_cleaned = cleaned_data["dia_inicial"]
 		residencia_cleaned = cleaned_data["residencia"]
+		disponible = True
 		#Verifica que no coincida con ninguna semana de Subastas
 		for semana in residencia_cleaned.subastas.all():
 			if semana.coincide(dia_inicial_cleaned):
 				if not (semana == cleaned_data["id"]):
 					self.add_error('dia_inicial',"La semana solicitada coincide con la Subasta de: "+ semana.dia_inicial.isoformat()+ " a "+ semana.dia_final().isoformat())
+					disponible = False
+					break
 		#Verifica que no coincida con ninguna semana de HotSale
-		for semana in residencia_cleaned.hotsales.all():
-			if semana.coincide(dia_inicial_cleaned):
-				if not (semana == cleaned_data["id"]):
-					self.add_error('dia_inicial',"La semana solicitada coincide con el HotSale de: "+ semana.dia_inicial.isoformat()+ " a "+ semana.dia_final().isoformat())
+		if disponible:
+			for semana in residencia_cleaned.hotsales.all():
+				if semana.coincide(dia_inicial_cleaned):
+					if not (semana == cleaned_data["id"]):
+						self.add_error('dia_inicial',"La semana solicitada coincide con el HotSale de: "+ semana.dia_inicial.isoformat()+ " a "+ semana.dia_final().isoformat())
+						break
 		cleaned_data["dia_inicial"]= dia_inicial_cleaned
 		return cleaned_data
 
@@ -68,6 +73,7 @@ class HotSaleAdmin(admin.ModelAdmin):
 
 class HotSaleInLine(admin.TabularInline):
 	model = HotSale
+	form = HotSaleAdminForm
 	extra = 0
 	fields = ["precio_reserva","dia_inicial"]
 

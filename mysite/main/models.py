@@ -25,7 +25,7 @@ class Residencia(models.Model):
 #		return disponible
 
 class Semana(models.Model):
-	dia_inicial = models.DateField(help_text='Fecha de inicio de la semana. Debe tener al menos 7 días de diferencia con la de otra semana.') 
+	dia_inicial = models.DateField() 
 	precio_reserva = models.FloatField()
 
 	def __str__(self):
