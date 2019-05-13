@@ -16,13 +16,8 @@ class Residencia(models.Model):
 	def __str__(self):
 		return self.nombre
 
-#	def semanaDisponible(self,fecha):
-#		disponible = True
-#		for semana in (self.subastas + self.hotsales):
-#			if semana.coincide(fecha):
-#				disponible = False
-#				break
-#		return disponible
+	class Meta:
+		ordering = ['nombre']
 
 class Semana(models.Model):
 	dia_inicial = models.DateField() 
@@ -39,6 +34,7 @@ class Semana(models.Model):
 
 	class Meta:
 		abstract = True
+		ordering = ['dia_inicial', 'residencia']
 
 class Subasta(Semana):
 	precio_inicial = models.FloatField()
