@@ -98,12 +98,24 @@ class HotSaleInLine(admin.TabularInline):
 	extra = 0
 	fields = ["precio_reserva","dia_inicial"]
 
+class SubastaAdminView(admin.TabularInline):
+	model = Subasta
+	readonly_fields = ['dia_inicial','precio_reserva','precio_inicial','inicio_de_subasta']
+	verbose_name_plural = "Subastas cargadas"
+	max_num = 0
+
+class HotSaleAdminView(admin.TabularInline):
+	model = HotSale
+	readonly_fields = ['dia_inicial','precio_reserva']
+	verbose_name_plural = "HotSales cargados"
+	max_num = 0
+
 class ResidenciaAdmin(admin.ModelAdmin):
 	inlines = [
-		ImagenInline, SubastaInLine, HotSaleInLine,
+		SubastaAdminView, HotSaleAdminView, ImagenInline, SubastaInLine, HotSaleInLine,
 	]
 
 
 admin.site.register(Residencia,ResidenciaAdmin)
 admin.site.register(Subasta,SubastaAdmin)
-admin.site.register(HotSale, HotSaleAdmin)
+admin.site.register(HotSale,HotSaleAdmin)
