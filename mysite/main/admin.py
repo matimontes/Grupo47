@@ -1,8 +1,32 @@
 from django.contrib import admin
 from .models import Residencia, Subasta, HotSale, Imagen
 from django import forms
+from django.db.models.query import EmptyQuerySet
 from datetime import timedelta
 # Register your models here.
+
+class SemanasAdminInlineFormSet(forms.BaseInlineFormSet):
+	
+	def coincide(self, dia_inicial_1, dia_inicial_2):
+		return ((dia_inicial_1 > (dia_inicial_2 - timedelta(days=7))) and (dia_inicial_1 < (dia_inicial_2 + timedelta(days=7)) ) )
+
+	def clean(self):
+		super().clean()
+		for form in self.forms:
+			dia_inicial_1 = form.cleaned_data["dia_inicial"]
+			for formCheck in self.forms:
+				dia_inicial_2 = formCheck.cleaned_data["dia_inicial"]
+				if form != formCheck:
+					if self.coincide(dia_inicial_1,dia_inicial_2):
+						form.add_error('dia_inicial',"La semana solicitada coincide con la HotSale ingresada a iniciar: "+ dia_inicial_2.isoformat())
+						formCheck.cleaned_data["dia_inicial"] = dia_inicial_2
+						break
+				formCheck.cleaned_data["dia_inicial"] = dia_inicial_2
+			form.cleaned_data["dia_inicial"] = dia_inicial_1
+
+	def get_queryset(self):
+		query = super().get_queryset()
+		return self.model.objects.none()
 
 class SemanaAdminForm(forms.ModelForm):
 
@@ -14,18 +38,17 @@ class SemanaAdminForm(forms.ModelForm):
 		#Verifica que no coincida con ninguna semana de Subastas
 		for semana in residencia_cleaned.subastas.all():
 			if semana.coincide(dia_inicial_cleaned):
-				if not (semana == cleaned_data["id"]):
-					self.add_error('dia_inicial',"La semana solicitada coincide con la Subasta de: "+ semana.dia_inicial.isoformat()+ " a "+ semana.dia_final().isoformat())
-					disponible = False
-					break
+				self.add_error("dia_inicial","La semana solicitada coincide con la Subasta de: "+ semana.dia_inicial.isoformat()+ " a "+ semana.dia_final().isoformat())
+				disponible = False
+				break
 		#Verifica que no coincida con ninguna semana de HotSale
 		if disponible:
 			for semana in residencia_cleaned.hotsales.all():
 				if semana.coincide(dia_inicial_cleaned):
-					if not (semana == cleaned_data["id"]):
-						self.add_error('dia_inicial',"La semana solicitada coincide con el HotSale de: "+ semana.dia_inicial.isoformat()+ " a "+ semana.dia_final().isoformat())
-						break
-		cleaned_data["dia_inicial"]= dia_inicial_cleaned
+					self.add_error('dia_inicial',"La semana solicitada coincide con la HotSale de: "+ semana.dia_inicial.isoformat()+ " a "+ semana.dia_final().isoformat())
+					break
+		cleaned_data["dia_inicial"] = dia_inicial_cleaned
+		cleaned_data["residencia"] = residencia_cleaned
 		return cleaned_data
 
 class ImagenInline(admin.TabularInline):
@@ -53,11 +76,9 @@ class SubastaAdmin(admin.ModelAdmin):
 class SubastaInLine(admin.TabularInline):
 	model = Subasta
 	form = SubastaAdminForm
+	formset = SemanasAdminInlineFormSet
 	extra = 0
 	fields = ["precio_reserva","precio_inicial","dia_inicial","inicio_de_subasta"]
-
-	def get_max_num(self, request, obj=None, **kwargs):
-		return (len(obj.subastas.all()) + 1)
 
 class HotSaleAdminForm(SemanaAdminForm):
 	"""
@@ -68,17 +89,14 @@ class HotSaleAdminForm(SemanaAdminForm):
 		cleaned_data = super().clean()
 
 class HotSaleAdmin(admin.ModelAdmin):
-	form = HotSaleAdminForm
 	fields = ["residencia","precio_reserva","dia_inicial"]
 
 class HotSaleInLine(admin.TabularInline):
 	model = HotSale
 	form = HotSaleAdminForm
+	formset = SemanasAdminInlineFormSet
 	extra = 0
 	fields = ["precio_reserva","dia_inicial"]
-
-	def get_max_num(self, request, obj=None, **kwargs):
-		return (len(obj.hotsales.all()) + 1)
 
 class ResidenciaAdmin(admin.ModelAdmin):
 	inlines = [
