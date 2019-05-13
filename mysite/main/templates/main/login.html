@@ -1,0 +1,14 @@
+{% extends "main/header_no_authentication.html" %}
+
+{% block content %}
+<form method="POST">
+  {% csrf_token %}
+  {{form.as_p}}
+  <br>
+  <br>
+  <button class="btn" type="submit">Iniciar Sesión</button>
+</form>
+
+Si no tenés una cuenta, <a href="/register"><strong>registrate.<strong></a>
+
+{% endblock %}
