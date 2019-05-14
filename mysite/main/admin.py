@@ -9,9 +9,16 @@ from .filters import MesInicioListFilter
 class SemanasAdminInlineFormSet(forms.BaseInlineFormSet):
 	
 	def coincide(self, dia_inicial_1, dia_inicial_2):
+		"""
+			Devuelve True si las semanas se superponen.
+		"""
 		return ((dia_inicial_1 > (dia_inicial_2 - timedelta(days=7))) and (dia_inicial_1 < (dia_inicial_2 + timedelta(days=7)) ) )
 
 	def clean(self):
+		"""
+			Validación del FormSet de Semanas.
+			Compara cada Form en el FormSet entre sí para detectar errores.
+		"""
 		super().clean()
 		for form in self.forms:
 			dia_inicial_1 = form.cleaned_data["dia_inicial"]
@@ -26,12 +33,17 @@ class SemanasAdminInlineFormSet(forms.BaseInlineFormSet):
 			form.cleaned_data["dia_inicial"] = dia_inicial_1
 
 	def get_queryset(self):
-		query = super().get_queryset()
+		"""
+			Devuelve un QuerySet vacío del Model
+		"""
 		return self.model.objects.none()
 
 class SemanaAdminForm(forms.ModelForm):
 
 	def clean(self):
+		"""
+			Validación de Form Semana.
+		"""
 		cleaned_data = super().clean()
 		dia_inicial_cleaned = cleaned_data["dia_inicial"]
 		residencia_cleaned = cleaned_data["residencia"]
@@ -53,13 +65,16 @@ class SemanaAdminForm(forms.ModelForm):
 		return cleaned_data
 
 class ImagenInline(admin.TabularInline):
+	"""
+		Clase Inline de Imagenes
+	"""
 	model = Imagen
 	extra = 0
 	verbose_name_plural = 'imágenes'
 
 class SubastaAdminForm(SemanaAdminForm):
 	"""
-	Esta clase Form contiene la verificación de la creación de Subastas
+		Esta clase Form contiene la verificación de la creación de Subastas
 	"""
 
 	def clean(self):
@@ -71,12 +86,22 @@ class SubastaAdminForm(SemanaAdminForm):
 			self.add_error('inicio_de_subasta',"La subasta debe comenzar al menos 4 días antes que el día inicial de la semana.")
 
 class SubastaAdmin(admin.ModelAdmin):
+	"""
+		Clase ModelAdmin de Subasta.
+		Utiliza SubastaAdminForm como form.
+		Tiene filtros por residencia y por fecha (MesInicioListFilter).
+		La búsqueda se realiza por residencia.
+	"""
 	form = SubastaAdminForm
 	fields = ["residencia","precio_reserva","precio_inicial","dia_inicial","inicio_de_subasta"]
 	list_filter = ('residencia', MesInicioListFilter,)
 	search_fields = ('residencia',)
 
 class SubastaInLine(admin.TabularInline):
+	"""
+		Clase Inline de Subastas.
+		Utiliza la clase SubastaAdminForm como form y SemanasAdminInlineFormSet como formset.
+	"""
 	model = Subasta
 	form = SubastaAdminForm
 	formset = SemanasAdminInlineFormSet
@@ -85,19 +110,29 @@ class SubastaInLine(admin.TabularInline):
 
 class HotSaleAdminForm(SemanaAdminForm):
 	"""
-	Esta clase Form contiene la verificación de la creación de HotSales
+		Esta clase Form contiene la verificación de la creación de HotSales
 	"""
 
 	def clean(self):
 		cleaned_data = super().clean()
 
 class HotSaleAdmin(admin.ModelAdmin):
+	"""
+		Clase ModelAdmin de HotSale.
+		Utiliza HotSaleAdminForm como form.
+		Tiene filtros por residencia y por fecha (MesInicioListFilter).
+		La búsqueda se realiza por residencia.
+	"""
 	form = HotSaleAdminForm
 	fields = ["residencia","precio_reserva","dia_inicial"]
 	list_filter = ('residencia', MesInicioListFilter,)
 	search_fields = ('residencia',)
 
 class HotSaleInLine(admin.TabularInline):
+	"""
+		Clase Inline de HotSales.
+		Utiliza la clase HotSaleAdminForm como form y SemanasAdminInlineFormSet como formset.
+	"""
 	model = HotSale
 	form = HotSaleAdminForm
 	formset = SemanasAdminInlineFormSet
@@ -105,23 +140,50 @@ class HotSaleInLine(admin.TabularInline):
 	fields = ["precio_reserva","dia_inicial"]
 
 class SubastaAdminView(admin.TabularInline):
+	"""
+		Clase Inline de subastas ya creadas.
+	"""
 	model = Subasta
 	readonly_fields = ['dia_inicial','precio_reserva','precio_inicial','inicio_de_subasta']
 	verbose_name_plural = "Subastas cargadas"
 	max_num = 0
 
 class HotSaleAdminView(admin.TabularInline):
+	"""
+		Clase Inline de HotSales ya creados.
+	"""
 	model = HotSale
 	readonly_fields = ['dia_inicial','precio_reserva']
 	verbose_name_plural = "HotSales cargados"
 	max_num = 0
 
 class ResidenciaAdmin(admin.ModelAdmin):
+	"""
+		Clase ModelAdmin de Residencia.
+		Usa form default.
+		Contiene inlines: 
+			SubastaAdminView
+			HotSaleAdminView
+			SubastaInLine
+			HotSaleInLine
+			ImagenInline
+		Están ordenadas por (en orden de prioridad):
+			nombre
+			dirección
+			ciudad
+			pais
+		Tiene filtros  por:
+			ciudad
+			pais
+			personas
+			baños
+		La búsqueda serealiza por nombre o dirección.
+	"""
 	list_filter = ('ciudad','pais','personas','baños',)
 	search_fields = ('nombre', 'dirección',)
 	ordering = ('nombre','dirección','ciudad','pais',)
 	inlines = [
-		SubastaAdminView, HotSaleAdminView, ImagenInline, SubastaInLine, HotSaleInLine,
+		SubastaAdminView, HotSaleAdminView, SubastaInLine, HotSaleInLine, ImagenInline,
 	]
 
 
