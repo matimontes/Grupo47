@@ -1,24 +1,24 @@
 {% extends "main/header_logged_in.html" %}
 
 {% block content %}
-
-
-  <div class="row">
-    {% for r in residencias %}
-      <div class="col s12 m7 l4">
-        <div class="card medium">
-          <div class="card-image">
-            <img src="images/{{r.fotos}}">
-            <span class="card-title">{{r.nombre}}</span>
-          </div>
-          <div class="card-content">
-            <p>{{r.descripcion}}</p>
-          </div>
-          <div class="card-action">
-            <a href="#">Conocer</a>
+<body bgcolor="#e3f2fd">
+    <div class="row">
+      {% for r in residencias %}
+        <div class="col s12 m7 l4">
+          <div class="card medium z-depth-3">
+            <div class="card-image">
+              <img src="{{r.fotos}}">
+              <span class="card-title">{{r.nombre}}</span>
+            </div>
+            <div class="card-content" style="overflow: auto">
+              <p>{{r.descripcion}}</p><br>
+            </div>
+            <div class="card-action">
+              <a href="#">Conocer</a>
+            </div>
           </div>
         </div>
-      </div>
-    {% endfor %}
-  </div>
+      {% endfor %}
+    </div>
+  </body>
 {% endblock %}
