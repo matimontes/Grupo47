@@ -2,6 +2,23 @@
 
 {% block content %}
 
-  Bienvenido a Home Switch Home!
 
+  <div class="row">
+    {% for r in residencias %}
+      <div class="col s12 m7 l4">
+        <div class="card medium">
+          <div class="card-image">
+            <img src="images/{{r.fotos}}">
+            <span class="card-title">{{r.nombre}}</span>
+          </div>
+          <div class="card-content">
+            <p>{{r.descripcion}}</p>
+          </div>
+          <div class="card-action">
+            <a href="#">Conocer</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 {% endblock %}

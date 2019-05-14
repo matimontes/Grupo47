@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
+from .models import Residencia
 
 
 def homepage(request):
     if request.user.is_authenticated: #si hay una sesion iniciada
         user = request.user
         return render(request=request,
-                      template_name="main/home_logged_in.html")
+                      template_name="main/home_logged_in.html",
+                      context={"residencias": Residencia.objects.all})
     else: #si no hay una sesion iniciada
         return render(request=request,
                       template_name="main/home.html")
@@ -43,9 +45,11 @@ def login(request):
                 auth_login(request, user) #inicio la sesion
                 return redirect("main:homepage") #lo mando a homepage
             else: #datos invalidos
-                messages.error(request, "Nombre de usuario o contraseña inválidos.")
+                pass
+                #messages.error(request, "Nombre de usuario o contraseña inválidos.")
         else: #se lleno mal la form
-            messages.error(request, "Datos inválidos.")
+            pass
+            #messages.error(request, "Datos inválidos.")
     #la request es normal
     form = AuthenticationForm
     return render(request=request,

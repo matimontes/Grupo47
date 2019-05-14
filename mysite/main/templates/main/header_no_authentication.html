@@ -1,14 +1,19 @@
-<body>
-  <nav>
-    <div class="nav-wrapper">
-        <a href="/">HOME SWITCH HOME</a>
-    <div>
-  </nav>
-  <div class="container">
-    <br>
-    <br>
-    {% block content %}
-    {% endblock %}
-  </div>
+{% extends "main/builder.html" %}
 
-</body>
+{% block builder %}
+  <body>
+    <nav>
+      <div class="nav-wrapper #2196f3 blue">
+        <a href="/" class="brand-logo">
+          <font color="black">H</font> S <font color="black">H</font></a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+        </ul>
+      </div>
+    </nav>
+    <div class="container">
+      <br>
+      {% block content %}
+      {% endblock %}
+    </div>
+  </body>
+{% endblock %}
