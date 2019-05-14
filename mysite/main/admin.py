@@ -3,6 +3,7 @@ from .models import Residencia, Subasta, HotSale, Imagen
 from django import forms
 from django.db.models.query import EmptyQuerySet
 from datetime import timedelta
+from .filters import MesInicioListFilter
 # Register your models here.
 
 class SemanasAdminInlineFormSet(forms.BaseInlineFormSet):
@@ -72,6 +73,8 @@ class SubastaAdminForm(SemanaAdminForm):
 class SubastaAdmin(admin.ModelAdmin):
 	form = SubastaAdminForm
 	fields = ["residencia","precio_reserva","precio_inicial","dia_inicial","inicio_de_subasta"]
+	list_filter = ('residencia', MesInicioListFilter,)
+	search_fields = ('residencia',)
 
 class SubastaInLine(admin.TabularInline):
 	model = Subasta
@@ -89,7 +92,10 @@ class HotSaleAdminForm(SemanaAdminForm):
 		cleaned_data = super().clean()
 
 class HotSaleAdmin(admin.ModelAdmin):
+	form = HotSaleAdminForm
 	fields = ["residencia","precio_reserva","dia_inicial"]
+	list_filter = ('residencia', MesInicioListFilter,)
+	search_fields = ('residencia',)
 
 class HotSaleInLine(admin.TabularInline):
 	model = HotSale
@@ -111,6 +117,9 @@ class HotSaleAdminView(admin.TabularInline):
 	max_num = 0
 
 class ResidenciaAdmin(admin.ModelAdmin):
+	list_filter = ('ciudad','pais','personas','baños',)
+	search_fields = ('nombre', 'dirección',)
+	ordering = ('nombre','dirección','ciudad','pais',)
 	inlines = [
 		SubastaAdminView, HotSaleAdminView, ImagenInline, SubastaInLine, HotSaleInLine,
 	]

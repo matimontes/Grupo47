@@ -5,6 +5,8 @@ from datetime import date, timedelta
 class Residencia(models.Model):
 	nombre = models.CharField(max_length=50)
 	dirección = models.CharField(max_length=200)
+	ciudad = models.CharField(max_length=100)
+	pais = models.CharField(max_length=30)
 	#fotos = SE IMPLEMENTA EN CLASE IMAGEN
 	descripcion = models.TextField()
 	habitaciones = models.IntegerField(default=0)
