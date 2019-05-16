@@ -1,13 +1,13 @@
-{% extends "main/header_logged_in.html" %}
-
+{% extends "main/headers/header_logged_in.html" %}
 {% block content %}
-<body bgcolor="#e3f2fd">
+<body bgcolor="#e3f2fd" style="font-family: oswald">
+  <h5 class="centrar">Recomendaciones</h5>
     <div class="row">
       {% for r in residencias %}
         <div class="col s12 m7 l4">
           <div class="card medium z-depth-3">
             <div class="card-image">
-              <img src="{{r.fotos}}">
+              <img src="https://q-cf.bstatic.com/images/hotel/max1024x768/681/68184730.jpg"/>
               <span class="card-title">{{r.nombre}}</span>
             </div>
             <div class="card-content" style="overflow: auto">
@@ -20,5 +20,7 @@
         </div>
       {% endfor %}
     </div>
+    <div><a href="/buscar_residencias" class="waves-effect waves-light btn-large centrar">
+      <i class="material-icons left">call_made</i>Explorar residencias</a></div>
   </body>
 {% endblock %}

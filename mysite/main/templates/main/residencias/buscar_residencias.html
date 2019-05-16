@@ -1,0 +1,35 @@
+{% extends "main/headers/header_logged_in.html" %}
+
+{% block content %}
+
+<body bgcolor="#e3f2fd">
+      <div class="input-field col s12">
+        <select>
+          <option value="" disabled selected>Personas</option>
+          <option value="1">2 personas</option>
+          <option value="2">3 personas</option>
+          <option value="3">4 personas</option>
+        </select>
+        <label>Cantidad de Personas</label>
+      </div>
+    <div class="row">
+      {% for r in residencias %}
+        <div class="col s12 m7 l4">
+          <div class="card medium z-depth-3">
+            <div class="card-image">
+              <img src="/images}">
+              <span class="card-title">{{r.nombre}}</span>
+            </div>
+            <div class="card-content" style="overflow: auto">
+              <p>{{r.descripcion}}</p><br>
+            </div>
+            <div class="card-action">
+              <a href="#">Conocer</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </body>
+
+{% endblock %}
