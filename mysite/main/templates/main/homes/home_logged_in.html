@@ -1,6 +1,6 @@
 {% extends "main/headers/header_logged_in.html" %}
 {% block content %}
-<body bgcolor="#e3f2fd" style="font-family: oswald">
+<body>
   <h5 class="centrar">Recomendaciones</h5>
     <div class="row">
       {% for r in residencias %}
@@ -20,7 +20,7 @@
         </div>
       {% endfor %}
     </div>
-    <div><a href="/buscar_residencias" class="waves-effect waves-light btn-large centrar">
+    <div class="centrar"><a href="/buscar_residencias" class="waves-effect waves-light btn-large">
       <i class="material-icons left">call_made</i>Explorar residencias</a></div>
   </body>
 {% endblock %}
