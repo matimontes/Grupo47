@@ -196,7 +196,8 @@ class ResidenciaAdmin(admin.ModelAdmin):
 	list_display = ('nombre','ciudad','pais','dirección','personas')
 	list_per_page = 30
 
-
+admin.site.index_template = 'admin/mysite/index.html'
+admin.site.site_header = 'Administración de HSH'
 admin.site.register(Residencia,ResidenciaAdmin)
 admin.site.register(Subasta,SubastaAdmin)
 admin.site.register(HotSale,HotSaleAdmin)
