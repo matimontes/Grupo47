@@ -49,3 +49,19 @@ class HotSale(Semana):
 class Imagen(models.Model):
 	residencia = models.ForeignKey(Residencia,on_delete=models.CASCADE,related_name='imagenes')
 	imagen = models.ImageField(upload_to=('fotos/'))
+
+class Usuario(models.Model):
+	codigo = models.IntegerField()
+	nombre = models.CharField(max_length=50)
+	apellido = models.CharField(max_length=50)
+	nacionalidad = models.CharField(max_length=50)
+	email = models.CharField(max_length=50)
+	creditos = models.IntegerField(default=2)
+
+	def NombreCompleto(self):
+		cadena = "{1} {2}"
+		return cadena.format(self.nombre, self.apellido)
+
+	def __str__(self):
+		return self.NombreCompleto()
+
