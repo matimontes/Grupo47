@@ -96,6 +96,9 @@ class SubastaAdmin(admin.ModelAdmin):
 	fields = ["residencia","precio_reserva","precio_inicial","dia_inicial","inicio_de_subasta"]
 	list_filter = ('residencia', MesInicioListFilter,)
 	search_fields = ('residencia',)
+	list_display = ('residencia','dia_inicial','dia_final','inicio_de_subasta','precio_reserva','precio_inicial')
+	list_editable = ('precio_reserva','precio_inicial')
+	list_per_page = 30
 
 class SubastaInLine(admin.TabularInline):
 	"""
@@ -127,6 +130,9 @@ class HotSaleAdmin(admin.ModelAdmin):
 	fields = ["residencia","precio_reserva","dia_inicial"]
 	list_filter = ('residencia', MesInicioListFilter,)
 	search_fields = ('residencia',)
+	list_display = ('residencia','dia_inicial','dia_final','precio_reserva')
+	list_editable = ('precio_reserva',)
+	list_per_page = 30
 
 class HotSaleInLine(admin.TabularInline):
 	"""
@@ -147,6 +153,7 @@ class SubastaAdminView(admin.TabularInline):
 	readonly_fields = ['dia_inicial','precio_reserva','precio_inicial','inicio_de_subasta']
 	verbose_name_plural = "Subastas cargadas"
 	max_num = 0
+	show_change_link = True
 
 class HotSaleAdminView(admin.TabularInline):
 	"""
@@ -156,6 +163,7 @@ class HotSaleAdminView(admin.TabularInline):
 	readonly_fields = ['dia_inicial','precio_reserva']
 	verbose_name_plural = "HotSales cargados"
 	max_num = 0
+	show_change_link = True
 
 class ResidenciaAdmin(admin.ModelAdmin):
 	"""
@@ -185,6 +193,8 @@ class ResidenciaAdmin(admin.ModelAdmin):
 	inlines = [
 		SubastaAdminView, HotSaleAdminView, SubastaInLine, HotSaleInLine, ImagenInline,
 	]
+	list_display = ('nombre','ciudad','pais','dirección','personas')
+	list_per_page = 30
 
 
 admin.site.register(Residencia,ResidenciaAdmin)
