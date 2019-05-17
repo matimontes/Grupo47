@@ -65,3 +65,16 @@ class Usuario(models.Model):
 	def __str__(self):
 		return self.NombreCompleto()
 
+class Tarjeta(models.Model): #Falta completar
+	__numero = models.IntegerField(max_length = 16)
+	__codigo = models.IntegerField(max_length = 3)
+
+	def GetNumero(self):
+		return self __numero
+
+	def GetCodigo(self):
+		return self __codigo
+
+	#def Pagar(self):
+	#def Validar(self):
+	#	return True
