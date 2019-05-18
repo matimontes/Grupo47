@@ -2,10 +2,15 @@
   display: flex;
   justify-content: center;
 }
+@font-face {
+  font-family: 'coolvetica';
+  src: url('../fonts/coolvetica/coolvetica rg.ttf')  format("truetype"),
+       local('coolvetica');
+}
 body {
   background: #e3f2fd;
-  font-family: Helvetica;
-  font-weight: bold;
+  font-family: coolvetica;
+  /* font-weight: bold; */
 }
 a:hover {
   font-style: italic;

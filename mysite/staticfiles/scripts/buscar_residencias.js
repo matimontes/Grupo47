@@ -1,4 +1,4 @@
-alert("a");
+
 const Elems = document.querySelector('select');
 M.FormSelect.init(Elems, {});
 
