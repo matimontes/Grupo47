@@ -43,6 +43,8 @@ class Subasta(Semana):
 	precio_inicial = models.DecimalField(max_digits=11,decimal_places=2)
 	inicio_de_subasta = models.DateField()
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='subastas')
+	usuarios_inscriptos = models.ManyToManyField('Usuario',related_name='inscripciones')
+	#pujas CREADAS DESDE CLASE PUJA
 
 class HotSale(Semana):
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='hotsales')
@@ -51,14 +53,10 @@ class SemanaReservada(Semana):
 	usuario = models.ForeignKey('Usuario',on_delete=models.CASCADE,related_name='semanas_reservadas')
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='semanas_reservadas')
 
-class SubastaEvento(models.Model):
-	usuarios_inscriptos = models.ManyToManyField('Usuario',related_name='inscripciones')
-	#pujas CREADAS DESDE CLASE PUJA
-
 class Puja(models.Model):
 	usuario = models.ForeignKey('Usuario',on_delete=models.CASCADE,related_name='pujas')
 	dinero_pujado = models.DecimalField(max_digits=11,decimal_places=2)
-	subasta = models.ForeignKey('SubastaEvento',on_delete=models.CASCADE,related_name='pujas')
+	subasta = models.ForeignKey('Subasta',on_delete=models.CASCADE,related_name='pujas')
 
 class Imagen(models.Model):
 	residencia = models.ForeignKey(Residencia,on_delete=models.CASCADE,related_name='imagenes')
