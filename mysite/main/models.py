@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import date, timedelta
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Residencia(models.Model):
@@ -39,12 +40,25 @@ class Semana(models.Model):
 		ordering = ['dia_inicial', 'residencia']
 
 class Subasta(Semana):
-	precio_inicial = models.FloatField()
+	precio_inicial = models.DecimalField(max_digits=11,decimal_places=2)
 	inicio_de_subasta = models.DateField()
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='subastas')
 
 class HotSale(Semana):
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='hotsales')
+
+class SemanaReservada(Semana):
+	usuario = models.ForeignKey('Usuario',on_delete=models.CASCADE,related_name='semanas_reservadas')
+	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='semanas_reservadas')
+
+class SubastaEvento(models.Model):
+	usuarios_inscriptos = models.ManyToManyField('Usuario',related_name='inscripciones')
+	#pujas CREADAS DESDE CLASE PUJA
+
+class Puja(models.Model):
+	usuario = models.ForeignKey('Usuario',on_delete=models.CASCADE,related_name='pujas')
+	dinero_pujado = models.DecimalField(max_digits=11,decimal_places=2)
+	subasta = models.ForeignKey('SubastaEvento',on_delete=models.CASCADE,related_name='pujas')
 
 class Imagen(models.Model):
 	residencia = models.ForeignKey(Residencia,on_delete=models.CASCADE,related_name='imagenes')
@@ -66,14 +80,14 @@ class Usuario(models.Model):
 		return self.NombreCompleto()
 
 class Tarjeta(models.Model): #Falta completar
-	__numero = models.IntegerField(max_length = 16)
-	__codigo = models.IntegerField(max_length = 3)
+	numero = models.IntegerField()
+	codigo = models.IntegerField()
 
 	def GetNumero(self):
-		return self __numero
+		return self.numero
 
 	def GetCodigo(self):
-		return self __codigo
+		return self.codigo
 
 	#def Pagar(self):
 	#def Validar(self):
