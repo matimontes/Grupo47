@@ -24,7 +24,7 @@ class Residencia(models.Model):
 
 class Semana(models.Model):
 	dia_inicial = models.DateField() 
-	precio_reserva = models.FloatField()
+	precio_reserva = models.DecimalField(max_digits=11,decimal_places=2)
 
 	def __str__(self):
 		return self.residencia.nombre + " - De: " + self.dia_inicial.isoformat() + " a: " + self.dia_final().isoformat()
@@ -44,20 +44,45 @@ class Subasta(Semana):
 	inicio_de_subasta = models.DateField()
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='subastas')
 	usuarios_inscriptos = models.ManyToManyField('Usuario',related_name='inscripciones')
+	iniciada = False
 	#pujas CREADAS DESDE CLASE PUJA
 
 	def fin_de_subasta(self):
 		return (self.inicio_de_subasta + timedelta(days=3))
 
-	def pujaActual(self):
+	def puja_actual(self):
 		return self.pujas.first()
 
 	def pujar(self,usuario_pujador,dinero_a_pujar):
-		if dinero_pujado > self.pujaActual() + 100:
+		if dinero_pujado > self.puja_actual().dinero_pujado + 100:
 			Puja.objects.create(usuario=usuario_pujador,dinero_pujado=dinero_a_pujar,subasta=self)
 		else:
 			#AGREGAR FUNCIONALIDAD
 			pass
+
+	def comenzar(self):
+		self.iniciada = True
+		Puja.objects.create(usuario=None,dinero_pujado=self.precio_inicial,subasta=self)
+		self.notificar_inscriptos()
+	
+	def finalizar(self):
+		puja = self.puja_actual()
+		SemanaReservada.objects.create(usuario=puja.usuario,
+			precio_reserva=self.puja.dinero_pujado,
+			residencia=self.residencia,
+			dia_inicial=self.dia_inicial)
+	#FALTA BORRARSE A SÍ MISMO AFUERA DEL FINALIZAR
+
+	def forzar_comienzo(self):
+		self.comenzar
+		self.inicio_de_subasta = datetime.today()
+
+	def forzar_fin(self):
+		self.finalizar
+
+	def notificar_inscriptos(self):
+		for usuario in self.usuarios_inscriptos:
+			usuario.notificar_comienzo_subasta(self)
 
 class HotSale(Semana):
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='hotsales')
@@ -92,6 +117,10 @@ class Usuario(models.Model):
 
 	def __str__(self):
 		return self.NombreCompleto()
+
+	def notificar_comienzo_subasta(self,subasta):
+		#AGREGAR FUNCIONALIDAD PARA NOTIFICAR POR MAIL QUE COMENZÓ LA SUBASTA
+		pass
 
 class Tarjeta(models.Model): #Falta completar
 	numero = models.IntegerField()
