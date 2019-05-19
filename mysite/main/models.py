@@ -46,6 +46,19 @@ class Subasta(Semana):
 	usuarios_inscriptos = models.ManyToManyField('Usuario',related_name='inscripciones')
 	#pujas CREADAS DESDE CLASE PUJA
 
+	def fin_de_subasta(self):
+		return (self.inicio_de_subasta + timedelta(days=3))
+
+	def pujaActual(self):
+		return self.pujas.first()
+
+	def pujar(self,usuario_pujador,dinero_a_pujar):
+		if dinero_pujado > self.pujaActual() + 100:
+			Puja.objects.create(usuario=usuario_pujador,dinero_pujado=dinero_a_pujar,subasta=self)
+		else:
+			#AGREGAR FUNCIONALIDAD
+			pass
+
 class HotSale(Semana):
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='hotsales')
 
@@ -57,6 +70,9 @@ class Puja(models.Model):
 	usuario = models.ForeignKey('Usuario',on_delete=models.CASCADE,related_name='pujas')
 	dinero_pujado = models.DecimalField(max_digits=11,decimal_places=2)
 	subasta = models.ForeignKey('Subasta',on_delete=models.CASCADE,related_name='pujas')
+
+	class Meta:
+		ordering = ['subasta','-dinero_pujado']
 
 class Imagen(models.Model):
 	residencia = models.ForeignKey(Residencia,on_delete=models.CASCADE,related_name='imagenes')

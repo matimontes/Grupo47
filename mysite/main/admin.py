@@ -151,6 +151,7 @@ class SubastaAdminView(admin.TabularInline):
 	"""
 	model = Subasta
 	readonly_fields = ['dia_inicial','precio_reserva','precio_inicial','inicio_de_subasta']
+	exclude = ['usuarios_inscriptos']
 	verbose_name_plural = "Subastas cargadas"
 	max_num = 0
 	show_change_link = True
