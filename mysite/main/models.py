@@ -60,6 +60,23 @@ class Subasta(Semana):
 			#AGREGAR FUNCIONALIDAD
 			pass
 
+	def cancelar_puja(self,usuario):
+		puja = self.puja_actual()
+		if puja.usuario == usuario:
+			puja.delete()
+		else:
+			#AGREGAR FUNCIONALIDAD
+			pass
+
+	def abandonar_subasta(self,usuario):
+		pass
+
+	def agregar_usuario(self,usuario):
+		pass
+
+	def esta_inscripto(self,usuario):
+		return usuario in self.usuarios_inscriptos
+
 	def comenzar(self):
 		self.iniciada = True
 		Puja.objects.create(usuario=None,dinero_pujado=self.precio_inicial,subasta=self)
