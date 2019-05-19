@@ -1,6 +1,10 @@
 
-const Elems = document.querySelector('select');
-M.FormSelect.init(Elems, {});
+const pasajeros = document.querySelector("select[name='pasajeros']");
+M.FormSelect.init(pasajeros, {});
+
+const pais = document.querySelector("select[name='pais']");
+M.FormSelect.init(pais, {});
+
 
 const calendario = document.querySelector('.datepicker');
 hoy = new Date();

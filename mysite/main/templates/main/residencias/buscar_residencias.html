@@ -1,5 +1,5 @@
 {% extends "main/headers/header_logged_in.html" %}
-{% load staticfiles %}
+{% load static %}
 {% block content %}
 
 <body>
@@ -9,19 +9,30 @@
       <div class="col s12 m4">
         <div class="input-field">
           <i class="material-icons">date_range</i>
-          <input type="text" class="datepicker materialize-red-text.text-darken-1 ancho">
+          <input type="text" class="datepicker">
         </div>
       </div>
-      <div class="col s10 m4">
+      <div class="col s12 m4">
         <div class="input-field col s12">
           <i class="material-icons">hotel</i>
-          <select>
+          <select name="pasajeros">
             <option value="" disabled selected>Pasajeros</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
+            {% for p in pasajeros %}
+              <option value="1">{{p}}</option>
+            {% endfor %}
           </select>
         </div>
+    </div>
+    <div class="col s12 m4">
+      <div class="input-field">
+        <i class="material-icons">map</i>
+        <select name="pais">
+          <option value="" disabled selected>Pais</option>
+          {% for p in paises %}
+            <option value="1">{{p}}</option>
+          {% endfor %}
+        </select>
+      </div>
     </div>
   </div>
   </div>

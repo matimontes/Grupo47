@@ -62,6 +62,10 @@ def logout(request):
     return redirect("main:homepage")
 
 def buscar_residencias(request):
+    paises = set(r.pais for r in Residencia.objects.all())
+    pasajeros = set(r.personas for r in Residencia.objects.all())
     return render(request=request,
                   template_name="main/residencias/buscar_residencias.html",
-                  context={"residencias": Residencia.objects.all})
+                  context={"residencias": Residencia.objects.all,
+                           "paises": paises,
+                           "pasajeros": pasajeros})
