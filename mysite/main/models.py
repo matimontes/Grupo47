@@ -128,6 +128,7 @@ class Usuario(models.Model):
 	nacionalidad = models.CharField(max_length=50)
 	email = models.CharField(max_length=50)
 	creditos = models.IntegerField(default=2)
+	premium = false 
 
 	def NombreCompleto(self):
 		cadena = "{1} {2}"
@@ -139,6 +140,12 @@ class Usuario(models.Model):
 	def notificar_comienzo_subasta(self,subasta):
 		#AGREGAR FUNCIONALIDAD PARA NOTIFICAR POR MAIL QUE COMENZÓ LA SUBASTA
 		pass
+
+	def invertir_premium(self):
+		if self.premium:
+			self.premium = False
+		else:
+			self.premium = True
 
 class Tarjeta(models.Model): #Falta completar
 	numero = models.IntegerField()
