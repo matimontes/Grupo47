@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
 from django.contrib import messages
+from django.http import HttpResponse
 from .models import Residencia, Subasta
 
 
@@ -69,3 +70,7 @@ def buscar_residencias(request):
                   context={"residencias": Residencia.objects.all,
                            "paises": paises,
                            "pasajeros": pasajeros})
+
+def residencia(request, nombre_residencia):
+    res = Residencia.objects.get(nombre=nombre_residencia)
+    return HttpResponse(res)
