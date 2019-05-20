@@ -122,6 +122,7 @@ class Imagen(models.Model):
 
 class Usuario(models.Model):
 	codigo = models.IntegerField()
+	username = models.CharField(max_length=15)
 	nombre = models.CharField(max_length=50)
 	apellido = models.CharField(max_length=50)
 	nacionalidad = models.CharField(max_length=50)
@@ -142,12 +143,6 @@ class Usuario(models.Model):
 class Tarjeta(models.Model): #Falta completar
 	numero = models.IntegerField()
 	codigo = models.IntegerField()
-
-	def GetNumero(self):
-		return self.numero
-
-	def GetCodigo(self):
-		return self.codigo
 
 	#def Pagar(self):
 	#def Validar(self):
