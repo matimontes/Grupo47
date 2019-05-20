@@ -128,7 +128,7 @@ class Usuario(models.Model):
 	nacionalidad = models.CharField(max_length=50)
 	email = models.CharField(max_length=50)
 	creditos = models.IntegerField(default=2)
-	premium = false 
+	premium = False 
 
 	def NombreCompleto(self):
 		cadena = "{1} {2}"
