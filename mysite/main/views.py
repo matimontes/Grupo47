@@ -72,9 +72,9 @@ def buscar_residencias(request):
                            "paises": paises,
                            "pasajeros": pasajeros})
 
-def residencia(request, nombre_residencia):
-    res = Residencia.objects.get(nombre=nombre_residencia)
-    subastas = Subasta.objects.filter(residencia=res.id)
+def residencia(request, id_residencia):
+    res = Residencia.objects.get(id=id_residencia)
+    subastas = Subasta.objects.filter(residencia=id_residencia)
     user = request.user
     return render(request=request,
                   template_name="main/residencias/ver_residencia.html",

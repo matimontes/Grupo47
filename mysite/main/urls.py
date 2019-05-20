@@ -24,5 +24,5 @@ path("", views.homepage, name="homepage"),
     path("login/", views.login, name="login"),
     path("logout/", views.logout, name="logout"),
     path("buscar_residencias/", views.buscar_residencias, name="buscar_residencias"),
-    path("ver_residencia/<nombre_residencia>/", views.residencia, name="residencia"),
+    path("ver_residencia/<id_residencia>/", views.residencia, name="residencia"),
 ]
