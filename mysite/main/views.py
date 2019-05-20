@@ -4,6 +4,7 @@ from django.contrib.auth import login as auth_login, logout as auth_logout, auth
 from django.contrib import messages
 from django.http import HttpResponse
 from .models import Residencia, Subasta
+from main.forms import RegistrationForm
 
 
 def homepage(request):
@@ -21,7 +22,7 @@ def register(request):
     #si la request es tipo POST es porque el usuario nos mando info
     #click en "registrarse"
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = RegistrationForm(request.POST)
         if form.is_valid(): #si el form fue completado correctamente
             user = form.save() #registramos el usuario
             auth_login(request, user) #iniciamos su sesion automaticamente
@@ -30,7 +31,7 @@ def register(request):
             for msg in form.error_messages:
                 print(form.error_messages[msg]) #muestro los errores
     #es una request normal
-    form = UserCreationForm
+    form = RegistrationForm
     return render(request=request,
                   template_name="main/authentication/register.html",
                   context={"form":form})
@@ -63,8 +64,6 @@ def logout(request):
     return redirect("main:homepage")
 
 def buscar_residencias(request):
-    paises = set(r.pais for r in Residencia.objects.all())
-    pasajeros = set(r.personas for r in Residencia.objects.all())
     return render(request=request,
                   template_name="main/residencias/buscar_residencias.html",
                   context={"residencias": Residencia.objects.all,
