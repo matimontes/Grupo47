@@ -42,9 +42,11 @@
       <td>${{s.precio_inicial}}</td>
       <td>${{s.precio_reserva}}</td>
       <td><a href="#" class="waves-effect waves-light btn-small">Inscribirse<a></td>
-      <!-- {% if user.es_premium %} -->
-      <!-- {% endif %} -->
-      <td><a href="#" class="waves-effect waves-light btn-small">Reservar<a></td>
+      {% if user.premium %}
+        <td><a href="#" class="waves-effect waves-light btn-small">Reservar<a></td>
+      {% else %}
+        <td><a href="#" class="waves-effect waves-light disabled btn-small">Reservar<a></td>
+      {% endif %}
     </tr>
     {% endfor %}
   {% else %}

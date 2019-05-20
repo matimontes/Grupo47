@@ -15,7 +15,7 @@ class Residencia(models.Model):
 	baños = models.IntegerField(default=0)
 	#subastas = SE IMPLEMENTA EN SUBASTA
 	#hotsales = SE IMPLEMENTA EN HOTSALE
-	
+
 	def __str__(self):
 		return self.nombre
 
@@ -23,7 +23,7 @@ class Residencia(models.Model):
 		ordering = ['nombre']
 
 class Semana(models.Model):
-	dia_inicial = models.DateField() 
+	dia_inicial = models.DateField()
 	precio_reserva = models.DecimalField(max_digits=11,decimal_places=2)
 
 	def __str__(self):
@@ -81,7 +81,7 @@ class Subasta(Semana):
 		self.iniciada = True
 		Puja.objects.create(usuario=None,dinero_pujado=self.precio_inicial,subasta=self)
 		self.notificar_inscriptos()
-	
+
 	def finalizar(self):
 		puja = self.puja_actual()
 		SemanaReservada.objects.create(usuario=puja.usuario,
