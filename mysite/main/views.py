@@ -64,6 +64,8 @@ def logout(request):
     return redirect("main:homepage")
 
 def buscar_residencias(request):
+    paises = set(r.pais for r in Residencia.objects.all())
+    pasajeros = set(r.personas for r in Residencia.objects.all())
     return render(request=request,
                   template_name="main/residencias/buscar_residencias.html",
                   context={"residencias": Residencia.objects.all,
@@ -72,4 +74,10 @@ def buscar_residencias(request):
 
 def residencia(request, nombre_residencia):
     res = Residencia.objects.get(nombre=nombre_residencia)
-    return HttpResponse(res)
+    subastas = Subasta.objects.filter(residencia=res.id)
+    user = request.user
+    return render(request=request,
+                  template_name="main/residencias/ver_residencia.html",
+                  context={"residencia": res,
+                           "subastas": subastas,
+                           "usuario": user})

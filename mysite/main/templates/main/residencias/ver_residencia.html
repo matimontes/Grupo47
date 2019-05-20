@@ -1,0 +1,57 @@
+{% extends "main/headers/header_logged_in.html" %}
+{% load static %}
+{% block content %}
+
+<body>
+  <h1 class="centrar">{{residencia.nombre}}</h1>
+  <section>
+    <div class="columna-grande">
+      <img class="imagen-residencia"
+      src='https://q-cf.bstatic.com/images/hotel/max1024x768/681/68184730.jpg'>
+    </div>
+    <h5>Resumen:</h5>
+    <div class="columna-chica">
+      <div class="compacto scrollable">
+        <p style="font-size: 20">{{residencia.descripcion}}</p>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="columna-grande" style="width: 100%; font-size: 150%">
+      <span>{{residencia.ciudad}}, {{residencia.pais}} | </span>
+      <span>Dirección: {{residencia.dirección}} | </span>
+      <span>Pasajeros: {{residencia.personas}} | </span>
+      <span>Baños: {{residencia.baños}}</span>
+    </div>
+  </section>
+  {% if subastas %}
+    <div style="float: left; width: 100%">
+      <h5 class="centrar">Proximas subastas:</h5>
+    </div>
+  <table style="width:100%">
+    <tr>
+      <th>Fecha</th>
+      <th>Precio Incial</th>
+      <th>Precio Reserva</th>
+      <th></th>
+      <th></th>
+    </tr>
+    {% for s in subastas %}
+    <tr>
+      <td>De {{s.dia_inicial}} a {{s.dia_final}}</td>
+      <td>${{s.precio_inicial}}</td>
+      <td>${{s.precio_reserva}}</td>
+      <td><a href="#" class="waves-effect waves-light btn-small">Inscribirse<a></td>
+      <!-- {% if user.es_premium %} -->
+      <!-- {% endif %} -->
+      <td><a href="#" class="waves-effect waves-light btn-small">Reservar<a></td>
+    </tr>
+    {% endfor %}
+  {% else %}
+    <div style="float: left; width: 100%">
+      <h5 class="centrar">No hay subastas disponibles</h5>
+    </div>
+  {% endif %}
+</body>
+
+{% endblock %}

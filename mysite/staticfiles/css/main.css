@@ -25,3 +25,20 @@ a:hover {
 .logo:hover{
   width: 155px;
 }
+.columna-grande{
+  float: left;
+  width: 70%;
+}
+.columna-chica{
+  float: left;
+  width: 30%;
+}
+.imagen-residencia{
+  width: 90%;
+}
+.compacto {
+  height: 300px;
+}
+.scrollable {
+  overflow: auto;
+}
