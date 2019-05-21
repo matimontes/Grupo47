@@ -1,0 +1,14 @@
+{% extends "main/headers/header_logged_in.html" %}
+{% load static %}
+{% block content %}
+<body>
+  <div>
+    <h3>Subasta por {{subasta.residencia}}</h3>
+    {% if comenzo == True %}
+      <h5>Duración: desde {{subasta.inicio_de_subasta}} hasta {{subasta.fin_de_subasta}}</h5>
+    {% else %}
+      <h5>La subasta ya comenzó, tenes tiempo hasta el {{subasta.fin_de_subasta}}
+    {% endif %}
+  </div>
+</body>
+{% endblock %}

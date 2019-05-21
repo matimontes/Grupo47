@@ -81,3 +81,12 @@ def residencia(request, id_residencia):
                   context={"residencia": res,
                            "subastas": subastas,
                            "usuario": user})
+
+def subasta(request, id_subasta):
+    import datetime
+    sub = Subasta.objects.get(id=id_subasta)
+    comenzo = False if datetime.datetime.now().date() < sub.inicio_de_subasta else True
+    return render(request=request,
+                  template_name="main/subastas/ver_subasta.html",
+                  context={"subasta": sub,
+                           "comenzo": comenzo})
