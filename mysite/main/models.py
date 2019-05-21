@@ -1,6 +1,8 @@
 from django.db import models
 from datetime import date, timedelta
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+#from django.dispatch import receiver
 
 # Create your models here.
 class Residencia(models.Model):
@@ -121,32 +123,31 @@ class Imagen(models.Model):
 	imagen = models.ImageField(upload_to=('fotos/'))
 
 class Usuario(models.Model):
-#	user = models.OneToOneField(User)
-	codigo = models.IntegerField()
-	username = models.CharField(max_length=15)
-	nombre = models.CharField(max_length=50)
-	apellido = models.CharField(max_length=50)
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
+	codigo = models.IntegerField(default=0)
 	nacionalidad = models.CharField(max_length=50)
-	email = models.CharField(max_length=50)
 	creditos = models.IntegerField(default=2)
-	premium = False 
-
-	def NombreCompleto(self):
-		cadena = "{1} {2}"
-		return cadena.format(self.nombre, self.apellido)
+	#premium = False 
 
 	def __str__(self):
-		return self.NombreCompleto()
+		return self.user.username
 
 	def notificar_comienzo_subasta(self,subasta):
 		#AGREGAR FUNCIONALIDAD PARA NOTIFICAR POR MAIL QUE COMENZÓ LA SUBASTA
 		pass
 
-	def invertir_premium(self):
-		if self.premium:
-			self.premium = False
-		else:
-			self.premium = True
+#	def invertir_premium(self):
+#		if self.premium:
+#			self.premium = False
+#		else:
+#			self.premium = True
+
+def create_profile(sender, **kwargs):
+    if kwargs['created']:
+        user_profile = Usuario.objects.create(user=kwargs['instance'])
+
+post_save.connect(create_profile, sender=User)
+
 
 class Tarjeta(models.Model): #Falta completar
 	numero = models.IntegerField()
