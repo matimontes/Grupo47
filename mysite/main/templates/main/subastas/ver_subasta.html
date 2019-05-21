@@ -4,10 +4,14 @@
 <body>
   <div>
     <h3>Subasta por {{subasta.residencia}}</h3>
-    {% if comenzo == True %}
+    {% if comenzo == False %}
       <h5>Duración: desde {{subasta.inicio_de_subasta}} hasta {{subasta.fin_de_subasta}}</h5>
     {% else %}
-      <h5>La subasta ya comenzó, tenes tiempo hasta el {{subasta.fin_de_subasta}}
+      <!-- {% if inscripto %}
+        <h5>La subasta ya comenzó, tenes tiempo hasta el {{subasta.fin_de_subasta}} para pujar</h5>
+      {% else %}
+        <h5>La inscripción ya cerró</h5>
+      {% endif %} -->
     {% endif %}
   </div>
 </body>
