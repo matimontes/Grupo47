@@ -31,7 +31,7 @@ def register(request):
             for msg in form.error_messages:
                 print(form.error_messages[msg]) #muestro los errores
     #es una request normal
-    form = RegistrationForm
+    form = RegistrationForm()
     return render(request=request,
                   template_name="main/authentication/register.html",
                   context={"form":form})
