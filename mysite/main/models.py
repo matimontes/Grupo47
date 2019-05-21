@@ -121,6 +121,7 @@ class Imagen(models.Model):
 	imagen = models.ImageField(upload_to=('fotos/'))
 
 class Usuario(models.Model):
+#	user = models.OneToOneField(User)
 	codigo = models.IntegerField()
 	username = models.CharField(max_length=15)
 	nombre = models.CharField(max_length=50)
