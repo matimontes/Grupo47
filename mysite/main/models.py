@@ -2,7 +2,7 @@ from django.db import models
 from datetime import date, timedelta
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
-#from django.dispatch import receiver
+from django.dispatch import receiver
 
 # Create your models here.
 class Residencia(models.Model):
@@ -142,11 +142,20 @@ class Usuario(models.Model):
 #		else:
 #			self.premium = True
 
-def create_profile(sender, **kwargs):
-    if kwargs['created']:
-        user_profile = Usuario.objects.create(user=kwargs['instance'])
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Usuario.objects.create(user=instance)
 
-post_save.connect(create_profile, sender=User)
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.usuario.save()
+
+# def create_profile(sender, **kwargs):
+#     if kwargs['created']:
+#         user_profile = Usuario.objects.create(user=kwargs['instance'])
+
+# post_save.connect(create_profile, sender=User)
 
 
 class Tarjeta(models.Model): #Falta completar
