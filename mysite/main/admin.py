@@ -58,12 +58,19 @@ class SemanaAdminForm(forms.ModelForm):
 		dia_inicial_cleaned = cleaned_data["dia_inicial"]
 		residencia_cleaned = cleaned_data["residencia"]
 		disponible = True
-		#Verifica que no coincida con ninguna semana de Subastas
-		for semana in residencia_cleaned.subastas.all():
+		#Verifica que no coincida con ninguna semana Reservada
+		for semana in residencia_cleaned.semanas_reservadas.all():
 			if semana.coincide(dia_inicial_cleaned):
-				self.add_error("dia_inicial","La semana solicitada coincide con la Subasta de: "+ semana.dia_inicial.isoformat()+ " a "+ semana.dia_final().isoformat())
+				self.add_error("dia_inicial","La semana solicitada coincide con la Semana Reservada de: "+ semana.dia_inicial.isoformat()+ " a "+ semana.dia_final().isoformat())
 				disponible = False
 				break
+		#Verifica que no coincida con ninguna semana de Subastas
+		if disponible:
+			for semana in residencia_cleaned.subastas.all():
+				if semana.coincide(dia_inicial_cleaned):
+					self.add_error("dia_inicial","La semana solicitada coincide con la Subasta de: "+ semana.dia_inicial.isoformat()+ " a "+ semana.dia_final().isoformat())
+					disponible = False
+					break
 		#Verifica que no coincida con ninguna semana de HotSale
 		if disponible:
 			for semana in residencia_cleaned.hotsales.all():
