@@ -1,15 +1,14 @@
 {% extends "main/builder.html" %}
-
+{% load staticfiles%}
 {% block builder %}
 
-  <body>
+  <header>
     <div class="navbar-fixed">
       <nav>
-        <div class="nav-wrapper #2196f3 blue">
+        <div class="nav-wrapper #ffa726 orange lighten-1">
           <a href="/" class="brand-logo">
-            <font color="black">H</font>S<font color="black">H</font></a>
-          <ul id="nav-mobile" class="right hide-on-med-and-down">
-          </ul>
+          <img class="logo" src="{% static 'logos/HSH-Complete.svg' %}" alt="hsh logo">
+          </a>
         </div>
       </nav>
     </div>
@@ -17,6 +16,5 @@
       {% block content %}
       {% endblock %}
     </div>
-  </body>
-
+  </header>
 {% endblock %}

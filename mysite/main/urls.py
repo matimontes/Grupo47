@@ -26,5 +26,6 @@ path("", views.homepage, name="homepage"),
     path("buscar_residencias/", views.buscar_residencias, name="buscar_residencias"),
     path("ver_residencia/<id_residencia>/", views.residencia, name="residencia"),
     path("subasta/<id_subasta>/", views.subasta, name="subasta"),
+    path("inscribirse/<id_residencia>/<id_subasta>/", views.inscribirse, name="inscribirse"),
     #path("reserva/<id_subasta>/", views.reserva, name="reserva"),
 ]

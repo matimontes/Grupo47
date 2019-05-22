@@ -24,7 +24,7 @@
       <span>Baños: {{residencia.baños}}</span>
     </div>
   </section>
-  {% if subastas %}
+  {% if inscripto %}
     <div style="float: left; width: 100%">
       <h5 class="centrar">Proximas subastas:</h5>
     </div>
@@ -36,19 +36,25 @@
       <th>Precio Reserva</th>
       <th></th>
       <th></th>
+      <th></th>
     </tr>
-    {% for s in subastas %}
+    {% for s, i in inscripto.items %}
     <tr>
       <td>De {{s.dia_inicial}} a {{s.dia_final}}</td>
       <td>{{s.inicio_de_subasta}} - {{s.fin_de_subasta}}</td>
       <td>${{s.precio_inicial}}</td>
       <td>${{s.precio_reserva}}</td>
-      <td><a href="/subasta/{{s.id}}" class="waves-effect waves-light btn-small">Inscribirse<a></td>
+      {% if i %}
+        <td><a href="" class="waves-effect waves-light btn-small disabled">Inscripto<a></td>
+      {% else %}
+        <td><a href="/inscribirse/{{residencia.id}}/{{s.id}}" class="waves-effect waves-light btn-small">Inscribirse<a></td>
+      {% endif %}
       {% if user.premium %}
         <td><a href="/reserva/{{s.id}}" class="waves-effect waves-light btn-small">Reservar<a></td>
       {% else %}
         <td><a href="#" class="waves-effect waves-light disabled btn-small">Reservar<a></td>
       {% endif %}
+      <td><a href="/subasta/{{s.id}}" class="waves-effect waves-light btn-small">Ver<a></td>
     </tr>
     {% endfor %}
   {% else %}

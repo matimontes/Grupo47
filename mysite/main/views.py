@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
+from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate, get_user_model
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import Residencia, Subasta
+from .models import Residencia, Subasta, Usuario
 from main.forms import RegistrationForm
 
 
@@ -47,11 +47,9 @@ def login(request):
             if user is not None: #si es valido
                 auth_login(request, user) #inicio la sesion
                 return redirect("main:homepage") #lo mando a homepage
-            else: #datos invalidos
-                pass#messages.error(request, "Nombre de usuario o contraseña inválidos.")
-        else: #se lleno mal la form
-            pass
-            #messages.error(request, "Datos inválidos.")
+        else: #datos invalidos
+            messages.error(request, "Nombre de usuario o contraseña inválidos.")
+
     #la request es normal
     form = AuthenticationForm
     return render(request=request,
@@ -96,20 +94,28 @@ def buscar_residencias(request):
 def residencia(request, id_residencia):
     res = Residencia.objects.get(id=id_residencia)
     subastas = Subasta.objects.filter(residencia=id_residencia)
-    user = request.user
+    user = request.user#get_user_model()
+    inscripto = {}
+    for s in subastas:
+        inscripto[s] = s.esta_inscripto(user)
     return render(request=request,
                   template_name="main/residencias/ver_residencia.html",
                   context={"residencia": res,
-                           "subastas": subastas,
+                           "inscripto": inscripto,
                            "usuario": user})
 
 def subasta(request, id_subasta):
     import datetime
     sub = Subasta.objects.get(id=id_subasta)
-    #inscripto = sub.esta_inscripto(request.user)
+    inscripto = sub.esta_inscripto(request.user)
     comenzo = False if datetime.datetime.now().date() < sub.inicio_de_subasta else True
     return render(request=request,
                   template_name="main/subastas/ver_subasta.html",
                   context={"subasta": sub,
-                           "comenzo": comenzo})
-                           #"inscripto": inscripto
+                           "comenzo": comenzo,
+                           "inscripto": inscripto})
+
+def inscribirse(request, id_residencia, id_subasta):
+    sub = Subasta.objects.get(id=id_subasta)
+    sub.inscribirse(get_user_model())
+    return redirect(f"/ver_residencia/{id_residencia}/")
