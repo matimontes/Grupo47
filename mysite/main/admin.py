@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Residencia, Subasta, HotSale, Imagen
+from .models import Residencia, Subasta, HotSale, Imagen, SemanaReservada
 from django import forms
 from django.db.models.query import EmptyQuerySet
 from datetime import timedelta
@@ -177,6 +177,17 @@ class HotSaleAdminView(admin.TabularInline):
 	max_num = 0
 	show_change_link = True
 
+class SemanaReservadaView(admin.TabularInline):
+	"""
+		Clase Inline de SemanaReservada.
+	"""
+	model = SemanaReservada
+	readonly_fields = ['usuario','dia_inicial','precio_reserva']
+	verbose_name_plural = "Semanas reservadas"
+	max_num = 0
+	can_delete = False
+	show_change_link = True
+
 class ResidenciaAdmin(admin.ModelAdmin):
 	"""
 		Clase ModelAdmin de Residencia.
@@ -203,7 +214,7 @@ class ResidenciaAdmin(admin.ModelAdmin):
 	search_fields = ('nombre', 'dirección',)
 	ordering = ('nombre','dirección','ciudad','pais',)
 	inlines = [
-		SubastaAdminView, HotSaleAdminView, SubastaInLine, HotSaleInLine, ImagenInline,
+		SemanaReservadaView, SubastaAdminView, HotSaleAdminView, SubastaInLine, HotSaleInLine, ImagenInline,
 	]
 	list_display = ('nombre','ciudad','pais','dirección','personas')
 	list_per_page = 30
