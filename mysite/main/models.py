@@ -46,7 +46,7 @@ class Subasta(Semana):
 	inicio_de_subasta = models.DateField()
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='subastas')
 	usuarios_inscriptos = models.ManyToManyField('Usuario',related_name='inscripciones')
-	iniciada = False
+	iniciada = models.BooleanField(default=False)
 	#pujas CREADAS DESDE CLASE PUJA
 
 	def fin_de_subasta(self):
@@ -86,8 +86,8 @@ class Subasta(Semana):
 
 	def comenzar(self):
 		self.iniciada = True
-		Puja.objects.create(usuario=None,dinero_pujado=self.precio_inicial,subasta=self)
 		self.notificar_inscriptos()
+		self.save(update_fields=['iniciada'])
 
 	def finalizar(self):
 		puja = self.puja_actual()
@@ -98,14 +98,15 @@ class Subasta(Semana):
 	#FALTA BORRARSE A SÍ MISMO AFUERA DEL FINALIZAR
 
 	def forzar_comienzo(self):
-		self.comenzar
-		self.inicio_de_subasta = datetime.today()
+		self.inicio_de_subasta = date.today()
+		self.save(update_fields=['inicio_de_subasta'])
+		self.comenzar()
 
 	def forzar_fin(self):
 		self.finalizar
 
 	def notificar_inscriptos(self):
-		for usuario in self.usuarios_inscriptos:
+		for usuario in self.usuarios_inscriptos.all():
 			usuario.notificar_comienzo_subasta(self)
 
 class HotSale(Semana):
@@ -146,6 +147,7 @@ class Usuario(models.Model):
 			self.premium = False
 		else:
 			self.premium = True
+		self.save(update_fields=['premium'])
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

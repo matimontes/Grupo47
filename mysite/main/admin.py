@@ -6,6 +6,11 @@ from datetime import timedelta
 from .filters import MesInicioListFilter
 # Register your models here.
 
+def iniciar_subasta(modeladmin, request, queryset):
+    for subasta in queryset:
+    	subasta.forzar_comienzo()
+iniciar_subasta.short_description = "Iniciar Subastas Seleccionada/s"
+
 class SemanasAdminInlineFormSet(forms.BaseInlineFormSet):
 	
 	def coincide(self, dia_inicial_1, dia_inicial_2):
@@ -96,9 +101,10 @@ class SubastaAdmin(admin.ModelAdmin):
 	fields = ["residencia","precio_reserva","precio_inicial","dia_inicial","inicio_de_subasta"]
 	list_filter = ('residencia', MesInicioListFilter,)
 	search_fields = ('residencia',)
-	list_display = ('residencia','dia_inicial','dia_final','inicio_de_subasta','precio_reserva','precio_inicial')
+	list_display = ('residencia','dia_inicial','dia_final','inicio_de_subasta','iniciada','precio_reserva','precio_inicial')
 	list_editable = ('precio_reserva','precio_inicial')
 	list_per_page = 30
+	actions = [iniciar_subasta]
 
 class SubastaInLine(admin.TabularInline):
 	"""
