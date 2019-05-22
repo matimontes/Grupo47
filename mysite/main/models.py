@@ -46,7 +46,7 @@ class Subasta(Semana):
 	inicio_de_subasta = models.DateField()
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='subastas')
 	usuarios_inscriptos = models.ManyToManyField('Usuario',related_name='inscripciones')
-	iniciada = False
+	iniciada = models.BooleanField(default=False)
 	#pujas CREADAS DESDE CLASE PUJA
 
 	def fin_de_subasta(self):
@@ -71,36 +71,52 @@ class Subasta(Semana):
 			pass
 
 	def abandonar_subasta(self,usuario):
-		pass
+		self.anular_inscripcion_usuario(usuario)
+		for puja in self.pujas.filter(usuario__exact=usuario):
+			puja.delete()
 
-	def agregar_usuario(self,usuario):
-		pass
+	def inscribir_usuario(self,usuario):
+		self.usuarios_inscriptos.add(usuario)
+
+	def anular_inscripcion_usuario(self,usuario):
+		self.usuarios_inscriptos.remove(usuario)
 
 	def esta_inscripto(self,usuario):
-		return usuario in self.usuarios_inscriptos
+		return some_queryset.filter(id=usuario.id).exists()
+
+	def usuario_default(self):
+		return Usuario.objects.get(user__username='puja_default')
 
 	def comenzar(self):
 		self.iniciada = True
-		Puja.objects.create(usuario=None,dinero_pujado=self.precio_inicial,subasta=self)
+		Puja.objects.create(usuario=self.usuario_default(),dinero_pujado=self.precio_inicial,subasta=self)
 		self.notificar_inscriptos()
+		self.save(update_fields=['iniciada'])
 
 	def finalizar(self):
 		puja = self.puja_actual()
 		SemanaReservada.objects.create(usuario=puja.usuario,
-			precio_reserva=self.puja.dinero_pujado,
+			precio_reserva=puja.dinero_pujado,
 			residencia=self.residencia,
 			dia_inicial=self.dia_inicial)
+		self.delete()
 	#FALTA BORRARSE A SÍ MISMO AFUERA DEL FINALIZAR
 
 	def forzar_comienzo(self):
-		self.comenzar
-		self.inicio_de_subasta = datetime.today()
+		self.inicio_de_subasta = date.today()
+		self.save(update_fields=['inicio_de_subasta'])
+		self.comenzar()
+		
 
 	def forzar_fin(self):
-		self.finalizar
+		if self.iniciada:
+			self.finalizar()
+			return True
+		else:
+			return False
 
 	def notificar_inscriptos(self):
-		for usuario in self.usuarios_inscriptos:
+		for usuario in self.usuarios_inscriptos.all():
 			usuario.notificar_comienzo_subasta(self)
 
 class HotSale(Semana):
@@ -127,7 +143,7 @@ class Usuario(models.Model):
 	codigo = models.IntegerField(default=0)
 	nacionalidad = models.CharField(max_length=50)
 	creditos = models.IntegerField(default=2)
-	#premium = False 
+	premium = False 
 
 	def __str__(self):
 		return self.user.username
@@ -136,11 +152,12 @@ class Usuario(models.Model):
 		#AGREGAR FUNCIONALIDAD PARA NOTIFICAR POR MAIL QUE COMENZÓ LA SUBASTA
 		pass
 
-#	def invertir_premium(self):
-#		if self.premium:
-#			self.premium = False
-#		else:
-#			self.premium = True
+	def invertir_premium(self):
+		if self.premium:
+			self.premium = False
+		else:
+			self.premium = True
+		self.save(update_fields=['premium'])
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -150,13 +167,6 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.usuario.save()
-
-# def create_profile(sender, **kwargs):
-#     if kwargs['created']:
-#         user_profile = Usuario.objects.create(user=kwargs['instance'])
-
-# post_save.connect(create_profile, sender=User)
-
 
 class Tarjeta(models.Model): #Falta completar
 	numero = models.IntegerField()
