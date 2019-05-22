@@ -71,13 +71,18 @@ class Subasta(Semana):
 			pass
 
 	def abandonar_subasta(self,usuario):
-		pass
+		self.anular_inscripcion_usuario(usuario)
+		for puja in self.pujas.filter(usuario__exact=usuario):
+			puja.delete()
 
-	def agregar_usuario(self,usuario):
-		pass
+	def inscribir_usuario(self,usuario):
+		self.usuarios_inscriptos.add(usuario)
+
+	def anular_inscripcion_usuario(self,usuario):
+		self.usuarios_inscriptos.remove(usuario)
 
 	def esta_inscripto(self,usuario):
-		return usuario in self.usuarios_inscriptos
+		return some_queryset.filter(id=usuario.id).exists()
 
 	def comenzar(self):
 		self.iniciada = True
@@ -127,7 +132,7 @@ class Usuario(models.Model):
 	codigo = models.IntegerField(default=0)
 	nacionalidad = models.CharField(max_length=50)
 	creditos = models.IntegerField(default=2)
-	#premium = False 
+	premium = False 
 
 	def __str__(self):
 		return self.user.username
@@ -136,11 +141,11 @@ class Usuario(models.Model):
 		#AGREGAR FUNCIONALIDAD PARA NOTIFICAR POR MAIL QUE COMENZÓ LA SUBASTA
 		pass
 
-#	def invertir_premium(self):
-#		if self.premium:
-#			self.premium = False
-#		else:
-#			self.premium = True
+	def invertir_premium(self):
+		if self.premium:
+			self.premium = False
+		else:
+			self.premium = True
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -150,13 +155,6 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.usuario.save()
-
-# def create_profile(sender, **kwargs):
-#     if kwargs['created']:
-#         user_profile = Usuario.objects.create(user=kwargs['instance'])
-
-# post_save.connect(create_profile, sender=User)
-
 
 class Tarjeta(models.Model): #Falta completar
 	numero = models.IntegerField()

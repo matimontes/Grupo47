@@ -4,7 +4,7 @@
 <body>
   <div>
     <h3>Subasta por {{subasta.residencia}}</h3>
-    {% if comenzo == False %}
+    {% if subasta.iniciada == False %}
       <h5>Duración: desde {{subasta.inicio_de_subasta}} hasta {{subasta.fin_de_subasta}}</h5>
     {% else %}
       <!-- {% if inscripto %}
