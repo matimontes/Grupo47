@@ -7,13 +7,16 @@ from .filters import MesInicioListFilter
 # Register your models here.
 
 def iniciar_subasta(modeladmin, request, queryset):
-    for subasta in queryset:
-    	subasta.forzar_comienzo()
+	for subasta in queryset:
+		subasta.forzar_comienzo()
 iniciar_subasta.short_description = "Iniciar Subastas Seleccionada/s"
 
 def finalizar_subasta(modeladmin, request, queryset):
-    for subasta in queryset:
-    	subasta.forzar_fin()
+	for subasta in queryset:
+		if subasta.forzar_fin():
+			modeladmin.message_user(request, "La Subasta: %s finalizó con éxito." % subasta.__str__())
+		else:
+			modeladmin.message_user(request,  "La Subasta: %s no finalizó, ya que no está inicializada." % subasta.__str__(),'error')
 finalizar_subasta.short_description = "Finalizar Subastas Seleccionada/s"
 
 class SemanasAdminInlineFormSet(forms.BaseInlineFormSet):
@@ -188,12 +191,25 @@ class SemanaReservadaView(admin.TabularInline):
 	"""
 		Clase Inline de SemanaReservada.
 	"""
+
 	model = SemanaReservada
 	readonly_fields = ['usuario','dia_inicial','precio_reserva']
 	verbose_name_plural = "Semanas reservadas"
 	max_num = 0
 	can_delete = False
 	show_change_link = True
+
+class SemanaReservadaAdmin(admin.ModelAdmin):
+	list_filter = ('residencia', MesInicioListFilter,)
+	search_fields = ('residencia',)
+	list_display = ('residencia','dia_inicial','dia_final','precio_reserva','usuario')
+	list_per_page = 30
+
+	def has_add_permission(self, request):
+		return False
+
+	def has_change_permission(self, request, obj=None):
+		return False
 
 class ResidenciaAdmin(admin.ModelAdmin):
 	"""
@@ -228,6 +244,7 @@ class ResidenciaAdmin(admin.ModelAdmin):
 
 admin.site.index_template = 'admin/mysite/index.html'
 admin.site.site_header = 'Administración de HSH'
+admin.site.register(SemanaReservada,SemanaReservadaAdmin)
 admin.site.register(Residencia,ResidenciaAdmin)
 admin.site.register(Subasta,SubastaAdmin)
 admin.site.register(HotSale,HotSaleAdmin)

@@ -106,9 +106,14 @@ class Subasta(Semana):
 		self.inicio_de_subasta = date.today()
 		self.save(update_fields=['inicio_de_subasta'])
 		self.comenzar()
+		
 
 	def forzar_fin(self):
-		self.finalizar()
+		if self.iniciada:
+			self.finalizar()
+			return True
+		else:
+			return False
 
 	def notificar_inscriptos(self):
 		for usuario in self.usuarios_inscriptos.all():
