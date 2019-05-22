@@ -84,17 +84,22 @@ class Subasta(Semana):
 	def esta_inscripto(self,usuario):
 		return some_queryset.filter(id=usuario.id).exists()
 
+	def usuario_default(self):
+		return Usuario.objects.get(user__username='puja_default')
+
 	def comenzar(self):
 		self.iniciada = True
+		Puja.objects.create(usuario=self.usuario_default(),dinero_pujado=self.precio_inicial,subasta=self)
 		self.notificar_inscriptos()
 		self.save(update_fields=['iniciada'])
 
 	def finalizar(self):
 		puja = self.puja_actual()
 		SemanaReservada.objects.create(usuario=puja.usuario,
-			precio_reserva=self.puja.dinero_pujado,
+			precio_reserva=puja.dinero_pujado,
 			residencia=self.residencia,
 			dia_inicial=self.dia_inicial)
+		self.delete()
 	#FALTA BORRARSE A SÍ MISMO AFUERA DEL FINALIZAR
 
 	def forzar_comienzo(self):
@@ -103,7 +108,7 @@ class Subasta(Semana):
 		self.comenzar()
 
 	def forzar_fin(self):
-		self.finalizar
+		self.finalizar()
 
 	def notificar_inscriptos(self):
 		for usuario in self.usuarios_inscriptos.all():

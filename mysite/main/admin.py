@@ -11,6 +11,11 @@ def iniciar_subasta(modeladmin, request, queryset):
     	subasta.forzar_comienzo()
 iniciar_subasta.short_description = "Iniciar Subastas Seleccionada/s"
 
+def finalizar_subasta(modeladmin, request, queryset):
+    for subasta in queryset:
+    	subasta.forzar_fin()
+finalizar_subasta.short_description = "Finalizar Subastas Seleccionada/s"
+
 class SemanasAdminInlineFormSet(forms.BaseInlineFormSet):
 	
 	def coincide(self, dia_inicial_1, dia_inicial_2):
@@ -104,7 +109,7 @@ class SubastaAdmin(admin.ModelAdmin):
 	list_display = ('residencia','dia_inicial','dia_final','inicio_de_subasta','iniciada','precio_reserva','precio_inicial')
 	list_editable = ('precio_reserva','precio_inicial')
 	list_per_page = 30
-	actions = [iniciar_subasta]
+	actions = [iniciar_subasta,finalizar_subasta]
 
 class SubastaInLine(admin.TabularInline):
 	"""
