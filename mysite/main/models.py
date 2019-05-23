@@ -136,7 +136,7 @@ class Puja(models.Model):
 
 class Imagen(models.Model):
 	residencia = models.ForeignKey(Residencia,on_delete=models.CASCADE,related_name='imagenes')
-	imagen = models.ImageField(upload_to=('fotos/'))
+	imagen = models.ImageField(upload_to=('staticfiles/fotos'))
 
 class Usuario(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
