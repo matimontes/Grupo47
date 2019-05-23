@@ -56,7 +56,7 @@ class Subasta(Semana):
 		return self.pujas.first()
 
 	def pujar(self,usuario_pujador,dinero_a_pujar):
-		if dinero_pujado > self.puja_actual().dinero_pujado + 100:
+		if dinero_a_pujar > self.puja_actual().dinero_pujado + 100:
 			Puja.objects.create(usuario=usuario_pujador,dinero_pujado=dinero_a_pujar,subasta=self)
 		else:
 			#AGREGAR FUNCIONALIDAD

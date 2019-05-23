@@ -4,7 +4,7 @@ from django.contrib.auth import login as auth_login, logout as auth_logout, auth
 from django.contrib import messages
 from django.http import HttpResponse
 from .models import Residencia, Subasta, Usuario
-from main.forms import RegistrationForm
+from main.forms import RegistrationForm, MontoPujaForm
 
 
 def homepage(request):
@@ -108,18 +108,21 @@ def residencia(request, id_residencia):
                            "hoy": hoy})
 
 def subasta(request, id_subasta):
-    if request.method == "POST":
-        dato = request.POST.get("label")
-        print(dato)
-    import datetime
     sub = Subasta.objects.get(id=id_subasta)
+    if request.method == "POST":
+        form = MontoPujaForm(request.POST)
+        if form.is_valid():
+            monto = form.cleaned_data.get("monto")
+            print(monto)
+            sub.pujar(request.user.usuario, monto)
+    form = MontoPujaForm()
+    import datetime
     inscripto = sub.esta_inscripto(request.user.usuario)
-    comenzo = False if datetime.datetime.now().date() < sub.inicio_de_subasta else True
     return render(request=request,
                   template_name="main/subastas/ver_subasta.html",
                   context={"subasta": sub,
-                           "comenzo": comenzo,
-                           "inscripto": inscripto})
+                           "inscripto": inscripto,
+                           "form": form})
 
 def inscribirse(request, id_residencia, id_subasta):
     sub = Subasta.objects.get(id=id_subasta)
