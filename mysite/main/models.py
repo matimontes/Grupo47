@@ -24,6 +24,9 @@ class Residencia(models.Model):
 	class Meta:
 		ordering = ['nombre']
 
+	def primerFoto(self):
+		return self.imagenes.first().imagen.name[12:]
+
 class Semana(models.Model):
 	dia_inicial = models.DateField()
 	precio_reserva = models.DecimalField(max_digits=11,decimal_places=2)
@@ -56,7 +59,7 @@ class Subasta(Semana):
 		return self.pujas.first()
 
 	def pujar(self,usuario_pujador,dinero_a_pujar):
-		if dinero_a_pujar > self.puja_actual().dinero_pujado + 100:
+		if (dinero_a_pujar > self.puja_actual().dinero_pujado + 100) and (self.puja_actual().usuario == usuario_pujador):
 			Puja.objects.create(usuario=usuario_pujador,dinero_pujado=dinero_a_pujar,subasta=self)
 		else:
 			#AGREGAR FUNCIONALIDAD

@@ -1,4 +1,5 @@
 {% extends "main/headers/header_logged_in.html" %}
+{% load staticfiles %}
 {% block content %}
 <body>
   <h5 class="centrar">Recomendaciones</h5>
@@ -7,7 +8,7 @@
         <div class="col s12 m7 l4">
           <div class="card medium z-depth-3">
             <div class="card-image">
-              <img src="https://q-cf.bstatic.com/images/hotel/max1024x768/681/68184730.jpg"/>
+              <img src="{% static r.primerFoto %}" height="200"/>
               <span class="card-title">{{r.nombre}}</span>
             </div>
             <div class="card-content" style="overflow: auto">

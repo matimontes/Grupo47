@@ -1,13 +1,16 @@
 {% extends "main/headers/header_logged_in.html" %}
 {% load static %}
+{% load staticfiles %}
 {% block content %}
 
 <body>
   <h1 class="centrar">{{residencia.nombre}}</h1>
   <section>
     <div class="columna-grande">
+      <!-- <img class="imagen-residencia"
+      src="{% static 'fotos/68184730.jpg' %}" alt="My image"> -->
       <img class="imagen-residencia"
-      src='https://q-cf.bstatic.com/images/hotel/max1024x768/681/68184730.jpg'>
+      src="{% static residencia.primerFoto %}" alt="Imagen Residencia: {{ residencia.primerFoto }}">
     </div>
     <h5>Resumen:</h5>
     <div class="columna-chica">
