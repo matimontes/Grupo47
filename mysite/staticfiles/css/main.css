@@ -1,0 +1,44 @@
+.centrar {
+  display: flex;
+  justify-content: center;
+}
+@font-face {
+  font-family: 'coolvetica';
+  src: url('../fonts/coolvetica/coolvetica rg.ttf')  format("truetype"),
+       local('coolvetica');
+}
+body {
+  background: #e3f2fd;
+  font-family: coolvetica;
+}
+a:hover {
+  font-style: italic;
+}
+.logo{
+  background-size: 300px;
+  background-repeat: no-repeat;
+  width: 150px;
+  height: 60px;
+  margin-left: 20;
+  position: relative;
+}
+.logo:hover{
+  width: 155px;
+}
+.columna-grande{
+  float: left;
+  width: 70%;
+}
+.columna-chica{
+  float: left;
+  width: 30%;
+}
+.imagen-residencia{
+  width: 90%;
+}
+.compacto {
+  height: 300px;
+}
+.scrollable {
+  overflow: auto;
+}
