@@ -29,7 +29,12 @@
               <form method="POST">
               {% csrf_token %}<td>{{form}}
               </td>
-              <td><button type="submit" class="waves-effect waves-light btn-small">Pujar</button></td></form>
+                {% if subasta.puja_actual.usuario == request.user.usuario %}
+                  <td><button type="submit" class="waves-effect waves-light btn-small disabled">Pujar</button></td>
+                {% else %}
+                  <td><button type="submit" class="waves-effect waves-light btn-small">Pujar</button></td>
+                {% endif %}
+              </form>
             </tr>
         </div>
       {% else %}
