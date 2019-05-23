@@ -1,14 +1,43 @@
 {% extends "main/headers/header_logged_in.html" %}
 {% load static %}
 {% block content %}
+
 <body>
   <div>
-    <h3>Subasta por {{subasta.residencia}}</h3>
-    {% if subasta.iniciada == False %}
+    <h3>Subasta por la semana del {{subasta.dia_inicial}} al {{subasta.dia_final}}
+    en {{subasta.residencia}}</h3>
+    {% if not comenzo %}
       <h5>Duración: desde {{subasta.inicio_de_subasta}} hasta {{subasta.fin_de_subasta}}</h5>
+      {% if inscripto %}
+        <p><i class="material-icons">check</i>Estás inscripto</p>
+      {% else %}
+        <a href="/inscribirse/{{subasta.residencia.id}}/{{subasta.id}}" class="waves-effect waves-light btn-small">Inscribirse<a>
+      {% endif %}
     {% else %}
       {% if inscripto %}
         <h5>La subasta ya comenzó, tenes tiempo hasta el {{subasta.fin_de_subasta}} para pujar</h5>
+        <p><i class="material-icons">check</i>Estás inscripto</p>
+        <div>
+          <table style="width:100%">
+            <tr>
+              <th>Precio inicial</th>
+              <th>Puja Actual</th>
+              <th>Pujar</th>
+              <th></th>
+            </tr>
+            <tr>
+              <td>{{subasta.precio_inicial}}</td>
+              <td>{{subasta.puja_actual}}</td>
+              <form method="POST">
+              {% csrf_token %}
+              <td><div class="input-field">
+                    <i class="material-icons prefix">attach_money</i>
+                    <input  id="icon_prefix" type="number" class="validate">
+                    <label id="monto">Monto en pesos</label>
+                  </div></td>
+              <td><button type="submit" class="waves-effect waves-light btn-small">Pujar</button></td></form>
+            </tr>
+        </div>
       {% else %}
         <h5>La inscripción ya cerró</h5>
       {% endif %}

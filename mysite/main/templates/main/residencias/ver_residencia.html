@@ -44,10 +44,18 @@
       <td>{{s.inicio_de_subasta}} - {{s.fin_de_subasta}}</td>
       <td>${{s.precio_inicial}}</td>
       <td>${{s.precio_reserva}}</td>
-      {% if i %}
-        <td><a href="" class="waves-effect waves-light btn-small disabled">Inscripto<a></td>
+      {% if s.inicio_de_subasta > hoy %}
+        {% if i %}
+          <td><a href="" class="waves-effect waves-light btn-small disabled">Inscripto<a></td>
+        {% else %}
+          <td><a href="/inscribirse/{{residencia.id}}/{{s.id}}" class="waves-effect waves-light btn-small">Inscribirse<a></td>
+        {% endif %}
       {% else %}
-        <td><a href="/inscribirse/{{residencia.id}}/{{s.id}}" class="waves-effect waves-light btn-small">Inscribirse<a></td>
+        {% if i %}
+          <td><a href="" class="waves-effect waves-light btn-small disabled">Inscripto<a></td>
+        {% else %}
+          <td><a href="#" class="waves-effect waves-light disabled btn-small">Caducada<a></td>
+        {% endif %}
       {% endif %}
       {% if user.premium %}
         <td><a href="/reserva/{{s.id}}" class="waves-effect waves-light btn-small">Reservar<a></td>

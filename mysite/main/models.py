@@ -82,7 +82,7 @@ class Subasta(Semana):
 		self.usuarios_inscriptos.remove(usuario)
 
 	def esta_inscripto(self,usuario):
-		return some_queryset.filter(id=usuario.id).exists()
+		return self.usuarios_inscriptos.filter(id=usuario.id).exists()
 
 	def usuario_default(self):
 		return Usuario.objects.get(user__username='puja_default')
@@ -106,7 +106,7 @@ class Subasta(Semana):
 		self.inicio_de_subasta = date.today()
 		self.save(update_fields=['inicio_de_subasta'])
 		self.comenzar()
-		
+
 
 	def forzar_fin(self):
 		if self.iniciada:
@@ -143,7 +143,7 @@ class Usuario(models.Model):
 	codigo = models.IntegerField(default=0)
 	nacionalidad = models.CharField(max_length=50)
 	creditos = models.IntegerField(default=2)
-	premium = False 
+	premium = False
 
 	def __str__(self):
 		return self.user.username

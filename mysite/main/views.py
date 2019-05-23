@@ -92,9 +92,11 @@ def buscar_residencias(request):
                            "pasajeros": pasajeros})
 
 def residencia(request, id_residencia):
+    import datetime
     res = Residencia.objects.get(id=id_residencia)
     subastas = Subasta.objects.filter(residencia=id_residencia)
-    user = request.user#get_user_model()
+    user = request.user.usuario
+    hoy = datetime.datetime.now().date()
     inscripto = {}
     for s in subastas:
         inscripto[s] = s.esta_inscripto(user)
@@ -102,12 +104,16 @@ def residencia(request, id_residencia):
                   template_name="main/residencias/ver_residencia.html",
                   context={"residencia": res,
                            "inscripto": inscripto,
-                           "usuario": user})
+                           "usuario": user,
+                           "hoy": hoy})
 
 def subasta(request, id_subasta):
+    if request.method == "POST":
+        dato = request.POST.get("label")
+        print(dato)
     import datetime
     sub = Subasta.objects.get(id=id_subasta)
-    inscripto = sub.esta_inscripto(request.user)
+    inscripto = sub.esta_inscripto(request.user.usuario)
     comenzo = False if datetime.datetime.now().date() < sub.inicio_de_subasta else True
     return render(request=request,
                   template_name="main/subastas/ver_subasta.html",
@@ -117,5 +123,7 @@ def subasta(request, id_subasta):
 
 def inscribirse(request, id_residencia, id_subasta):
     sub = Subasta.objects.get(id=id_subasta)
-    sub.inscribirse(get_user_model())
-    return redirect(f"/ver_residencia/{id_residencia}/")
+    sub.inscribir_usuario(request.user.usuario)
+    #Obtengo el url desde donde se llamo a este link
+    referer = request.META.get("HTTP_REFERER")
+    return redirect(referer)
