@@ -25,7 +25,10 @@ class Residencia(models.Model):
 		ordering = ['nombre']
 
 	def primerFoto(self):
-		return self.imagenes.first().imagen.name[12:]
+		if self.imagenes.exists():
+			return self.imagenes.first().imagen.name[12:]
+		else:
+			return "fotos/68184730.jpg"
 
 class Semana(models.Model):
 	dia_inicial = models.DateField()
