@@ -62,11 +62,12 @@ class Subasta(Semana):
 		return self.pujas.first()
 
 	def pujar(self,usuario_pujador,dinero_a_pujar):
-		if (dinero_a_pujar > self.puja_actual().dinero_pujado + 100) and (self.puja_actual().usuario == usuario_pujador):
-			Puja.objects.create(usuario=usuario_pujador,dinero_pujado=dinero_a_pujar,subasta=self)
-		else:
+		Puja.objects.create(usuario=usuario_pujador,dinero_pujado=dinero_a_pujar,subasta=self)
+		# if (dinero_a_pujar >= self.puja_actual().dinero_pujado + 50) and (usuario_pujador.tiene_creditos()):
+			 # and (self.puja_actual().usuario == usuario_pujador)
+		# else:
 			#AGREGAR FUNCIONALIDAD
-			pass
+			# pass
 
 	def cancelar_puja(self,usuario):
 		puja = self.puja_actual()

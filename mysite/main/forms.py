@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from main.models import Usuario
 
 class MontoPujaForm(forms.Form):
-    monto = forms.FloatField(label="Monto a pujar")
+    monto = forms.DecimalField(label="Monto a pujar")
 
 class RegistrationForm(UserCreationForm):
 	email = forms.EmailField(required=True)

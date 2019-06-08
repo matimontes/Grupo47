@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from .models import Residencia, Subasta, Usuario
 from main.forms import RegistrationForm, MontoPujaForm
-
+from django.forms import ValidationError
 
 def homepage(request):
     if request.user.is_authenticated: #si hay una sesion iniciada
@@ -109,12 +109,26 @@ def residencia(request, id_residencia):
 
 def subasta(request, id_subasta):
     sub = Subasta.objects.get(id=id_subasta)
+    error = ''
     if request.method == "POST":
         form = MontoPujaForm(request.POST)
         if form.is_valid():
             monto = form.cleaned_data.get("monto")
-            print(monto)
-            sub.pujar(request.user.usuario, monto)
+            if (monto < sub.puja_actual().dinero_pujado + 50):
+                # form.add_error('monto','El monto a pujar debe superar al actual por al menos $50.')
+                form.add_error('monto',ValidationError('El monto a pujar debe superar al actual por al menos $50.', code='no supera'))
+                print(monto,'$50',form.has_error('monto'))
+                error = 'El monto a pujar debe superar al actual por al menos $50.'
+                # error = 'El monto a pujar debe superar al actual por al menos $50.'
+            elif not(usuario_pujador.tiene_creditos()):
+                form.add_error('monto','No tienes créditos suficientes para realizar una puja.')
+                print(monto,'sin credito')
+                error = 'No tienes créditos suficientes para realizar una puja.'
+                # error = 'No tienes créditos suficientes para realizar una puja.'
+            else:
+                error = ''
+                print(monto)
+                sub.pujar(request.user.usuario, monto)
     form = MontoPujaForm()
     import datetime
     inscripto = sub.esta_inscripto(request.user.usuario)
@@ -122,7 +136,8 @@ def subasta(request, id_subasta):
                   template_name="main/subastas/ver_subasta.html",
                   context={"subasta": sub,
                            "inscripto": inscripto,
-                           "form": form})
+                           "form": form,
+                           "error": error})
 
 def inscribirse(request, id_residencia, id_subasta):
     sub = Subasta.objects.get(id=id_subasta)

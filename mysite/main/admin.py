@@ -233,7 +233,7 @@ class ResidenciaAdmin(admin.ModelAdmin):
 			baños
 		La búsqueda serealiza por nombre o dirección.
 	"""
-	list_filter = ('ciudad','pais','personas','baños',)
+	list_filter = ('ciudad','pais','personas',)
 	search_fields = ('nombre', 'dirección',)
 	ordering = ('nombre','dirección','ciudad','pais',)
 	inlines = [
