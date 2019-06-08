@@ -116,18 +116,18 @@ def subasta(request, id_subasta):
             monto = form.cleaned_data.get("monto")
             if (monto < sub.puja_actual().dinero_pujado + 50):
                 # form.add_error('monto','El monto a pujar debe superar al actual por al menos $50.')
-                form.add_error('monto',ValidationError('El monto a pujar debe superar al actual por al menos $50.', code='no supera'))
-                print(monto,'$50',form.has_error('monto'))
-                error = 'El monto a pujar debe superar al actual por al menos $50.'
+                # form.add_error('monto',ValidationError('El monto a pujar debe superar al actual por al menos $50.', code='no supera'))
+                # print(monto,'$50',form.has_error('monto'))
                 # error = 'El monto a pujar debe superar al actual por al menos $50.'
+                pass
             elif not(usuario_pujador.tiene_creditos()):
-                form.add_error('monto','No tienes créditos suficientes para realizar una puja.')
-                print(monto,'sin credito')
-                error = 'No tienes créditos suficientes para realizar una puja.'
+                # form.add_error('monto','No tienes créditos suficientes para realizar una puja.')
+                # print(monto,'sin credito')
                 # error = 'No tienes créditos suficientes para realizar una puja.'
+                pass
             else:
-                error = ''
-                print(monto)
+                # error = ''
+                # print(monto)
                 sub.pujar(request.user.usuario, monto)
     form = MontoPujaForm()
     import datetime
