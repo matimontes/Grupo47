@@ -1,10 +1,98 @@
+from __future__ import unicode_literals
+
 from django.db import models
 from datetime import date, timedelta
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+
+from django.core.mail import send_mail
+from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.base_user import AbstractBaseUser
+from django.utils.translation import ugettext_lazy as _
+
+from django.contrib.auth.base_user import BaseUserManager
 
 # Create your models here.
+class UserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def _create_user(self, email, password, **extra_fields):
+        """
+        Creates and saves a User with the given email and password.
+        """
+        if not email:
+            raise ValueError('The given email must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email=None, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(email, password, **extra_fields)
+
+    def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self._create_user(email, password, **extra_fields)
+
+class User(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(_('email address'), unique=True)
+    first_name = models.CharField(_('nombre'), max_length=30, blank=True)
+    last_name = models.CharField(_('apellido'), max_length=30, blank=True)
+    date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
+    is_active = models.BooleanField(_('active'), default=True)
+    date_of_birth = models.DateTimeField(_('fecha de nacimiento'))
+    nacionalidad = models.CharField(max_length=50)
+    creditos = models.IntegerField(default=0)
+    premium = models.BooleanField(_('premium estatus'), default=False,)
+    is_staff = models.BooleanField(
+        _('staff status'),
+        default=False,
+        help_text=_('Designates whether the user can log into this admin site.'),
+    )
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    class Meta:
+        verbose_name = _('cliente')
+        verbose_name_plural = _('clientes')
+
+    def get_full_name(self):
+        '''
+        Returns the first_name plus the last_name, with a space in between.
+        '''
+        full_name = '%s %s' % (self.first_name, self.last_name)
+        return full_name.strip()
+
+    def get_short_name(self):
+        '''
+        Returns the short name for the user.
+        '''
+        return self.first_name
+
+    def email_user(self, subject, message, from_email=None, **kwargs):
+        '''
+        Sends an email to this User.
+        '''
+        send_mail(subject, message, from_email, [self.email], **kwargs)
+
+from django.conf import settings
+
+class Course(models.Model):
+    slug = models.SlugField(max_length=100)
+    name = models.CharField(max_length=100)
+    tutor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
 class Residencia(models.Model):
 	nombre = models.CharField(max_length=50)
 	dirección = models.CharField(max_length=200)
@@ -51,7 +139,7 @@ class Subasta(Semana):
 	precio_inicial = models.DecimalField(max_digits=11,decimal_places=2)
 	inicio_de_subasta = models.DateField()
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='subastas')
-	usuarios_inscriptos = models.ManyToManyField('Usuario',related_name='inscripciones')
+	usuarios_inscriptos = models.ManyToManyField('User',related_name='inscripciones')
 	iniciada = models.BooleanField(default=False)
 	#pujas CREADAS DESDE CLASE PUJA
 
@@ -130,11 +218,11 @@ class HotSale(Semana):
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='hotsales')
 
 class SemanaReservada(Semana):
-	usuario = models.ForeignKey('Usuario',on_delete=models.CASCADE,related_name='semanas_reservadas')
+	usuario = models.ForeignKey('User',on_delete=models.CASCADE,related_name='semanas_reservadas')
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='semanas_reservadas')
 
 class Puja(models.Model):
-	usuario = models.ForeignKey('Usuario',on_delete=models.CASCADE,related_name='pujas')
+	usuario = models.ForeignKey('User',on_delete=models.CASCADE,related_name='pujas')
 	dinero_pujado = models.DecimalField(max_digits=11,decimal_places=2)
 	subasta = models.ForeignKey('Subasta',on_delete=models.CASCADE,related_name='pujas')
 
@@ -166,14 +254,14 @@ class Usuario(models.Model):
 			self.premium = True
 		self.save(update_fields=['premium'])
 
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Usuario.objects.create(user=instance)
+# @receiver(post_save, sender=User)
+# def create_user_profile(sender, instance, created, **kwargs):
+#     if created:
+#         Usuario.objects.create(user=instance)
 
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.usuario.save()
+# @receiver(post_save, sender=User)
+# def save_user_profile(sender, instance, **kwargs):
+#     instance.usuario.save()
 
 class Tarjeta(models.Model): #Falta completar
 	numero = models.IntegerField()
