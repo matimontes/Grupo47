@@ -132,6 +132,13 @@ class Semana(models.Model):
 	def coincide(self,fecha):
 		return ((fecha > self.dia_inicial - timedelta(days=7)) and (fecha < self.dia_final()))
 
+	def reservar(self,usuario,precio_reserva):
+		SemanaReservada.objects.create(usuario=usuario,
+			precio_reserva=precio_reserva,
+			residencia=self.residencia,
+			dia_inicial=self.dia_inicial)
+		self.delete()
+
 	class Meta:
 		abstract = True
 		ordering = ['dia_inicial', 'residencia']
@@ -181,7 +188,7 @@ class Subasta(Semana):
 		return self.usuarios_inscriptos.filter(id=usuario.id).exists()
 
 	def usuario_default(self):
-		return Usuario.objects.get(user__email='puja_default@hsh.com')
+		return User.objects.get(email='puja_default@hsh.com')
 
 	def comenzar(self):
 		self.iniciada = True
@@ -191,12 +198,7 @@ class Subasta(Semana):
 
 	def finalizar(self):
 		puja = self.puja_actual()
-		SemanaReservada.objects.create(usuario=puja.usuario,
-			precio_reserva=puja.dinero_pujado,
-			residencia=self.residencia,
-			dia_inicial=self.dia_inicial)
-		self.delete()
-	#FALTA BORRARSE A SÍ MISMO AFUERA DEL FINALIZAR
+		self.reservar(puja.usuario,puja.dinero_pujado)
 
 	def forzar_comienzo(self):
 		self.inicio_de_subasta = date.today()
@@ -228,7 +230,7 @@ class Puja(models.Model):
 	subasta = models.ForeignKey('Subasta',on_delete=models.CASCADE,related_name='pujas')
 
 	class Meta:
-		ordering = ['subasta','-dinero_pujado']
+		ordering = ['subasta','dinero_pujado']
 
 class Imagen(models.Model):
 	residencia = models.ForeignKey(Residencia,on_delete=models.CASCADE,related_name='imagenes')
