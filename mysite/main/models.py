@@ -49,7 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(_('apellido'), max_length=30, blank=True)
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_active = models.BooleanField(_('active'), default=True)
-    date_of_birth = models.DateTimeField(_('fecha de nacimiento'), default=timezone.now)
+    date_of_birth = models.DateField(_('fecha de nacimiento'), default=timezone.now)
     nacionalidad = models.CharField(max_length=50, blank=True)
     creditos = models.IntegerField(default=0)
     premium = models.BooleanField(_('premium estatus'), default=False)

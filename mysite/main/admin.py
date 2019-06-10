@@ -3,7 +3,7 @@ from .models import Residencia, Subasta, HotSale, Imagen, SemanaReservada
 from django import forms
 from django.db.models.query import EmptyQuerySet
 from datetime import timedelta
-from .filters import MesInicioListFilter
+from .filters import MesInicioListFilter, InicialDelNombreListFilter, TipoDeUsuarioListFilter
 # Register your models here.
 
 def iniciar_subasta(modeladmin, request, queryset):
@@ -302,11 +302,10 @@ class UserAdmin(BaseUserAdmin):
     # that reference specific fields on auth.User.
     list_display = ('first_name','last_name','email','date_joined')
     list_display_links = ('first_name','last_name','email')
-    list_filter = ('is_staff',)
+    list_filter = (TipoDeUsuarioListFilter,InicialDelNombreListFilter,'date_of_birth')
     fieldsets = (
         (None, {'fields': ('email', 'password','premium')}),
         ('Información personal', {'fields': ('first_name','last_name','date_of_birth','nacionalidad')}),
-        ('Permisos', {'fields': ('is_staff',)}),
     )
     # readonly_fields = ('premium',)
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
