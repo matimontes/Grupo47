@@ -4,8 +4,9 @@ from django.contrib.auth import login as auth_login, logout as auth_logout, auth
 from django.contrib import messages
 from django.http import HttpResponse
 from .models import Residencia, Subasta
-from main.forms import RegistrationForm, MontoPujaForm
+from main.forms import RegistrationForm, MontoPujaForm, BuscarResidenciaForm
 from django.forms import ValidationError
+import datetime
 
 def homepage(request):
     if request.user.is_authenticated: #si hay una sesion iniciada
@@ -83,11 +84,40 @@ def update_profile(request):
     })
 
 def buscar_residencias(request):
+    residencias = Residencia.objects.all()
+    subastas = []
+    if request.method == 'POST':
+        form = BuscarResidenciaForm(request.POST)
+        if form.is_valid():
+            fecha_inicio = datetime.datetime.strptime(form.cleaned_data.get("inicio"), '%d/%m/%Y')
+            fecha_fin = datetime.datetime.strptime(form.cleaned_data.get("fin"), '%d/%m/%Y') - datetime.timedelta(days=7)
+            print(fecha_fin)
+            pasa_form = form.cleaned_data.get("pasajeros")
+            pais_form = form.cleaned_data.get("pais")
+            if pasa_form != None and pais_form != "":
+                pasa_form = int(pasa_form)
+                subastas = Subasta.objects.filter(dia_inicial__gte = fecha_inicio.date(),
+                                                  dia_inicial__lte = fecha_fin.date(),
+                                                  residencia__personas = pasa_form,
+                                                  residencia__pais = pais_form)
+            elif pais_form != "":
+                subastas = Subasta.objects.filter(dia_inicial__gte = fecha_inicio.date(),
+                                                  dia_inicial__lte = fecha_fin.date(),
+                                                  residencia__pais = pais_form)
+            elif pasa_form != None:
+                pasa_form = int(pasa_form)
+                subastas = Subasta.objects.filter(dia_inicial__gte = fecha_inicio.date(),
+                                                  dia_inicial__lte = fecha_fin.date(),
+                                                  residencia__personas = pasa_form)
+            else:
+                subastas = Subasta.objects.filter(dia_inicial__gte = fecha_inicio.date(),
+                                                  dia_inicial__lte = fecha_fin.date())
+        residencias = [Residencia.objects.get(id=s.residencia.id) for s in subastas]
     paises = set(r.pais for r in Residencia.objects.all())
     pasajeros = set(r.personas for r in Residencia.objects.all())
     return render(request=request,
                   template_name="main/residencias/buscar_residencias.html",
-                  context={"residencias": Residencia.objects.all,
+                  context={"residencias": residencias,
                            "paises": paises,
                            "pasajeros": pasajeros})
 

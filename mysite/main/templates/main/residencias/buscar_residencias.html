@@ -4,38 +4,48 @@
 
 <body>
   <h5 class="centrar">Filtrar Búsqueda</h5>
-  <div class="container">
+  <form method="POST">
+    {% csrf_token %}
     <div class="row">
-      <div class="col s12 m4">
+      <div class="col s3">
         <div class="input-field">
           <i class="material-icons">date_range</i>
-          <input type="text" class="datepicker">
+          <input type="text" placeholder="Desde" class="datepicker" name="inicio">
         </div>
       </div>
-      <div class="col s12 m4">
+      <div class="col s3">
+        <div class="input-field">
+          <i class="material-icons">date_range</i>
+          <input type="text" placeholder="Hasta" class="datepicker" name="fin">
+        </div>
+      </div>
+      <div class="col s3">
         <div class="input-field col s12">
           <i class="material-icons">hotel</i>
           <select name="pasajeros">
             <option value="" disabled selected>Pasajeros</option>
             {% for p in pasajeros %}
-              <option value="1">{{p}}</option>
+              <option value={{p}}>{{p}}</option>
             {% endfor %}
           </select>
         </div>
-    </div>
-    <div class="col s12 m4">
+      </div>
+    <div class="col s3">
       <div class="input-field">
         <i class="material-icons">map</i>
-        <select name="pais">
-          <option value="" disabled selected>Pais</option>
-          {% for p in paises %}
-            <option value="1">{{p}}</option>
-          {% endfor %}
-        </select>
+          <select name="pais">
+            <option value="" disabled selected>Pais</option>
+            {% for p in paises %}
+              <option value={{p}}>{{p}}</option>
+            {% endfor %}
+          </select>
       </div>
     </div>
   </div>
-  </div>
+    <div class="centrar">
+      <button type="submit" class="waves-effect waves-light btn-large">Buscar</button>
+    </div>
+  </form>
     <div class="row">
       {% for r in residencias %}
         <div class="col s12 m7 l4">

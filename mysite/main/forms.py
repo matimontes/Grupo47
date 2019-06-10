@@ -5,6 +5,12 @@ from main.models import User
 class MontoPujaForm(forms.Form):
     monto = forms.DecimalField(label="Monto a pujar")
 
+class BuscarResidenciaForm(forms.Form):
+    inicio = forms.CharField()
+    fin = forms.CharField()
+    pasajeros = forms.IntegerField(required=False)
+    pais = forms.CharField(required=False)
+
 class RegistrationForm(UserCreationForm):
 	email = forms.EmailField(required=True)
 
