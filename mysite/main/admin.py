@@ -307,7 +307,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('email', 'password','premium')}),
         ('Información personal', {'fields': ('first_name','last_name','date_of_birth','nacionalidad')}),
     )
-    # readonly_fields = ('premium',)
+    readonly_fields = ('premium',)
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
     add_fieldsets = (
@@ -319,8 +319,6 @@ class UserAdmin(BaseUserAdmin):
     search_fields = ('email',)
     ordering = ('-date_joined',)
     filter_horizontal = ()
-
-    change_form_template = 'admin/mysite/change_form.html'
 
 # Now register the new UserAdmin...
 admin.site.register(User, UserAdmin)
