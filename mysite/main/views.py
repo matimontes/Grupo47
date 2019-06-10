@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate, get_user_model
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import Residencia, Subasta, Usuario
+from .models import Residencia, Subasta
 from main.forms import RegistrationForm, MontoPujaForm
 from django.forms import ValidationError
 

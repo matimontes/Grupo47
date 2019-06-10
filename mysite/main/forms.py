@@ -1,7 +1,6 @@
 from django import forms
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from main.models import Usuario
+from main.models import User
 
 class MontoPujaForm(forms.Form):
     monto = forms.DecimalField(label="Monto a pujar")
@@ -12,10 +11,10 @@ class RegistrationForm(UserCreationForm):
 	class Meta:
 		model = User
 		fields = (
-			"username",
+			"email",
 			"first_name",
 			"last_name",
-			"email",
+			"date_of_birth",
 			"password1",
 			"password2"
 		)

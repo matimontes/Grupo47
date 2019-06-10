@@ -49,9 +49,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_active = models.BooleanField(_('active'), default=True)
     date_of_birth = models.DateTimeField(_('fecha de nacimiento'))
-    nacionalidad = models.CharField(max_length=50)
+    nacionalidad = models.CharField(max_length=50, blank=True)
     creditos = models.IntegerField(default=0)
-    premium = models.BooleanField(_('premium estatus'), default=False,)
+    premium = models.BooleanField(_('premium estatus'), default=False)
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,
@@ -180,7 +180,7 @@ class Subasta(Semana):
 		return self.usuarios_inscriptos.filter(id=usuario.id).exists()
 
 	def usuario_default(self):
-		return Usuario.objects.get(user__username='puja_default')
+		return Usuario.objects.get(user__email='puja_default@hsh.com')
 
 	def comenzar(self):
 		self.iniciada = True
@@ -233,26 +233,26 @@ class Imagen(models.Model):
 	residencia = models.ForeignKey(Residencia,on_delete=models.CASCADE,related_name='imagenes')
 	imagen = models.ImageField(upload_to=('staticfiles/fotos'))
 
-class Usuario(models.Model):
-	user = models.OneToOneField(User, on_delete=models.CASCADE)
-	codigo = models.IntegerField(default=0)
-	nacionalidad = models.CharField(max_length=50)
-	creditos = models.IntegerField(default=2)
-	premium = False
+# class Usuario(models.Model):
+	# user = models.OneToOneField(User, on_delete=models.CASCADE)
+	# codigo = models.IntegerField(default=0)
+	# nacionalidad = models.CharField(max_length=50)
+	# creditos = models.IntegerField(default=2)
+	# premium = False
 
-	def __str__(self):
-		return self.user.username
+	# def __str__(self):
+	# 	return self.user.username
 
-	def notificar_comienzo_subasta(self,subasta):
-		#AGREGAR FUNCIONALIDAD PARA NOTIFICAR POR MAIL QUE COMENZÓ LA SUBASTA
-		pass
+	# def notificar_comienzo_subasta(self,subasta):
+	# 	#AGREGAR FUNCIONALIDAD PARA NOTIFICAR POR MAIL QUE COMENZÓ LA SUBASTA
+	# 	pass
 
-	def invertir_premium(self):
-		if self.premium:
-			self.premium = False
-		else:
-			self.premium = True
-		self.save(update_fields=['premium'])
+	# def invertir_premium(self):
+	# 	if self.premium:
+	# 		self.premium = False
+	# 	else:
+	# 		self.premium = True
+	# 	self.save(update_fields=['premium'])
 
 # @receiver(post_save, sender=User)
 # def create_user_profile(sender, instance, created, **kwargs):
