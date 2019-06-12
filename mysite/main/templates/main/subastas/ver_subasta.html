@@ -27,9 +27,9 @@
               <td>{{subasta.precio_inicial}}</td>
               <td>{{subasta.puja_actual.dinero_pujado}}</td>
               <form method="POST">
-              {% csrf_token %}<td>{{form}}
-              </td>
-                {% if subasta.puja_actual.usuario == request.user.usuario %}
+                {% csrf_token %}
+                <td>{{form}}</td>
+                {% if subasta.puja_actual.usuario == request.user %}
                   <td><button type="submit" class="waves-effect waves-light btn-small disabled">Pujar</button></td>
                 {% else %}
                   <td><button type="submit" class="waves-effect waves-light btn-small">Pujar</button></td>

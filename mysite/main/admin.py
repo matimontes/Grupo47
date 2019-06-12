@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Residencia, Subasta, HotSale, Imagen, SemanaReservada
+from .models import Residencia, Subasta, HotSale, Imagen, SemanaReservada, Puja
 from django import forms
 from django.db.models.query import EmptyQuerySet
 from datetime import timedelta
@@ -304,7 +304,7 @@ class UserAdmin(BaseUserAdmin):
     list_display_links = ('first_name','last_name','email')
     list_filter = (TipoDeUsuarioListFilter,InicialDelNombreListFilter,'date_of_birth')
     fieldsets = (
-        (None, {'fields': ('email', 'password','premium')}),
+        (None, {'fields': ('email', 'password','premium','creditos')}),
         ('Información personal', {'fields': ('first_name','last_name','date_of_birth','nacionalidad')}),
     )
     readonly_fields = ('premium',)
@@ -332,3 +332,4 @@ admin.site.register(SemanaReservada,SemanaReservadaAdmin)
 admin.site.register(Residencia,ResidenciaAdmin)
 admin.site.register(Subasta,SubastaAdmin)
 admin.site.register(HotSale,HotSaleAdmin)
+admin.site.register(Puja)

@@ -86,6 +86,15 @@ class User(AbstractBaseUser, PermissionsMixin):
         Sends an email to this User.
         '''
         send_mail(subject, message, from_email, [self.email], **kwargs)
+    
+    def notificar_comienzo_subasta(self,subasta):
+        #AGREGAR FUNCIONALIDAD PARA NOTIFICAR POR MAIL QUE COMENZÓ LA SUBASTA
+        pass
+
+    def tiene_creditos(self):
+    	if self.creditos > 0:
+    		return True
+    	return False
 
 from django.conf import settings
 
@@ -230,7 +239,7 @@ class Puja(models.Model):
 	subasta = models.ForeignKey('Subasta',on_delete=models.CASCADE,related_name='pujas')
 
 	class Meta:
-		ordering = ['subasta','dinero_pujado']
+		ordering = ['subasta','-dinero_pujado']
 
 class Imagen(models.Model):
 	residencia = models.ForeignKey(Residencia,on_delete=models.CASCADE,related_name='imagenes')

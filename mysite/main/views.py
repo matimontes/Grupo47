@@ -95,7 +95,7 @@ def residencia(request, id_residencia):
     import datetime
     res = Residencia.objects.get(id=id_residencia)
     subastas = Subasta.objects.filter(residencia=id_residencia)
-    user = request.user.usuario
+    user = request.user
     hoy = datetime.datetime.now().date()
     inscripto = {}
     for s in subastas:
@@ -111,37 +111,24 @@ def subasta(request, id_subasta):
     sub = Subasta.objects.get(id=id_subasta)
     error = ''
     if request.method == "POST":
-        form = MontoPujaForm(request.POST)
+        form = MontoPujaForm(request.POST,user=request.user,subasta=sub)
         if form.is_valid():
             monto = form.cleaned_data.get("monto")
-            if (monto < sub.puja_actual().dinero_pujado + 50):
-                # form.add_error('monto','El monto a pujar debe superar al actual por al menos $50.')
-                # form.add_error('monto',ValidationError('El monto a pujar debe superar al actual por al menos $50.', code='no supera'))
-                # print(monto,'$50',form.has_error('monto'))
-                # error = 'El monto a pujar debe superar al actual por al menos $50.'
-                pass
-            elif not(usuario_pujador.tiene_creditos()):
-                # form.add_error('monto','No tienes créditos suficientes para realizar una puja.')
-                # print(monto,'sin credito')
-                # error = 'No tienes créditos suficientes para realizar una puja.'
-                pass
-            else:
-                # error = ''
-                # print(monto)
-                sub.pujar(request.user.usuario, monto)
-    form = MontoPujaForm()
+            sub.pujar(request.user, monto)
+            sub.save()
+    else:
+        form = MontoPujaForm(user=request.user,subasta=sub)
     import datetime
-    inscripto = sub.esta_inscripto(request.user.usuario)
+    inscripto = sub.esta_inscripto(request.user)
     return render(request=request,
                   template_name="main/subastas/ver_subasta.html",
                   context={"subasta": sub,
                            "inscripto": inscripto,
-                           "form": form,
-                           "error": error})
+                           "form": form})
 
 def inscribirse(request, id_residencia, id_subasta):
     sub = Subasta.objects.get(id=id_subasta)
-    sub.inscribir_usuario(request.user.usuario)
+    sub.inscribir_usuario(request.user)
     #Obtengo el url desde donde se llamo a este link
     referer = request.META.get("HTTP_REFERER")
     return redirect(referer)
