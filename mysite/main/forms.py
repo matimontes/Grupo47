@@ -13,16 +13,13 @@ class MontoPujaForm(forms.Form):
     def clean(self):
         data = self.cleaned_data
         cleaned_monto = data['monto']
-        if (self.subasta.esta_inscripto(self.user)):
-            if (self.subasta.puja_actual().usuario != self.user):
-                if (cleaned_monto < self.subasta.puja_actual().dinero_pujado + 50):
-                    self.add_error('monto','El monto a pujar debe superar al actual por al menos $50.')
-                if not(self.user.tiene_creditos()):
-                    self.add_error('monto','No tienes créditos suficientes para realizar una puja.')
-            else:
-                raise forms.ValidationError('Tu puja ya está ganando.')
+        if (self.subasta.puja_actual().usuario != self.user):
+            if (cleaned_monto < self.subasta.puja_actual().dinero_pujado + 50):
+                self.add_error('monto','El monto a pujar debe superar al actual por al menos $50.')
+            if not(self.user.tiene_creditos()):
+                self.add_error('monto','No tienes créditos suficientes para realizar una puja.')
         else:
-            raise forms.ValidationError('Debes estar inscripto para realizar una puja.')
+            raise forms.ValidationError('Tu puja ya está ganando.')
         return data
 
 class RegistrationForm(UserCreationForm):

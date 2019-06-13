@@ -17,15 +17,19 @@
       {% if inscripto %}
         <h5>La subasta ya comenzó, tenes tiempo hasta el {{subasta.fin_de_subasta}} para pujar</h5>
         <p><i class="material-icons">check</i>Estás inscripto</p>
-        <div>
-          <table style="width:100%">
-            <tr>
-              <th>Precio inicial</th>
-              <th>Puja Actual</th>
-            </tr>
-            <tr>
-              <td>{{subasta.precio_inicial}}</td>
-              <td>{{subasta.puja_actual.dinero_pujado}}</td>
+      {% else %}
+        <h5>La inscripción ya cerró</h5>
+      {% endif %}
+      <div>
+        <table style="width:100%">
+          <tr>
+            <th>Precio inicial</th>
+            <th>Puja Actual</th>
+          </tr>
+          <tr>
+            <td>{{subasta.precio_inicial}}</td>
+            <td>{{subasta.puja_actual.dinero_pujado}}</td>
+            {% if inscripto %}
               <form method="POST">
                 {% csrf_token %}
                 <td>{{form}}</td>
@@ -35,11 +39,9 @@
                   <td><button type="submit" class="waves-effect waves-light btn-small">Pujar</button></td>
                 {% endif %}
               </form>
-            </tr>
-        </div>
-      {% else %}
-        <h5>La inscripción ya cerró</h5>
-      {% endif %}
+            {% endif %}
+          </tr>
+      </div>
     {% endif %}
   </div>
 </body>
