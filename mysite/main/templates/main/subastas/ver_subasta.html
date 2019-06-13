@@ -7,18 +7,14 @@
     <h3>Subasta por la semana del {{subasta.dia_inicial}} al {{subasta.dia_final}}
     en {{subasta.residencia}}</h3>
     {% if not subasta.iniciada %}
-      <h5>Duración: desde {{subasta.inicio_de_subasta}} hasta {{subasta.fin_de_subasta}}</h5>
-      {% if inscripto %}
-        <p><i class="material-icons">check</i>Estás inscripto</p>
-      {% else %}
-        <a href="/inscribirse/{{subasta.residencia.id}}/{{subasta.id}}" class="waves-effect waves-light btn-small">Inscribirse<a>
-      {% endif %}
+      <h5>La subasta comenzará el día {{subasta.inicio_de_subasta}} y terminará {{subasta.fin_de_subasta}}</h5>
+      <p>Recuerda inscribirte para poder participar.</p>
     {% else %}
       {% if inscripto %}
         <h5>La subasta ya comenzó, tenes tiempo hasta el {{subasta.fin_de_subasta}} para pujar</h5>
         <p><i class="material-icons">check</i>Estás inscripto</p>
       {% else %}
-        <h5>La inscripción ya cerró</h5>
+        <h5>La inscripción ya cerró. No puedes participar de las pujas.</h5>
       {% endif %}
       <div>
         <table style="width:100%">

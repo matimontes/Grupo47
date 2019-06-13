@@ -65,7 +65,9 @@
       {% else %}
         <td><a href="#" class="waves-effect waves-light disabled btn-small">Reservar<a></td>
       {% endif %}
-      <td><a href="/subasta/{{s.id}}" class="waves-effect waves-light btn-small">Ver<a></td>
+      {% if s.iniciada %}
+        <td><a href="/subasta/{{s.id}}" class="waves-effect waves-light btn-small">Ver<a></td>
+      {% endif %}
     </tr>
     {% endfor %}
   {% else %}

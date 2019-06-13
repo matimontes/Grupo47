@@ -19,7 +19,7 @@ class MontoPujaForm(forms.Form):
             if not(self.user.tiene_creditos()):
                 self.add_error('monto','No tienes créditos suficientes para realizar una puja.')
         else:
-            raise forms.ValidationError('Tu puja ya está ganando.')
+            raise forms.ValidationError('No puedes pujar cuando tu puja ya está ganando.')
         return data
 
 class RegistrationForm(UserCreationForm):
