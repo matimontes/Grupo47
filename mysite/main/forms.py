@@ -22,6 +22,12 @@ class MontoPujaForm(forms.Form):
             raise forms.ValidationError('No puedes pujar cuando tu puja ya está ganando.')
         return data
 
+class BuscarResidenciaForm(forms.Form):
+    inicio = forms.CharField()
+    fin = forms.CharField()
+    pasajeros = forms.IntegerField(required=False)
+    pais = forms.CharField(required=False)
+
 class RegistrationForm(UserCreationForm):
 	email = forms.EmailField(required=True)
 

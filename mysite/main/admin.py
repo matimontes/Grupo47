@@ -20,7 +20,7 @@ def finalizar_subasta(modeladmin, request, queryset):
 finalizar_subasta.short_description = "Finalizar Subastas Seleccionada/s"
 
 class SemanasAdminInlineFormSet(forms.BaseInlineFormSet):
-	
+
 	def coincide(self, dia_inicial_1, dia_inicial_2):
 		"""
 			Devuelve True si las semanas se superponen.
@@ -215,7 +215,7 @@ class ResidenciaAdmin(admin.ModelAdmin):
 	"""
 		Clase ModelAdmin de Residencia.
 		Usa form default.
-		Contiene inlines: 
+		Contiene inlines:
 			SubastaAdminView
 			HotSaleAdminView
 			SubastaInLine
