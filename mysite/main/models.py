@@ -184,7 +184,7 @@ class Subasta(Semana):
 
 	def abandonar_subasta(self,usuario):
 		self.anular_inscripcion_usuario(usuario)
-		for puja in self.pujas.filter(usuario__exact=usuario):
+		for puja in self.pujas.filter(usuario=usuario):
 			puja.delete()
 
 	def inscribir_usuario(self,usuario):

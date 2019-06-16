@@ -29,6 +29,7 @@
               <form method="POST">
                 {% csrf_token %}
                 <td>{{form}}</td>
+                <td><a href="/abandonar/{{subasta.residencia.id}}/{{subasta.id}}" class="waves-effect waves-light btn-small">Abandonar<a></td>
                 {% if subasta.puja_actual.usuario == request.user %}
                   <td><button type="submit" class="waves-effect waves-light btn-small disabled">Pujar</button></td>
                 {% else %}

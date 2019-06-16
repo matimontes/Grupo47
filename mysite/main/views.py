@@ -162,3 +162,10 @@ def inscribirse(request, id_residencia, id_subasta):
     #Obtengo el url desde donde se llamo a este link
     referer = request.META.get("HTTP_REFERER")
     return redirect(referer)
+
+def abandonar(request, id_residencia, id_subasta):
+    sub = Residencia.objects.get(id=id_residencia).subastas.get(id=id_subasta)
+    sub.abandonar_subasta(request.user)
+    #Obtengo el url desde donde se llamo a este link
+    referer = request.META.get("HTTP_REFERER")
+    return redirect(referer)
