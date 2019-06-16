@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from main.models import User
+from datetime import date, timedelta
 
 class MontoPujaForm(forms.Form):
     monto = forms.DecimalField(label="Monto a pujar")
@@ -29,7 +30,6 @@ class BuscarResidenciaForm(forms.Form):
     pais = forms.CharField(required=False)
 
 class RegistrationForm(UserCreationForm):
-	email = forms.EmailField(required=True)
 
 	class Meta:
 		model = User
@@ -38,17 +38,21 @@ class RegistrationForm(UserCreationForm):
 			"first_name",
 			"last_name",
 			"date_of_birth",
+			"nacionalidad",
 			"password1",
 			"password2"
 		)
 
-	def save(self, commit=True):
-		user = super(RegistrationForm, self).save(commit=False)
-		user.first_name = self.cleaned_data['first_name']
-		user.last_name = self.cleaned_data['last_name']
-		user.email = self.cleaned_data['email']
-
-		if commit:
-			user.save()
-
-		return user
+	def clean(self):
+		data = super().clean()
+		cleaned_fecha = data['date_of_birth']
+		today = date.today()
+		if (cleaned_fecha.year == today.year - 18):
+			if (cleaned_fecha.month == today.month):
+				if (cleaned_fecha.day > today.day):
+					self.add_error('date_of_birth','Debes ser mayor de 18 años')
+			elif (cleaned_fecha.month > today.month):
+				self.add_error('date_of_birth','Debes ser mayor de 18 años')
+		elif (cleaned_fecha.year > today.year - 18):
+			self.add_error('date_of_birth','Debes ser mayor de 18 años')
+		return data

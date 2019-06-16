@@ -32,7 +32,8 @@ def register(request):
             for msg in form.error_messages:
                 print(form.error_messages[msg]) #muestro los errores
     #es una request normal
-    form = RegistrationForm()
+    else:
+        form = RegistrationForm()
     return render(request=request,
                   template_name="main/authentication/register.html",
                   context={"form":form})
@@ -52,7 +53,8 @@ def login(request):
             messages.error(request, "Nombre de usuario o contraseña inválidos.")
 
     #la request es normal
-    form = AuthenticationForm
+    else:
+        form = AuthenticationForm
     return render(request=request,
                   template_name="main/authentication/login.html",
                   context={"form":form})
