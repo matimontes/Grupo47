@@ -1,0 +1,55 @@
+{% extends "main/headers/header_logged_in.html" %}
+{% load static %}
+{% block content %}
+
+<body>
+	<h1 class="centrar">Perfil</h1>
+	<h3>
+		Datos Personales
+		<a href="/editar_perfil/" class="waves-effect waves-light btn-small">Editar perfil</a>
+	</h3>
+	<table>
+		<tr>
+			<td width="30%">Nombre completo:</td>
+			<td>{{request.user.get_full_name}}</td>
+		</tr>
+		<tr>
+			<td>Email:</td>
+			<td>{{request.user.email}}</td>
+		</tr>
+		<tr>
+			<td>Nacimiento:</td>
+			<td>{{request.user.date_of_birth}}</td>
+		</tr>
+		<tr>
+			<td>Nacionalidad:</td>
+			<td>{{request.user.nacionalidad}}</td>
+		</tr>
+	</table>
+	<h4>Datos de cuenta</h4>
+	<table>
+		<tr>
+			<td width="30%">Créditos:</td>
+			<td>{{request.user.creditos}} a vencer el {{request.user.vencimiento_de_creditos}}</td>
+		</tr>
+		<tr>
+			<td>Tipo de cuenta:</td>
+			<td>{{request.user.user_type}}</td>
+			<td width="35%">
+				{% if request.user.premium %}
+					<a href="/invertir/" class="waves-effect waves-light btn-small">Volver a ser usuario básico</a>
+				{% else %}
+					<a href="/invertir/" class="waves-effect waves-light btn-small">¡Quiero ser premium!</a>
+				{% endif %}
+			</td>
+		</tr>
+	</table>
+	<h4>Método de Pago</h4>
+	<p>Datos de tarjeta - COMPLETAR</p>
+
+	<a href="#" class="waves-effect waves-light btn-small">Eliminar cuenta</a>
+	<p></p>
+
+</body>
+
+{% endblock %}

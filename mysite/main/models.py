@@ -51,7 +51,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(_('active'), default=True)
     date_of_birth = models.DateField(_('fecha de nacimiento'))
     nacionalidad = models.CharField(max_length=50)
-    creditos = models.IntegerField(default=0)
+    creditos = models.IntegerField(default=2)
     premium = models.BooleanField(_('premium estatus'), default=False)
     is_staff = models.BooleanField(
         _('staff status'),
@@ -81,6 +81,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         '''
         return self.first_name
 
+    def user_type(self):
+    	if self.premium:
+    		return 'premium'
+    	return 'basico'
+
     def email_user(self, subject, message, from_email=None, **kwargs):
         '''
         Sends an email to this User.
@@ -92,9 +97,22 @@ class User(AbstractBaseUser, PermissionsMixin):
         pass
 
     def tiene_creditos(self):
-    	if self.creditos > 0:
-    		return True
-    	return False
+        if self.creditos > 0:
+            return True
+        return False
+
+    def vencimiento_de_creditos(self):
+        if self.date_joined.month > date.today().month:
+            return date(year=date.today().year,month=self.date_joined.month,day=self.date_joined.day)
+        elif (self.date_joined.month == date.today().month) and (self.date_joined.day > date.today().day):
+            return date(year=date.today().year,month=self.date_joined.month,day=self.date_joined.day)
+        return date(year=(date.today().year+1),month=self.date_joined.month,day=self.date_joined.day)
+
+    def invertir_tipo(self):
+    	if self.premium:
+    		self.premium = False
+    	else:
+    		self.premium = True
 
 from django.conf import settings
 

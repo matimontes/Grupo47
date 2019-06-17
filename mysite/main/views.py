@@ -10,7 +10,6 @@ import datetime
 
 def homepage(request):
     if request.user.is_authenticated: #si hay una sesion iniciada
-        user = request.user
         return render(request=request,
                       template_name="main/homes/home_logged_in.html",
                       context={"residencias": Residencia.objects.all()[:3]})
@@ -171,3 +170,20 @@ def abandonar(request, id_residencia, id_subasta):
     #Obtengo el url desde donde se llamo a este link
     referer = request.META.get("HTTP_REFERER")
     return redirect(referer)
+
+def perfil(request):
+    return render(request=request,
+                  template_name="main/user/profile.html",
+                  context={})
+
+def invertir(request):
+    request.user.invertir_tipo()
+    request.user.save()
+    #Obtengo el url desde donde se llamo a este link
+    referer = request.META.get("HTTP_REFERER")
+    return redirect(referer)
+
+def editar_perfil(request):
+    return render(request=request,
+                  template_name="main/user/editar_perfil.html",
+                  context={})

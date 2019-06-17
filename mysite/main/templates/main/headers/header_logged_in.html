@@ -1,5 +1,5 @@
 {% extends "main/builder.html" %}
-{% load staticfiles%}
+{% load staticfiles %}
 {% block builder %}
 
   <header>
@@ -10,7 +10,7 @@
           <img class="logo" src="{% static 'logos/HSH-Complete.svg' %}" alt="hsh logo">
           </a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="/">{{user.username}}</a></li>
+            <li><a href="/perfil">{{request.user.first_name}}</a></li>
             <li><a href="/logout">Logout</a></li>
           </ul>
         </div>
