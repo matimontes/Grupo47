@@ -19,7 +19,7 @@ from . import views
 app_name = "main"
 
 urlpatterns = [
-path("", views.homepage, name="homepage"),
+    path("", views.homepage, name="homepage"),
     path("register/", views.register, name="register"),
     path("login/", views.login, name="login"),
     path("logout/", views.logout, name="logout"),
@@ -30,5 +30,8 @@ path("", views.homepage, name="homepage"),
     path("abandonar/<id_residencia>/<id_subasta>/", views.abandonar, name="abandonar"),
     path("perfil/", views.perfil, name="perfil"),
     path("editar_perfil/", views.editar_perfil, name="editar_perfil"),
+    path("cambiar_contraseña/", views.cambiar_contraseña, name="cambiar_contraseña"),
+    path("eliminar_usuario/", views.eliminar_usuario, name="eliminar_usuario"),
+    path("eliminar_exito/", views.eliminar_usuario_exito, name="eliminar_usuario_exito"),
     #path("reserva/<id_subasta>/", views.reserva, name="reserva"),
 ]

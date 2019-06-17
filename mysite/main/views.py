@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate, get_user_model
 from django.contrib import messages
 from django.http import HttpResponse
 from .models import Residencia, Subasta
-from main.forms import RegistrationForm, MontoPujaForm, BuscarResidenciaForm, InvertirTipoForm
+from main.forms import RegistrationForm, MontoPujaForm, BuscarResidenciaForm, InvertirTipoForm, EditarPerfilForm
 from django.forms import ValidationError
 import datetime
+from django.contrib.auth.views import update_session_auth_hash
 
 def homepage(request):
     if request.user.is_authenticated: #si hay una sesion iniciada
@@ -176,6 +177,7 @@ def perfil(request):
         if user_type_form.is_valid():
             request.user.invertir_tipo()
             request.user.save()
+            messages.success(request, 'Ahora eres un usuario '+request.user.user_type()+'.')
     else:
         user_type_form = InvertirTipoForm(user=request.user)
     return render(request=request,
@@ -183,6 +185,39 @@ def perfil(request):
                   context={"user_type_form": user_type_form})
 
 def editar_perfil(request):
+    if request.method == "POST":
+        form = EditarPerfilForm(request.POST,instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Datos cambiados con éxito.')
+            update_session_auth_hash(request, form.instance)
+            return redirect("main:perfil")
+    else:
+        form = EditarPerfilForm(instance=request.user)
     return render(request=request,
                   template_name="main/user/editar_perfil.html",
+                  context={"form":form})
+
+def cambiar_contraseña(request):
+    if request.method == "POST":
+        form = PasswordChangeForm(request.user,request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Contraseña cambiada con éxito.')
+            update_session_auth_hash(request, form.user)
+            return redirect("main:perfil")
+    else:
+        form = PasswordChangeForm(user=request.user)
+    return render(request=request,
+                  template_name="main/user/cambiar_contraseña.html",
+                  context={"form":form})
+
+def eliminar_usuario(request):
+    request.user.eliminar_usuario()
+    messages.success(request, 'Cuenta eliminada con éxito.')
+    return redirect("main:eliminar_usuario_exito")
+
+def eliminar_usuario_exito(request):
+    return render(request=request,
+                  template_name="main/user/eliminar_usuario_exito.html",
                   context={})

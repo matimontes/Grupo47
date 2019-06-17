@@ -1,0 +1,17 @@
+{% extends "main/headers/header_no_authentication.html" %}
+{% load static %}
+{% block content %}
+
+<body>
+	<h4>
+		{% if messages %}
+		<ul class="messages">
+		    {% for message in messages %}
+		    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+		    {% endfor %}
+		</ul>
+		{% endif %}
+	</h4>
+</body>
+
+{% endblock %}

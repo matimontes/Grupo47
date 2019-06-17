@@ -117,6 +117,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     def validar_premium(self):
     	return True
 
+    def eliminar_usuario(self):
+    	#Eliminar pujas
+    	for subasta in self.inscripciones.all():
+    		subasta.abandonar_subasta(self)
+    	#Pasar reservas a pendientes
+    	# for reservas in self.semanas_reservadas.all():
+    	# 	pass
+    	#Eliminar usuario de base de datos
+    	self.delete()
+
 from django.conf import settings
 
 class Course(models.Model):

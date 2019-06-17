@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from main.models import User
 from datetime import date, timedelta
 
@@ -40,6 +40,38 @@ class InvertirTipoForm(forms.Form):
         if (not self.user.premium) and (not self.user.validar_premium()):
             raise forms.ValidationError('Tu tarjeta no es válida para ser premium.')
         return data
+
+class EditarPerfilForm(forms.ModelForm):
+
+	class Meta:
+		model = User
+		fields = (
+			"email",
+			"first_name",
+			"last_name",
+			"date_of_birth",
+			"nacionalidad"
+			)
+
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		user_permissions = self.fields.get('user_permissions')
+		if user_permissions:
+			user_permissions.queryset = user_permissions.queryset.select_related('content_type')
+
+	def clean(self):
+		data = super().clean()
+		cleaned_fecha = data['date_of_birth']
+		today = date.today()
+		if (cleaned_fecha.year == today.year - 18):
+			if (cleaned_fecha.month == today.month):
+				if (cleaned_fecha.day > today.day):
+					self.add_error('date_of_birth','Debes ser mayor de 18 años')
+			elif (cleaned_fecha.month > today.month):
+				self.add_error('date_of_birth','Debes ser mayor de 18 años')
+		elif (cleaned_fecha.year > today.year - 18):
+			self.add_error('date_of_birth','Debes ser mayor de 18 años')
+		return data
 
 class RegistrationForm(UserCreationForm):
 
