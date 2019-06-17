@@ -24,10 +24,31 @@ class MontoPujaForm(forms.Form):
         return data
 
 class BuscarResidenciaForm(forms.Form):
-    inicio = forms.CharField()
-    fin = forms.CharField()
+    inicio = forms.DateField(
+        widget=forms.DateInput(format='%d/%m/%Y', attrs={'class': 'datepicker'}),
+        input_formats=('%d/%m/%Y', )
+        )
+    fin = forms.DateField(
+        widget=forms.DateInput(format='%d/%m/%Y', attrs={'class': 'datepicker'}),
+        input_formats=('%d/%m/%Y', )
+        )
     pasajeros = forms.IntegerField(required=False)
+    ciudad = forms.CharField(required=False)
     pais = forms.CharField(required=False)
+
+    def clean(self):
+        import datetime
+        data = self.cleaned_data
+        fecha_inicio = data['inicio']
+        fecha_fin = data['fin']
+        if fecha_fin < fecha_inicio:
+            self.add_error('inicio', 'La fecha final debe ser mayor a la fecha inicial')
+        else:
+            if (fecha_fin - fecha_inicio).days < 8:
+                self.add_error('inicio', 'Debe haber al menos 8 días de diferencia entre las fechas.')
+            elif (fecha_fin - fecha_inicio).days > 60:
+                self.add_error('inicio', 'El rango entre las fechas debe ser menor a 2 meses.')
+        return data
 
 class InvertirTipoForm(forms.Form):
 

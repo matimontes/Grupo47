@@ -5,6 +5,9 @@ M.FormSelect.init(pasajeros, {});
 const pais = document.querySelector("select[name='pais']");
 M.FormSelect.init(pais, {});
 
+const ciudad = document.querySelector("select[name='ciudad']");
+M.FormSelect.init(ciudad, {});
+
 hoy = new Date();
 const calendario = document.querySelector(".datepicker[name='inicio']");
 inicio = M.Datepicker.init(calendario, {
