@@ -29,6 +29,18 @@ class BuscarResidenciaForm(forms.Form):
     pasajeros = forms.IntegerField(required=False)
     pais = forms.CharField(required=False)
 
+class InvertirTipoForm(forms.Form):
+
+    def __init__(self, *args, user, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        data = self.cleaned_data
+        if (not self.user.premium) and (not self.user.validar_premium()):
+            raise forms.ValidationError('Tu tarjeta no es válida para ser premium.')
+        return data
+
 class RegistrationForm(UserCreationForm):
 
 	class Meta:

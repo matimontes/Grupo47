@@ -114,6 +114,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     	else:
     		self.premium = True
 
+    def validar_premium(self):
+    	return True
+
 from django.conf import settings
 
 class Course(models.Model):

@@ -4,7 +4,7 @@ from django.contrib.auth import login as auth_login, logout as auth_logout, auth
 from django.contrib import messages
 from django.http import HttpResponse
 from .models import Residencia, Subasta
-from main.forms import RegistrationForm, MontoPujaForm, BuscarResidenciaForm
+from main.forms import RegistrationForm, MontoPujaForm, BuscarResidenciaForm, InvertirTipoForm
 from django.forms import ValidationError
 import datetime
 
@@ -140,7 +140,6 @@ def residencia(request, id_residencia):
 
 def subasta(request, id_subasta):
     sub = Subasta.objects.get(id=id_subasta)
-    error = ''
     if request.method == "POST":
         form = MontoPujaForm(request.POST,user=request.user,subasta=sub)
         if form.is_valid():
@@ -172,16 +171,16 @@ def abandonar(request, id_residencia, id_subasta):
     return redirect(referer)
 
 def perfil(request):
+    if request.method == "POST":
+        user_type_form = InvertirTipoForm(request.POST,user=request.user)
+        if user_type_form.is_valid():
+            request.user.invertir_tipo()
+            request.user.save()
+    else:
+        user_type_form = InvertirTipoForm(user=request.user)
     return render(request=request,
                   template_name="main/user/profile.html",
-                  context={})
-
-def invertir(request):
-    request.user.invertir_tipo()
-    request.user.save()
-    #Obtengo el url desde donde se llamo a este link
-    referer = request.META.get("HTTP_REFERER")
-    return redirect(referer)
+                  context={"user_type_form": user_type_form})
 
 def editar_perfil(request):
     return render(request=request,

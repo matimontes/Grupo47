@@ -10,7 +10,7 @@
 	</h3>
 	<table>
 		<tr>
-			<td width="30%">Nombre completo:</td>
+			<td width="35%">Nombre completo:</td>
 			<td>{{request.user.get_full_name}}</td>
 		</tr>
 		<tr>
@@ -29,19 +29,26 @@
 	<h4>Datos de cuenta</h4>
 	<table>
 		<tr>
-			<td width="30%">Créditos:</td>
+			<td width="35%">Créditos:</td>
 			<td>{{request.user.creditos}} a vencer el {{request.user.vencimiento_de_creditos}}</td>
 		</tr>
 		<tr>
 			<td>Tipo de cuenta:</td>
 			<td>{{request.user.user_type}}</td>
-			<td width="35%">
-				{% if request.user.premium %}
-					<a href="/invertir/" class="waves-effect waves-light btn-small">Volver a ser usuario básico</a>
-				{% else %}
-					<a href="/invertir/" class="waves-effect waves-light btn-small">¡Quiero ser premium!</a>
-				{% endif %}
-			</td>
+		</tr>
+		<tr>
+			<form method="POST">{% csrf_token %}
+				<td>
+					{% if request.user.premium %}
+						<button type="submit" class="waves-effect waves-light btn-small">Volver a ser usuario básico</button>
+					{% else %}
+						<button type="submit" class="waves-effect waves-light btn-small">¡Quiero ser premium!</button>
+					{% endif %}
+				</td>
+				<td>
+					{{user_type_form.non_field_errors}}
+				</td>
+			</form>
 		</tr>
 	</table>
 	<h4>Método de Pago</h4>

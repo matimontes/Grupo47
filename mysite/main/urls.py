@@ -30,6 +30,5 @@ path("", views.homepage, name="homepage"),
     path("abandonar/<id_residencia>/<id_subasta>/", views.abandonar, name="abandonar"),
     path("perfil/", views.perfil, name="perfil"),
     path("editar_perfil/", views.editar_perfil, name="editar_perfil"),
-    path("invertir/", views.invertir, name="invertir_tipo")
     #path("reserva/<id_subasta>/", views.reserva, name="reserva"),
 ]
