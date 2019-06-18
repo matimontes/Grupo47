@@ -103,27 +103,37 @@ def buscar_residencias(request):
                 dia_inicial__lte = fecha_fin, residencia__personas = pasa_form,
                 residencia__pais = pais_form, residencia__ciudad = ciudad_form)
             #si no se completan los pasajeros
-            elif pasa_form != "":
+            elif pais_form != "" and ciudad_form != "":
                 subastas = Subasta.objects.filter(dia_inicial__gte = fecha_inicio,
                 dia_inicial__lte = fecha_fin, residencia__pais = pais_form,
                 residencia__ciudad = ciudad_form)
             #si no se completa el pais
-            elif pais_form != None:
+            elif pasa_form != None and ciudad_form != "":
                 subastas = Subasta.objects.filter(dia_inicial__gte = fecha_inicio,
                 dia_inicial__lte = fecha_fin, residencia__personas = pasa_form,
                 residencia__ciudad = ciudad_form)
             #si no se completa la ciudad
-            elif ciudad_form != "":
+            elif pais_form != "" and pasa_form != None:
                 subastas = Subasta.objects.filter(dia_inicial__gte = fecha_inicio,
                 dia_inicial__lte = fecha_fin, residencia__personas = pasa_form,
                 residencia__pais = pais_form)
+            #solo se completa pasajeros
+            elif pasa_form != None:
+                subastas = Subasta.objects.filter(dia_inicial__gte = fecha_inicio,
+                dia_inicial__lte = fecha_fin, residencia__personas = pasa_form)
+            #solo se completa pais
+            elif pais_form != "":
+                subastas = Subasta.objects.filter(dia_inicial__gte = fecha_inicio,
+                dia_inicial__lte = fecha_fin, residencia__pais = pais_form)
+            #solo se completa ciudad:
+            elif ciudad_form != "":
+                subastas = Subasta.objects.filter(dia_inicial__gte = fecha_inicio,
+                dia_inicial__lte = fecha_fin, residencia__ciudad = ciudad_form)
             #si no se completa ningún otro campo
             else:
                 subastas = Subasta.objects.filter(dia_inicial__gte = fecha_inicio,
                                                   dia_inicial__lte = fecha_fin)
-        else:
-            errores = form.errors.as_text()
-        residencias = [Residencia.objects.get(id=s.residencia.id) for s in subastas]
+        residencias = set([Residencia.objects.get(id=s.residencia.id) for s in subastas])
     else:
         form = BuscarResidenciaForm()
     paises = set(r.pais for r in Residencia.objects.all())
