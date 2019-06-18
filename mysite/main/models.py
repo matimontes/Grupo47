@@ -72,8 +72,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     metodo_de_pago = models.OneToOneField(
         'Tarjeta',
         on_delete=models.CASCADE,
-        related_name='user',
-        default=Tarjeta.objects.create()
+        related_name='user'
         )
 
     objects = UserManager()
@@ -100,7 +99,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def user_type(self):
     	return 'premium' if self.premium else 'basico'
-        
+
     def email_user(self, subject, message, from_email=None, **kwargs):
         '''
         Sends an email to this User.
@@ -281,3 +280,13 @@ class Puja(models.Model):
 class Imagen(models.Model):
 	residencia = models.ForeignKey(Residencia,on_delete=models.CASCADE,related_name='imagenes')
 	imagen = models.ImageField(upload_to=('staticfiles/fotos'))
+
+class Suscripcion(models.Model):
+    premium = models.DecimalField(max_digits=11, decimal_places=2, unique=True, default=100)
+    basico = models.DecimalField(max_digits=11, decimal_places=2, unique=True, default=50)
+
+    def __str__(self):
+        return "Suscripciones"
+
+    class Meta():
+        verbose_name_plural = "Precios de Suscripciones"

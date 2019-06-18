@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Residencia, Subasta, HotSale, Imagen, SemanaReservada, Puja
+from .models import Residencia, Subasta, HotSale, Imagen, SemanaReservada, Puja, Suscripcion
 from django import forms
 from django.db.models.query import EmptyQuerySet
 from datetime import timedelta
@@ -242,6 +242,11 @@ class ResidenciaAdmin(admin.ModelAdmin):
 	list_display = ('nombre','ciudad','pais','dirección','personas')
 	list_per_page = 30
 
+class SuscripcionAdmin(admin.ModelAdmin):
+	verbose_name_plural = "Suscripciones"
+	def has_add_permission(self, request): #Deniega la posibilidad de añadir rows si ya hay una
+		return self.model.objects.count() < 1
+
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
@@ -334,3 +339,4 @@ admin.site.register(Residencia,ResidenciaAdmin)
 admin.site.register(Subasta,SubastaAdmin)
 admin.site.register(HotSale,HotSaleAdmin)
 admin.site.register(Puja)
+admin.site.register(Suscripcion, SuscripcionAdmin)
