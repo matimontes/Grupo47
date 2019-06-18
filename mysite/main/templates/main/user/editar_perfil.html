@@ -3,6 +3,9 @@
 {% block content %}
 
 <body>
+	<p>
+	<a href="javascript:history.go(-1)">Volver</a>
+	</p>
 	<h3>Editar datos</h3>
 	<form method="POST">
 		{% csrf_token %}
