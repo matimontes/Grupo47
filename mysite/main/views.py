@@ -4,7 +4,7 @@ from django.contrib.auth import login as auth_login, logout as auth_logout, auth
 from django.contrib import messages
 from django.http import HttpResponse
 from .models import Residencia, Subasta
-from main.forms import RegistrationForm, MontoPujaForm, BuscarResidenciaForm, InvertirTipoForm, EditarPerfilForm
+from main.forms import RegistrationForm, MontoPujaForm, BuscarResidenciaForm, InvertirTipoForm, EditarPerfilForm, PaymentForm
 from django.forms import ValidationError
 import datetime
 from django.contrib.auth.views import update_session_auth_hash
@@ -23,9 +23,13 @@ def register(request):
     #si la request es tipo POST es porque el usuario nos mando info
     #click en "registrarse"
     if request.method == "POST":
-        form = RegistrationForm(request.POST)
-        if form.is_valid(): #si el form fue completado correctamente
-            user = form.save() #registramos el usuario
+        user_form = RegistrationForm(request.POST)
+        cc_form = PaymentForm(request.POST)
+        if user_form.is_valid() and cc_form.is_valid(): #si el form fue completado correctamente
+            user = user_form.save(commit=False)
+            tarjeta = cc_form.save()
+            user.metodo_de_pago = tarjeta
+            user.save()
             auth_login(request, user) #iniciamos su sesion automaticamente
             return redirect("main:homepage") #los mandamos a home
         else: #si se completo mal el form
@@ -33,10 +37,11 @@ def register(request):
                 print(form.error_messages[msg]) #muestro los errores
     #es una request normal
     else:
-        form = RegistrationForm()
+        user_form = RegistrationForm()
+        cc_form = PaymentForm()
     return render(request=request,
                   template_name="main/authentication/register.html",
-                  context={"form":form})
+                  context={"user_form":user_form,"cc_form":cc_form})
 
 def login(request):
     #si la request es info enviada por el usuario

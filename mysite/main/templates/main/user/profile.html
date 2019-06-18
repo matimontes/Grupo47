@@ -68,8 +68,13 @@
 		</tr>
 	</table>
 	<h4>Método de Pago</h4>
-	<p>Datos de tarjeta - COMPLETAR</p>
-
+	<table>
+		<tr>
+			<td width="35%">Número de Tarjeta</td>
+			<td>{{request.user.metodo_de_pago.numero_censurado}}</td>
+		</tr>
+	</table>
+	<p></p>
 	<a href="/eliminar_usuario/" class="waves-effect waves-light btn-small">Eliminar cuenta</a>
 	<p></p>
 

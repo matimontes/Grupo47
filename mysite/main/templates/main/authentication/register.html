@@ -4,7 +4,8 @@
 <form method="POST">
   {% csrf_token %}
   <h5>Registro</h5>
-  {{form.as_p}}
+  {{user_form.as_p}}
+  {{cc_form.as_p}}
   <br>
   <br>
   <button class="btn" type="submit">Registrarse</button>

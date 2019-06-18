@@ -18,6 +18,9 @@ class Tarjeta(models.Model):
     cc_expiry = CardExpiryField(_('expiration date'), default="11/19")
     cc_code = SecurityCodeField(_('security code'), default="374")
 
+    def numero_censurado(self):
+        return '*'*(len(self.cc_number)-4)+self.cc_number[-4:]
+
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -47,6 +50,8 @@ class UserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
+        extra_fields['date_of_birth']=date(1950,1,1)
+
         return self._create_user(email, password, **extra_fields)
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -55,7 +60,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(_('apellido'), max_length=30, blank=True)
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_active = models.BooleanField(_('active'), default=True)
-    date_of_birth = models.DateField(_('fecha de nacimiento'), default=date(1950,1,1))
+    date_of_birth = models.DateField(_('fecha de nacimiento'))
     nacionalidad = models.CharField(max_length=50)
     creditos = models.IntegerField(default=2)
     premium = models.BooleanField(_('premium estatus'), default=False)

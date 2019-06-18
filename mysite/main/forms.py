@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from main.models import User
+from main.models import User, Tarjeta
 from datetime import date, timedelta
+from creditcards.forms import CardNumberField, CardExpiryField, SecurityCodeField
 
 class MontoPujaForm(forms.Form):
     monto = forms.DecimalField(label="Monto a pujar")
@@ -121,3 +122,8 @@ class RegistrationForm(UserCreationForm):
 		elif (cleaned_fecha.year > today.year - 18):
 			self.add_error('date_of_birth','Debes ser mayor de 18 años')
 		return data
+
+class PaymentForm(forms.ModelForm):
+	class Meta:
+		model = Tarjeta
+		fields = ("cc_number","cc_expiry","cc_code")
