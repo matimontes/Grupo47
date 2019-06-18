@@ -105,7 +105,7 @@ class RegistrationForm(UserCreationForm):
 			"date_of_birth",
 			"nacionalidad",
 			"password1",
-			"password2"
+			"password2",
 		)
 
 	def clean(self):

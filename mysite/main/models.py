@@ -8,10 +8,16 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
+from creditcards.models import CardNumberField, CardExpiryField, SecurityCodeField
 
 from django.contrib.auth.base_user import BaseUserManager
 
 # Create your models here.
+class Tarjeta(models.Model):
+    cc_number = CardNumberField(_('card number'), default="4532661247991100")
+    cc_expiry = CardExpiryField(_('expiration date'), default="11/19")
+    cc_code = SecurityCodeField(_('security code'), default="374")
+
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -49,7 +55,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(_('apellido'), max_length=30, blank=True)
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_active = models.BooleanField(_('active'), default=True)
-    date_of_birth = models.DateField(_('fecha de nacimiento'))
+    date_of_birth = models.DateField(_('fecha de nacimiento'), default=date(1950,1,1))
     nacionalidad = models.CharField(max_length=50)
     creditos = models.IntegerField(default=2)
     premium = models.BooleanField(_('premium estatus'), default=False)
@@ -58,6 +64,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         default=False,
         help_text=_('Designates whether the user can log into this admin site.'),
     )
+    metodo_de_pago = models.OneToOneField(
+        'Tarjeta',
+        on_delete=models.CASCADE,
+        related_name='user',
+        default=Tarjeta.objects.create()
+        )
 
     objects = UserManager()
 
@@ -199,11 +211,6 @@ class Subasta(Semana):
 
 	def pujar(self,usuario_pujador,dinero_a_pujar):
 		Puja.objects.create(usuario=usuario_pujador,dinero_pujado=dinero_a_pujar,subasta=self)
-		# if (dinero_a_pujar >= self.puja_actual().dinero_pujado + 50) and (usuario_pujador.tiene_creditos()):
-			 # and (self.puja_actual().usuario == usuario_pujador)
-		# else:
-			#AGREGAR FUNCIONALIDAD
-			# pass
 
 	def cancelar_puja(self,usuario):
 		puja = self.puja_actual()
@@ -275,41 +282,3 @@ class Puja(models.Model):
 class Imagen(models.Model):
 	residencia = models.ForeignKey(Residencia,on_delete=models.CASCADE,related_name='imagenes')
 	imagen = models.ImageField(upload_to=('staticfiles/fotos'))
-
-# class Usuario(models.Model):
-	# user = models.OneToOneField(User, on_delete=models.CASCADE)
-	# codigo = models.IntegerField(default=0)
-	# nacionalidad = models.CharField(max_length=50)
-	# creditos = models.IntegerField(default=2)
-	# premium = False
-
-	# def __str__(self):
-	# 	return self.user.username
-
-	# def notificar_comienzo_subasta(self,subasta):
-	# 	#AGREGAR FUNCIONALIDAD PARA NOTIFICAR POR MAIL QUE COMENZÓ LA SUBASTA
-	# 	pass
-
-	# def invertir_premium(self):
-	# 	if self.premium:
-	# 		self.premium = False
-	# 	else:
-	# 		self.premium = True
-	# 	self.save(update_fields=['premium'])
-
-# @receiver(post_save, sender=User)
-# def create_user_profile(sender, instance, created, **kwargs):
-#     if created:
-#         Usuario.objects.create(user=instance)
-
-# @receiver(post_save, sender=User)
-# def save_user_profile(sender, instance, **kwargs):
-#     instance.usuario.save()
-
-class Tarjeta(models.Model): #Falta completar
-	numero = models.IntegerField()
-	codigo = models.IntegerField()
-
-	#def Pagar(self):
-	#def Validar(self):
-	#	return True
