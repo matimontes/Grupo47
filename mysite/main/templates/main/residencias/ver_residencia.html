@@ -4,11 +4,14 @@
 {% block content %}
 
 <body>
+  <p>
+    <a href="/">Home</a>
+      >
+      <a href="javascript:history.go(-1)">Volver</a>
+    </p>
   <h1 class="centrar">{{residencia.nombre}}</h1>
   <section>
     <div class="columna-grande">
-      <!-- <img class="imagen-residencia"
-      src="{% static 'fotos/68184730.jpg' %}" alt="My image"> -->
       <img class="imagen-residencia"
       src="{% static residencia.primerFoto %}" alt="Imagen Residencia: {{ residencia.primerFoto }}">
     </div>

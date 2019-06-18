@@ -94,24 +94,21 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.first_name
 
     def user_type(self):
-    	if self.premium:
-    		return 'premium'
-    	return 'basico'
-
+    	return 'premium' if self.premium else 'basico'
+        
     def email_user(self, subject, message, from_email=None, **kwargs):
         '''
         Sends an email to this User.
         '''
         send_mail(subject, message, from_email, [self.email], **kwargs)
-    
+
     def notificar_comienzo_subasta(self,subasta):
         #AGREGAR FUNCIONALIDAD PARA NOTIFICAR POR MAIL QUE COMENZÓ LA SUBASTA
         pass
 
     def tiene_creditos(self):
-        if self.creditos > 0:
-            return True
-        return False
+        return self.creditos > 0
+
 
     def vencimiento_de_creditos(self):
         if self.date_joined.month > date.today().month:
@@ -121,10 +118,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return date(year=(date.today().year+1),month=self.date_joined.month,day=self.date_joined.day)
 
     def invertir_tipo(self):
-    	if self.premium:
-    		self.premium = False
-    	else:
-    		self.premium = True
+    	self.premium = not self.premium
 
     def validar_premium(self):
     	return True
