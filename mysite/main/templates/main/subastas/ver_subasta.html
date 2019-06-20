@@ -6,6 +6,15 @@
   <p>
     <a href="javascript:history.go(-1)">Volver</a>
   </p>
+  <p>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+  </p>
   <div>
     <h3>Subasta por la semana del {{subasta.dia_inicial}} al {{subasta.dia_final}}
     en {{subasta.residencia}}</h3>
