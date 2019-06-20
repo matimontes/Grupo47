@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Residencia, Subasta, HotSale, Imagen, SemanaReservada, Puja, Suscripcion
+from .models import Residencia, Subasta, HotSale, Imagen, SemanaReservada, Puja, Suscripcion, SemanaEnEspera
 from django import forms
 from django.db.models.query import EmptyQuerySet
 from datetime import timedelta
@@ -222,6 +222,18 @@ class SemanaReservadaAdmin(admin.ModelAdmin):
 	def has_change_permission(self, request, obj=None):
 		return False
 
+class SemanaEnEperaAdmin(admin.ModelAdmin):
+	list_filter = ('residencia', MesInicioListFilter,)
+	search_fields = ('residencia',)
+	list_display = ('residencia','dia_inicial','dia_final','precio_reserva')
+	list_per_page = 30
+
+	def has_add_permission(self, request):
+		return False
+
+	def has_change_permission(self, request, obj=None):
+		return False
+
 class ResidenciaAdmin(admin.ModelAdmin):
 	"""
 		Clase ModelAdmin de Residencia.
@@ -349,4 +361,5 @@ admin.site.register(Residencia,ResidenciaAdmin)
 admin.site.register(Subasta,SubastaAdmin)
 admin.site.register(HotSale,HotSaleAdmin)
 admin.site.register(Puja)
+admin.site.register(SemanaEnEspera,SemanaEnEperaAdmin)
 admin.site.register(Suscripcion, SuscripcionAdmin)

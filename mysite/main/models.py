@@ -231,11 +231,6 @@ class Subasta(Semana):
 			#AGREGAR FUNCIONALIDAD
 			pass
 
-	def abandonar_subasta(self,usuario):
-		self.anular_inscripcion_usuario(usuario)
-		for puja in self.pujas.filter(usuario=usuario):
-			puja.delete()
-
 	def inscribir_usuario(self,usuario):
 		self.usuarios_inscriptos.add(usuario)
 
@@ -254,6 +249,13 @@ class Subasta(Semana):
 	def convertir_en_semana_en_espera(self):
 		SemanaEnEspera.objects.create(dia_inicial=self.dia_inicial,precio_reserva=self.precio_reserva,residencia=self.residencia)
 		self.delete()
+
+	def abandonar_subasta(self,usuario):
+		self.anular_inscripcion_usuario(usuario)
+		for puja in self.pujas.filter(usuario=usuario):
+			puja.delete()
+		if self.cantidad_de_inscriptos() == 0:
+			self.convertir_en_semana_en_espera()
 
 	def comenzar(self):
 		self.iniciada = True

@@ -168,22 +168,27 @@ def residencia(request, id_residencia):
                            "usuario": user})
 
 def subasta(request, id_subasta):
-    sub = Subasta.objects.get(id=id_subasta)
-    if request.method == "POST":
-        form = MontoPujaForm(request.POST,user=request.user,subasta=sub)
-        if form.is_valid():
-            monto = form.cleaned_data.get("monto")
-            sub.pujar(request.user, monto)
-            sub.save()
-    else:
-        form = MontoPujaForm(user=request.user,subasta=sub)
-    import datetime
-    inscripto = sub.esta_inscripto(request.user)
-    return render(request=request,
-                  template_name="main/subastas/ver_subasta.html",
-                  context={"subasta": sub,
-                           "inscripto": inscripto,
-                           "form": form})
+    try:
+        sub = Subasta.objects.get(id=id_subasta)
+        if request.method == "POST":
+            form = MontoPujaForm(request.POST,user=request.user,subasta=sub)
+            if form.is_valid():
+                monto = form.cleaned_data.get("monto")
+                sub.pujar(request.user, monto)
+                sub.save()
+        else:
+            form = MontoPujaForm(user=request.user,subasta=sub)
+        import datetime
+        inscripto = sub.esta_inscripto(request.user)
+        return render(request=request,
+                      template_name="main/subastas/ver_subasta.html",
+                      context={"subasta": sub,
+                               "inscripto": inscripto,
+                               "form": form})
+    except:
+        return render(request=request,
+                      template_name="main/subastas/no_existe.html",
+                      context={})
 
 def inscribirse(request, id_residencia, id_subasta):
     if not request.user.is_staff:
