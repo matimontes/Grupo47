@@ -1,7 +1,36 @@
 {% extends "main/headers/header.html" %}
-
+{% load staticfiles %}
 {% block content %}
-
-  Bienvenido a Home Switch Home!
-
+<body>
+  <p>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+  </p>
+  <h5 class="centrar">Recomendaciones</h5>
+    <div class="row">
+      {% for r in residencias %}
+        <div class="col s12 m7 l4">
+          <div class="card medium z-depth-3">
+            <div class="card-image">
+              <img src="{% static r.primerFoto %}" height="200"/>
+              <span class="card-title style="text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">{{r.nombre}}</span>
+            </div>
+            <div class="card-content" style="overflow: auto">
+              <p>{{r.descripcion}}</p><br>
+            </div>
+            <div class="card-action">
+              <a href="/login">Conocer</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="centrar"><a href="/login" class="waves-effect waves-light btn-large">
+      <i class="material-icons left">call_made</i>Explorar residencias</a></div>
+  </body>
 {% endblock %}

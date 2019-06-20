@@ -16,7 +16,8 @@ def homepage(request):
                       context={"residencias": Residencia.objects.all()[:3]})
     else: #si no hay una sesion iniciada
         return render(request=request,
-                      template_name="main/homes/home.html")
+                      template_name="main/homes/home.html",
+                      context={"residencias": Residencia.objects.all()[:3]})
 
 
 def register(request):
