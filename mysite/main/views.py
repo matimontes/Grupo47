@@ -34,9 +34,6 @@ def register(request):
             messages.success(request, 'Cuenta registrada.')
             auth_login(request, user) #iniciamos su sesion automaticamente
             return redirect("main:homepage") #los mandamos a home
-        else: #si se completo mal el form
-            for msg in form.error_messages:
-                print(form.error_messages[msg]) #muestro los errores
     #es una request normal
     else:
         user_form = RegistrationForm()
