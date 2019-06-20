@@ -36,12 +36,14 @@
           </tr>
           <tr>
             <td>{{subasta.precio_inicial}}</td>
-            <td>{{subasta.puja_actual.dinero_pujado}}</td>
+            <td>
+              {{subasta.puja_actual.dinero_pujado}}
+            </td>
             {% if inscripto %}
               <form method="POST">
                 {% csrf_token %}
                 <td>{{form}}</td>
-                <td><a href="/abandonar/{{subasta.residencia.id}}/{{subasta.id}}" class="waves-effect waves-light btn-small">Abandonar<a></td>
+                <td><a href="/abandonar/{{subasta.residencia.id}}/{{subasta.id}}" class="waves-effect waves-light btn-small">Abandonar</a></td>
                 {% if subasta.puja_actual.usuario == request.user %}
                   <td><button type="submit" class="waves-effect waves-light btn-small disabled">Pujar</button></td>
                 {% else %}
@@ -50,6 +52,22 @@
               </form>
             {% endif %}
           </tr>
+        </table>
+        {% if request.user.is_staff %}
+          <h5>Pujas:</h5>
+          <table style="width:50%">
+            <tr>
+              <td>Monto</td>
+              <td>Usuario</td>
+            </tr>
+            {% for puja in subasta.pujas.all %}
+              <tr>
+                <td>{{puja.dinero_pujado}}</td>
+                <td>{{puja.usuario}}</td>
+              </tr>
+            {% endfor %}
+          </table>
+        {% endif %}
       </div>
     {% endif %}
   </div>

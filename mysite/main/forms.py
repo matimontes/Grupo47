@@ -57,12 +57,6 @@ class InvertirTipoForm(forms.Form):
         self.user = user
         super().__init__(*args, **kwargs)
 
-    def clean(self):
-        data = self.cleaned_data
-        if (not self.user.premium) and (not self.user.validar_premium()):
-            raise forms.ValidationError('Tu tarjeta no es válida para ser premium.')
-        return data
-
 class EditarPerfilForm(forms.ModelForm):
 
 	class Meta:
