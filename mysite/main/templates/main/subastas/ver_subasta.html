@@ -4,7 +4,7 @@
 
 <body>
   <p>
-    <a href="javascript:history.go(-1)">Volver</a>
+    <a href="/ver_residencia/{{subasta.residencia.id}}">Volver</a>
   </p>
   <p>
     {% if messages %}
@@ -24,7 +24,7 @@
         <p><i class="material-icons">check</i>Estás inscripto</p>
       {% else %}
         <p>Recuerda inscribirte para poder participar.</p>
-        <a href="/inscribirse/{{residencia.id}}/{{s.id}}" class="waves-effect waves-light btn-small">Inscribirse</a>
+        <a href="/inscribirse/{{subasta.residencia.id}}/{{subasta.id}}" class="waves-effect waves-light btn-small">Inscribirse</a>
         {% if user.premium %}
           {% if user.tiene_creditos %}
           <button data-target="modal1" class="waves-effect waves-light btn-small modal-trigger">Reservar</button>
@@ -36,8 +36,9 @@
               <p>Créditos disponibles: {{user.creditos}}</p>
             </div>
             <div class="modal-footer">
-              <a href="#!" class="modal-close waves-effect waves-light btn-small">Cancelar</a>
-              <a href="/reserva/{{subasta.id}}" class="modal-close waves-effect waves-light btn-small">Sí, reservar</a>
+              <a class="modal-close waves-effect waves-light btn-small">Cancelar</a>
+              <a href="/reserva/{{subasta.id}}" class="modal-close waves-effect waves-light btn-small">
+                Sí, reservar</a>
             </div>
           </div>
           {% else %}

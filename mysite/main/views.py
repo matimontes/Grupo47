@@ -188,7 +188,7 @@ def subasta(request, id_subasta):
                            "form": form})
 
 def inscribirse(request, id_residencia, id_subasta):
-    if not request.user.is_staff():
+    if not request.user.is_staff:
         sub = Subasta.objects.get(id=id_subasta)
         sub.inscribir_usuario(request.user)
     #Obtengo el url desde donde se llamo a este link
