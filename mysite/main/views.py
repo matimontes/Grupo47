@@ -250,3 +250,9 @@ def eliminar_usuario_exito(request):
     return render(request=request,
                   template_name="main/user/eliminar_usuario_exito.html",
                   context={})
+
+def reserva(request, id_subasta):
+    semana=Subasta.objects.get(id=id_subasta)
+    request.user.reservar_premium(semana)
+    #vuelve a la residencia porque la subasta fue borrada
+    return redirect(f"/ver_residencia/{semana.residencia.id}/")

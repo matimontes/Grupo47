@@ -243,7 +243,6 @@ class ResidenciaAdmin(admin.ModelAdmin):
 	list_per_page = 30
 
 class SuscripcionAdmin(admin.ModelAdmin):
-	verbose_name_plural = "Suscripciones"
 	def has_add_permission(self, request): #Deniega la posibilidad de añadir rows si ya hay una
 		return self.model.objects.count() < 1
 

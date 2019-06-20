@@ -33,5 +33,5 @@ urlpatterns = [
     path("cambiar_contraseña/", views.cambiar_contraseña, name="cambiar_contraseña"),
     path("eliminar_usuario/", views.eliminar_usuario, name="eliminar_usuario"),
     path("eliminar_exito/", views.eliminar_usuario_exito, name="eliminar_usuario_exito"),
-    #path("reserva/<id_subasta>/", views.reserva, name="reserva"),
+    path("reserva/<id_subasta>/", views.reserva, name="reserva"),
 ]
