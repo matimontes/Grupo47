@@ -158,7 +158,6 @@ def residencia(request, id_residencia):
     res = Residencia.objects.get(id=id_residencia)
     subastas = Subasta.objects.filter(residencia=id_residencia)
     user = request.user
-    hoy = datetime.datetime.now().date()
     inscripto = {}
     for s in subastas:
         inscripto[s] = s.esta_inscripto(user)
@@ -166,8 +165,7 @@ def residencia(request, id_residencia):
                   template_name="main/residencias/ver_residencia.html",
                   context={"residencia": res,
                            "inscripto": inscripto,
-                           "usuario": user,
-                           "hoy": hoy})
+                           "usuario": user})
 
 def subasta(request, id_subasta):
     sub = Subasta.objects.get(id=id_subasta)

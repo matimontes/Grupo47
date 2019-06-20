@@ -20,11 +20,11 @@
     en {{subasta.residencia}}</h3>
     {% if not subasta.iniciada %}
       <h5>La subasta comenzará el día {{subasta.inicio_de_subasta}} y terminará {{subasta.fin_de_subasta}}</h5>
-      {% if inscripto %}
-        <p><i class="material-icons">check</i>Estás inscripto</p>
+      {% if not inscripto %}
+      <p>Recuerda inscribirte para poder participar.</p>
+      <a href="/inscribirse/{{subasta.residencia.id}}/{{subasta.id}}" class="waves-effect waves-light btn-small">Inscribirse</a>
       {% else %}
-        <p>Recuerda inscribirte para poder participar.</p>
-        <a href="/inscribirse/{{subasta.residencia.id}}/{{subasta.id}}" class="waves-effect waves-light btn-small">Inscribirse</a>
+        <p><i class="material-icons">check</i>Estás inscripto</p>
         {% if user.premium %}
           {% if user.tiene_creditos %}
           <button data-target="modal1" class="waves-effect waves-light btn-small modal-trigger">Reservar</button>
@@ -68,13 +68,23 @@
               <form method="POST">
                 {% csrf_token %}
                 <td>{{form}}</td>
-                <td><a href="/abandonar/{{subasta.residencia.id}}/{{subasta.id}}" class="waves-effect waves-light btn-small">Abandonar<a></td>
                 {% if subasta.puja_actual.usuario == request.user %}
                   <td><button type="submit" class="waves-effect waves-light btn-small disabled">Pujar</button></td>
                 {% else %}
                   <td><button type="submit" class="waves-effect waves-light btn-small">Pujar</button></td>
                 {% endif %}
               </form>
+              <button data-target="abandonar" class="waves-effect waves-light btn-small modal-trigger">Abandonar</button>
+              <div id="abandonar" class="modal">
+                <div class="modal-content">
+                  <h4>¿Seguro que quiere abandonar la subasta?</h4>
+                  <p>No podrá seguir pujando.</p>
+                </div>
+                <div class="modal-footer">
+                  <a class="modal-close waves-effect waves-light btn-small">Cancelar</a>
+                  <a href="/abandonar/{{subasta.residencia.id}}/{{subasta.id}}" class="modal-close waves-effect waves-light btn-small">
+                    Sí, abandonar</a>
+                </div>
             {% endif %}
           </tr>
         </table>

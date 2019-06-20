@@ -50,7 +50,7 @@
       <td>{{s.inicio_de_subasta}} - {{s.fin_de_subasta}}</td>
       <td>${{s.precio_inicial}}</td>
       <td>${{s.precio_reserva}}</td>
-      {% if s.inicio_de_subasta > hoy %}
+      {% if not s.iniciada %}
         {% if user.premium %}
           {% if user.tiene_creditos %}
           <td>
