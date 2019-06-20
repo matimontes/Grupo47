@@ -8,6 +8,10 @@ from .filters import MesInicioListFilter, InicialDelNombreListFilter, TipoDeUsua
 
 def iniciar_subasta(modeladmin, request, queryset):
 	for subasta in queryset:
+		if subasta.cantidad_de_inscriptos() == 0:
+			modeladmin.message_user(request, "La Subasta: %s no tenía inscriptos, por lo que fue convertida en Semana en espera." % subasta.__str__())
+		else:
+			modeladmin.message_user(request, "La Subasta: %s inició con éxito." % subasta.__str__())
 		subasta.forzar_comienzo()
 iniciar_subasta.short_description = "Iniciar Subastas Seleccionada/s"
 
@@ -79,6 +83,13 @@ class SemanaAdminForm(forms.ModelForm):
 			for semana in residencia_cleaned.hotsales.all():
 				if semana.coincide(dia_inicial_cleaned):
 					self.add_error('dia_inicial',"La semana solicitada coincide con la HotSale de: "+ semana.dia_inicial.isoformat()+ " a "+ semana.dia_final().isoformat())
+					disponible = False
+					break
+		#Verifica que no coincida con ninguna semana de Semana en Espera
+		if disponible:
+			for semana in residencia_cleaned.semanas_en_espera.all():
+				if semana.coincide(dia_inicial_cleaned):
+					self.add_error('dia_inicial',"La semana solicitada coincide con la Semana en Espera de: "+ semana.dia_inicial.isoformat()+ " a "+ semana.dia_final().isoformat())
 					break
 		cleaned_data["dia_inicial"] = dia_inicial_cleaned
 		cleaned_data["residencia"] = residencia_cleaned

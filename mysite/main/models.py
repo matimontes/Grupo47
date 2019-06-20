@@ -14,128 +14,128 @@ from django.contrib.auth.base_user import BaseUserManager
 
 # Create your models here.
 class Tarjeta(models.Model):
-    cc_number = CardNumberField(_('card number'), default="4532661247991100")
-    cc_expiry = CardExpiryField(_('expiration date'), default="11/19")
-    cc_code = SecurityCodeField(_('security code'), default="374")
+	cc_number = CardNumberField(_('card number'), default="4532661247991100")
+	cc_expiry = CardExpiryField(_('expiration date'), default="11/19")
+	cc_code = SecurityCodeField(_('security code'), default="374")
 
-    def numero_censurado(self):
-        return '*'*(len(self.cc_number)-4)+self.cc_number[-4:]
+	def numero_censurado(self):
+		return '*'*(len(self.cc_number)-4)+self.cc_number[-4:]
 
 class UserManager(BaseUserManager):
-    use_in_migrations = True
+	use_in_migrations = True
 
-    def _create_user(self, email, password, **extra_fields):
-        """
-        Creates and saves a User with the given email and password.
-        """
-        if not email:
-            raise ValueError('The given email must be set')
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
+	def _create_user(self, email, password, **extra_fields):
+		"""
+		Creates and saves a User with the given email and password.
+		"""
+		if not email:
+			raise ValueError('The given email must be set')
+		email = self.normalize_email(email)
+		user = self.model(email=email, **extra_fields)
+		user.set_password(password)
+		user.save(using=self._db)
+		return user
 
-    def create_user(self, email=None, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', False)
-        extra_fields.setdefault('is_superuser', False)
-        return self._create_user(email, password, **extra_fields)
+	def create_user(self, email=None, password=None, **extra_fields):
+		extra_fields.setdefault('is_staff', False)
+		extra_fields.setdefault('is_superuser', False)
+		return self._create_user(email, password, **extra_fields)
 
-    def create_superuser(self, email, password, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
+	def create_superuser(self, email, password, **extra_fields):
+		extra_fields.setdefault('is_staff', True)
+		extra_fields.setdefault('is_superuser', True)
 
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError('Superuser must have is_staff=True.')
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError('Superuser must have is_superuser=True.')
+		if extra_fields.get('is_staff') is not True:
+			raise ValueError('Superuser must have is_staff=True.')
+		if extra_fields.get('is_superuser') is not True:
+			raise ValueError('Superuser must have is_superuser=True.')
 
-        extra_fields['date_of_birth']=date(1950,1,1)
+		extra_fields['date_of_birth']=date(1950,1,1)
 
-        return self._create_user(email, password, **extra_fields)
+		return self._create_user(email, password, **extra_fields)
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(_('email address'), unique=True)
-    first_name = models.CharField(_('nombre'), max_length=30, blank=True)
-    last_name = models.CharField(_('apellido'), max_length=30, blank=True)
-    date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
-    is_active = models.BooleanField(_('active'), default=True)
-    date_of_birth = models.DateField(_('fecha de nacimiento'))
-    nacionalidad = models.CharField(max_length=50)
-    creditos = models.IntegerField(default=2)
-    premium = models.BooleanField(_('premium estatus'), default=False)
-    is_staff = models.BooleanField(
-        _('staff status'),
-        default=False,
-        help_text=_('Designates whether the user can log into this admin site.'),
-    )
-    metodo_de_pago = models.OneToOneField(
-        'Tarjeta',
-        on_delete=models.CASCADE,
-        related_name='user'
-        )
+	email = models.EmailField(_('email address'), unique=True)
+	first_name = models.CharField(_('nombre'), max_length=30, blank=True)
+	last_name = models.CharField(_('apellido'), max_length=30, blank=True)
+	date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
+	is_active = models.BooleanField(_('active'), default=True)
+	date_of_birth = models.DateField(_('fecha de nacimiento'))
+	nacionalidad = models.CharField(max_length=50)
+	creditos = models.IntegerField(default=2)
+	premium = models.BooleanField(_('premium estatus'), default=False)
+	is_staff = models.BooleanField(
+		_('staff status'),
+		default=False,
+		help_text=_('Designates whether the user can log into this admin site.'),
+	)
+	metodo_de_pago = models.OneToOneField(
+		'Tarjeta',
+		on_delete=models.CASCADE,
+		related_name='user'
+		)
 
-    objects = UserManager()
+	objects = UserManager()
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+	USERNAME_FIELD = 'email'
+	REQUIRED_FIELDS = []
 
-    class Meta:
-        verbose_name = _('cliente')
-        verbose_name_plural = _('clientes')
+	class Meta:
+		verbose_name = _('cliente')
+		verbose_name_plural = _('clientes')
 
-    def get_full_name(self):
-        '''
-        Returns the first_name plus the last_name, with a space in between.
-        '''
-        full_name = '%s %s' % (self.first_name, self.last_name)
-        return full_name.strip()
+	def get_full_name(self):
+		'''
+		Returns the first_name plus the last_name, with a space in between.
+		'''
+		full_name = '%s %s' % (self.first_name, self.last_name)
+		return full_name.strip()
 
-    def get_short_name(self):
-        '''
-        Returns the short name for the user.
-        '''
-        return self.first_name
+	def get_short_name(self):
+		'''
+		Returns the short name for the user.
+		'''
+		return self.first_name
 
-    def user_type(self):
-    	return 'premium' if self.premium else 'basico'
+	def user_type(self):
+		return 'premium' if self.premium else 'basico'
 
-    def email_user(self, subject, message, from_email=None, **kwargs):
-        '''
-        Sends an email to this User.
-        '''
-        send_mail(subject, message, from_email, [self.email], **kwargs)
+	def email_user(self, subject, message, from_email=None, **kwargs):
+		'''
+		Sends an email to this User.
+		'''
+		send_mail(subject, message, from_email, [self.email], **kwargs)
 
-    def notificar_comienzo_subasta(self,subasta):
-        #AGREGAR FUNCIONALIDAD PARA NOTIFICAR POR MAIL QUE COMENZÓ LA SUBASTA
-        pass
+	def notificar_comienzo_subasta(self,subasta):
+		#AGREGAR FUNCIONALIDAD PARA NOTIFICAR POR MAIL QUE COMENZÓ LA SUBASTA
+		pass
 
-    def tiene_creditos(self):
-        return self.creditos > 0
+	def tiene_creditos(self):
+		return self.creditos > 0
 
 
-    def vencimiento_de_creditos(self):
-        if self.date_joined.month > date.today().month:
-            return date(year=date.today().year,month=self.date_joined.month,day=self.date_joined.day)
-        elif (self.date_joined.month == date.today().month) and (self.date_joined.day > date.today().day):
-            return date(year=date.today().year,month=self.date_joined.month,day=self.date_joined.day)
-        return date(year=(date.today().year+1),month=self.date_joined.month,day=self.date_joined.day)
+	def vencimiento_de_creditos(self):
+		if self.date_joined.month > date.today().month:
+			return date(year=date.today().year,month=self.date_joined.month,day=self.date_joined.day)
+		elif (self.date_joined.month == date.today().month) and (self.date_joined.day > date.today().day):
+			return date(year=date.today().year,month=self.date_joined.month,day=self.date_joined.day)
+		return date(year=(date.today().year+1),month=self.date_joined.month,day=self.date_joined.day)
 
-    def invertir_tipo(self):
-    	self.premium = not self.premium
+	def quitar_credito(self):
+		self.creditos -= 1
 
-    def validar_premium(self):
-    	return True
+	def invertir_tipo(self):
+		self.premium = not self.premium
 
-    def eliminar_usuario(self):
-    	#Eliminar pujas
-    	for subasta in self.inscripciones.all():
-    		subasta.abandonar_subasta(self)
-    	#Pasar reservas a pendientes
-    	# for reservas in self.semanas_reservadas.all():
-    	# 	pass
-    	#Eliminar usuario de base de datos
-    	self.delete()
+	def eliminar_usuario(self):
+		#Eliminar pujas
+		for subasta in self.inscripciones.all():
+			subasta.abandonar_subasta(self)
+		#Pasar reservas a pendientes
+		# for reservas in self.semanas_reservadas.all():
+		# 	pass
+		#Eliminar usuario de base de datos
+		self.delete()
 
     def reservar_premium(self, semana):
         if self.premium and self.tiene_creditos():
@@ -150,9 +150,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 from django.conf import settings
 
 class Course(models.Model):
-    slug = models.SlugField(max_length=100)
-    name = models.CharField(max_length=100)
-    tutor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	slug = models.SlugField(max_length=100)
+	name = models.CharField(max_length=100)
+	tutor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 class Residencia(models.Model):
 	nombre = models.CharField(max_length=50)
@@ -214,6 +214,9 @@ class Subasta(Semana):
 	def fin_de_subasta(self):
 		return (self.inicio_de_subasta + timedelta(days=3))
 
+	def cantidad_de_inscriptos(self):
+		return self.usuarios_inscriptos.count()
+
 	def puja_actual(self):
 		return self.pujas.first()
 
@@ -245,6 +248,10 @@ class Subasta(Semana):
 	def usuario_default(self):
 		return User.objects.get(email='puja_default@hsh.com')
 
+	def convertir_en_semana_en_espera(self):
+		SemanaEnEspera.objects.create(dia_inicial=self.dia_inicial,precio_reserva=self.precio_reserva,residencia=self.residencia)
+		self.delete()
+
 	def comenzar(self):
 		self.iniciada = True
 		Puja.objects.create(usuario=self.usuario_default(),dinero_pujado=self.precio_inicial,subasta=self)
@@ -253,13 +260,19 @@ class Subasta(Semana):
 
 	def finalizar(self):
 		puja = self.puja_actual()
-		self.reservar(puja.usuario,puja.dinero_pujado)
+		if puja.usuario == self.usuario_default():
+			self.convertir_en_semana_en_espera()
+		else:
+			puja.usuario.quitar_credito()
+			self.reservar(puja.usuario,puja.dinero_pujado)
 
 	def forzar_comienzo(self):
-		self.inicio_de_subasta = date.today()
-		self.save(update_fields=['inicio_de_subasta'])
-		self.comenzar()
-
+		if self.cantidad_de_inscriptos() == 0:
+			self.convertir_en_semana_en_espera()
+		else:
+			self.inicio_de_subasta = date.today()
+			self.save(update_fields=['inicio_de_subasta'])
+			self.comenzar()
 
 	def forzar_fin(self):
 		if self.iniciada:
@@ -279,6 +292,13 @@ class SemanaReservada(Semana):
 	usuario = models.ForeignKey('User',on_delete=models.CASCADE,related_name='semanas_reservadas')
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='semanas_reservadas')
 
+class SemanaEnEspera(Semana):
+	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='semanas_en_espera')
+
+	def convertir_en_hotsale(self):
+		HotSale.objects.create(dia_inicial=self.dia_inicial,precio_reserva=self.precio_reserva,residencia=self.residencia)
+		self.delete()
+
 class Puja(models.Model):
 	usuario = models.ForeignKey('User',on_delete=models.CASCADE,related_name='pujas')
 	dinero_pujado = models.DecimalField(max_digits=11,decimal_places=2)
@@ -292,11 +312,11 @@ class Imagen(models.Model):
 	imagen = models.ImageField(upload_to=('staticfiles/fotos'))
 
 class Suscripcion(models.Model):
-    premium = models.DecimalField(max_digits=11, decimal_places=2, unique=True, default=100)
-    basico = models.DecimalField(max_digits=11, decimal_places=2, unique=True, default=50)
+	premium = models.DecimalField(max_digits=11, decimal_places=2, unique=True, default=100)
+	basico = models.DecimalField(max_digits=11, decimal_places=2, unique=True, default=50)
 
-    def __str__(self):
-        return "Suscripciones"
+	def __str__(self):
+		return "Suscripciones"
 
     class Meta:
         verbose_name_plural = "Precios de Suscripciones"

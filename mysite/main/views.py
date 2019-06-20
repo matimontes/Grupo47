@@ -30,6 +30,7 @@ def register(request):
             tarjeta = cc_form.save()
             user.metodo_de_pago = tarjeta
             user.save()
+            messages.success(request, 'Cuenta registrada.')
             auth_login(request, user) #iniciamos su sesion automaticamente
             return redirect("main:homepage") #los mandamos a home
         else: #si se completo mal el form
@@ -55,7 +56,7 @@ def login(request):
                 auth_login(request, user) #inicio la sesion
                 return redirect("main:homepage") #lo mando a homepage
         else: #datos invalidos
-            messages.error(request, "Nombre de usuario o contraseña inválidos.")
+            messages.error(request, "Mail o contraseña inválidos.")
 
     #la request es normal
     else:
@@ -187,8 +188,9 @@ def subasta(request, id_subasta):
                            "form": form})
 
 def inscribirse(request, id_residencia, id_subasta):
-    sub = Subasta.objects.get(id=id_subasta)
-    sub.inscribir_usuario(request.user)
+    if not request.user.is_staff():
+        sub = Subasta.objects.get(id=id_subasta)
+        sub.inscribir_usuario(request.user)
     #Obtengo el url desde donde se llamo a este link
     referer = request.META.get("HTTP_REFERER")
     return redirect(referer)
@@ -196,6 +198,7 @@ def inscribirse(request, id_residencia, id_subasta):
 def abandonar(request, id_residencia, id_subasta):
     sub = Residencia.objects.get(id=id_residencia).subastas.get(id=id_subasta)
     sub.abandonar_subasta(request.user)
+    messages.success(request, 'Has abandonado la subasta con éxito.')
     #Obtengo el url desde donde se llamo a este link
     referer = request.META.get("HTTP_REFERER")
     return redirect(referer)
