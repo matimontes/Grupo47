@@ -266,6 +266,9 @@ class ResidenciaAdmin(admin.ModelAdmin):
 	list_per_page = 30
 
 class SuscripcionAdmin(admin.ModelAdmin):
+	def has_delete_permission(self, *args):
+		return False
+
 	def has_add_permission(self, request): #Deniega la posibilidad de añadir rows si ya hay una
 		return self.model.objects.count() < 1
 
