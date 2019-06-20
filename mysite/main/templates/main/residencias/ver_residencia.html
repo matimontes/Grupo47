@@ -64,13 +64,15 @@
         {% endif %}
       {% endif %}
       {% if user.premium %}
+        {% if user.tiene_creditos %}
         <td><a href="/reserva/{{s.id}}" class="waves-effect waves-light btn-small">Reservar<a></td>
+        {% else %}
+        <td><a href="#" class="waves-effect waves-light disabled btn-small">Reservar<a></td>
+        {% endif %}
       {% else %}
         <td><a href="#" class="waves-effect waves-light disabled btn-small">Reservar<a></td>
       {% endif %}
-      {% if s.iniciada %}
-        <td><a href="/subasta/{{s.id}}" class="waves-effect waves-light btn-small">Ver<a></td>
-      {% endif %}
+      <td><a href="/subasta/{{s.id}}" class="waves-effect waves-light btn-small">Ver<a></td>
     </tr>
     {% endfor %}
   {% else %}

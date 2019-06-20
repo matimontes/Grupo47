@@ -76,6 +76,22 @@
               </form>
             {% endif %}
           </tr>
+        </table>
+      {% if request.user.is_staff %}
+        <h5>Pujas:</h5>
+        <table style="width:50%">
+          <tr>
+            <td>Monto</td>
+            <td>Usuario</td>
+          </tr>
+          {% for puja in subasta.pujas.all %}
+            <tr>
+              <td>{{puja.dinero_pujado}}</td>
+              <td>{{puja.usuario}}</td>
+            </tr>
+          {% endfor %}
+        </table>
+      {% endif %}
       </div>
     {% endif %}
   </div>
