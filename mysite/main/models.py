@@ -9,6 +9,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
 from creditcards.models import CardNumberField, CardExpiryField, SecurityCodeField
+from creditcards import types
 
 from django.contrib.auth.base_user import BaseUserManager
 
@@ -20,6 +21,18 @@ class Tarjeta(models.Model):
 
 	def numero_censurado(self):
 		return '*'*(len(self.cc_number)-4)+self.cc_number[-4:]
+
+	def __str__(self):
+		return self.get_type()+' '+self.numero_censurado()
+
+	def get_type(self):
+		tipo = types.get_type(self.cc_number)
+		if tipo == types.CC_TYPE_VISA:
+			return "VISA"
+		elif tipo == types.CC_TYPE_AMEX:
+			return "AMEX"
+		else:
+			return "GENERIC"
 
 class UserManager(BaseUserManager):
 	use_in_migrations = True
