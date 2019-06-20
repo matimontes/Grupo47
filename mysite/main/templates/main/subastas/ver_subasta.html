@@ -20,7 +20,33 @@
     en {{subasta.residencia}}</h3>
     {% if not subasta.iniciada %}
       <h5>La subasta comenzará el día {{subasta.inicio_de_subasta}} y terminará {{subasta.fin_de_subasta}}</h5>
-      <p>Recuerda inscribirte para poder participar.</p>
+      {% if inscripto %}
+        <p><i class="material-icons">check</i>Estás inscripto</p>
+      {% else %}
+        <p>Recuerda inscribirte para poder participar.</p>
+        <a href="/inscribirse/{{residencia.id}}/{{s.id}}" class="waves-effect waves-light btn-small">Inscribirse</a>
+        {% if user.premium %}
+          {% if user.tiene_creditos %}
+          <button data-target="modal1" class="waves-effect waves-light btn-small modal-trigger">Reservar</button>
+          <div id="modal1" class="modal">
+            <div class="modal-content">
+              <h4>¿Seguro que quiere reservar la semana en {{subasta.residencia}}?</h4>
+              <p>Semana de reserva: {{subasta.dia_inicial}} - {{subasta.dia_final}}</p>
+              <p>Precio de reserva: ${{subasta.precio_reserva}}</p>
+              <p>Créditos disponibles: {{user.creditos}}</p>
+            </div>
+            <div class="modal-footer">
+              <a href="#!" class="modal-close waves-effect waves-light btn-small">Cancelar</a>
+              <a href="/reserva/{{subasta.id}}" class="modal-close waves-effect waves-light btn-small">Sí, reservar</a>
+            </div>
+          </div>
+          {% else %}
+          <td><a href="#" class="waves-effect waves-light disabled btn-small">Reservar<a></td>
+          {% endif %}
+        {% else %}
+          <td><a href="#" class="waves-effect waves-light disabled btn-small">Reservar<a></td>
+        {% endif %}
+      {% endif %}
     {% else %}
       {% if inscripto %}
         <h5>La subasta ya comenzó, tenes tiempo hasta el {{subasta.fin_de_subasta}} para pujar</h5>
@@ -36,14 +62,12 @@
           </tr>
           <tr>
             <td>{{subasta.precio_inicial}}</td>
-            <td>
-              {{subasta.puja_actual.dinero_pujado}}
-            </td>
+            <td>{{subasta.puja_actual.dinero_pujado}}</td>
             {% if inscripto %}
               <form method="POST">
                 {% csrf_token %}
                 <td>{{form}}</td>
-                <td><a href="/abandonar/{{subasta.residencia.id}}/{{subasta.id}}" class="waves-effect waves-light btn-small">Abandonar</a></td>
+                <td><a href="/abandonar/{{subasta.residencia.id}}/{{subasta.id}}" class="waves-effect waves-light btn-small">Abandonar<a></td>
                 {% if subasta.puja_actual.usuario == request.user %}
                   <td><button type="submit" class="waves-effect waves-light btn-small disabled">Pujar</button></td>
                 {% else %}
@@ -52,24 +76,9 @@
               </form>
             {% endif %}
           </tr>
-        </table>
-        {% if request.user.is_staff %}
-          <h5>Pujas:</h5>
-          <table style="width:50%">
-            <tr>
-              <td>Monto</td>
-              <td>Usuario</td>
-            </tr>
-            {% for puja in subasta.pujas.all %}
-              <tr>
-                <td>{{puja.dinero_pujado}}</td>
-                <td>{{puja.usuario}}</td>
-              </tr>
-            {% endfor %}
-          </table>
-        {% endif %}
       </div>
     {% endif %}
   </div>
+  <script src="{% static 'scripts/pop_up.js' %}"></script>
 </body>
 {% endblock %}
