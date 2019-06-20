@@ -132,8 +132,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 		for subasta in self.inscripciones.all():
 			subasta.abandonar_subasta(self)
 		#Pasar reservas a pendientes
-		# for reservas in self.semanas_reservadas.all():
-		# 	pass
+		for reservas in self.semanas_reservadas.all():
+		 	reservas.convertir_en_semana_en_espera()
 		#Eliminar usuario de base de datos
 		self.delete()
 
@@ -246,7 +246,10 @@ class Subasta(Semana):
 		return self.usuarios_inscriptos.filter(id=usuario.id).exists()
 
 	def usuario_default(self):
-		return User.objects.get(email='puja_default@hsh.com')
+		try:
+			return User.objects.get(email='puja_default@hsh.com')
+		except ObjectDoesNotExist:
+			User.objects.create(email='puja_default@hsh.com',password='asdqwezxcfghrtyvbnjkluiom,.',date_of_birth=date(1950,1,1),first_name='Puja',last_name='Default',creditos=1000000)
 
 	def convertir_en_semana_en_espera(self):
 		SemanaEnEspera.objects.create(dia_inicial=self.dia_inicial,precio_reserva=self.precio_reserva,residencia=self.residencia)
@@ -291,6 +294,10 @@ class HotSale(Semana):
 class SemanaReservada(Semana):
 	usuario = models.ForeignKey('User',on_delete=models.CASCADE,related_name='semanas_reservadas')
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='semanas_reservadas')
+
+	def convertir_en_semana_en_espera(self):
+		SemanaEnEspera.objects.create(dia_inicial=self.dia_inicial,precio_reserva=self.precio_reserva,residencia=self.residencia)
+		self.delete()
 
 class SemanaEnEspera(Semana):
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='semanas_en_espera')

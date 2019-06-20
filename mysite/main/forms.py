@@ -17,7 +17,7 @@ class MontoPujaForm(forms.Form):
         cleaned_monto = data['monto']
         if (self.subasta.puja_actual().usuario != self.user):
             if (cleaned_monto < self.subasta.puja_actual().dinero_pujado + 50):
-                self.add_error('monto','El monto a pujar debe superar al actual por al menos $50.')
+                self.add_error('monto','El monto a pujar debe superar al actual por al menos $1.')
             if not(self.user.tiene_creditos()):
                 self.add_error('monto','No tienes créditos suficientes para realizar una puja.')
         else:
