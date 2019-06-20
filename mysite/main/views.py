@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, Pass
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate, get_user_model
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import Residencia, Subasta
+from .models import Residencia, Subasta, Suscripcion
 from main.forms import RegistrationForm, MontoPujaForm, BuscarResidenciaForm, InvertirTipoForm, EditarPerfilForm, PaymentForm
 from django.forms import ValidationError
 import datetime
@@ -202,6 +202,7 @@ def abandonar(request, id_residencia, id_subasta):
     return redirect(referer)
 
 def perfil(request):
+    suscripciones = Suscripcion.objects.all()
     if request.method == "POST":
         user_type_form = InvertirTipoForm(request.POST,user=request.user)
         if user_type_form.is_valid():
@@ -212,7 +213,8 @@ def perfil(request):
         user_type_form = InvertirTipoForm(user=request.user)
     return render(request=request,
                   template_name="main/user/profile.html",
-                  context={"user_type_form": user_type_form})
+                  context={"user_type_form": user_type_form,
+                           "suscripciones": suscripciones[0]})
 
 def editar_perfil(request):
     if request.method == "POST":

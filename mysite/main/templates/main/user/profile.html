@@ -4,7 +4,7 @@
 
 <body>
 	<p>
-	<a href="javascript:history.go(-1)">Volver</a>
+	<a href="/">Volver</a>
 	</p>
 	<h1 class="centrar">Perfil</h1>
 	<h3>
@@ -53,12 +53,35 @@
 			<td>{{request.user.user_type}}</td>
 		</tr>
 		<tr>
-			<form method="POST">{% csrf_token %}
+			<form method="POST" id="cambio">{% csrf_token %}
 				<td>
 					{% if request.user.premium %}
-						<button type="submit" class="waves-effect waves-light btn-small">Volver a ser usuario básico</button>
+						<button data-target="basico" class="waves-effect waves-light btn-small modal-trigger">Volver a ser usuario básico</button>
+						<div id="basico" class="modal">
+							<div class="modal-content">
+								<h4>¿Seguro que quiere dejar de ser usuario Premium?</h4>
+								<p>Perderá todos los beneficios.</p>
+							</div>
+							<div class="modal-footer">
+								<a class="modal-close waves-effect waves-light btn-small">Cancelar</a>
+								<a onclick="document.getElementById('cambio').submit();" class="modal-close waves-effect waves-light btn-small">
+									Sí, seguro</a>
+							</div>
+						</div>
 					{% else %}
-						<button type="submit" class="waves-effect waves-light btn-small">¡Quiero ser premium!</button>
+						<button data-target="premium" class="waves-effect waves-light btn-small modal-trigger">¡Quiero ser Premium!</button>
+						<div id="premium" class="modal">
+							<div class="modal-content">
+								<h4>¿Seguro que quiere ser usuario Premium?</h4>
+								<p>Obtendrá todos los beneficios del usuario Premium.</p>
+								<p>Costo mensual: ${{suscripciones.premium}}</p>
+							</div>
+							<div class="modal-footer">
+								<a class="modal-close waves-effect waves-light btn-small">Cancelar</a>
+								<a onclick="document.getElementById('cambio').submit();" class="modal-close waves-effect waves-light btn-small">
+									Sí, seguro</a>
+							</div>
+						</div>
 					{% endif %}
 				</td>
 				<td>
@@ -78,9 +101,19 @@
 		</tr>
 	</table>
 	<p></p>
-	<a href="/eliminar_usuario/" class="waves-effect waves-light btn-small">Eliminar cuenta</a>
+	<button data-target="eliminar" class="waves-effect waves-light btn-small modal-trigger">Eliminar Cuenta</button>
+	<div id="eliminar" class="modal">
+		<div class="modal-content">
+			<h4>¿Seguro que quiere eliminar su cuenta de Home Switch Home?</h4>
+			<p>Perderá todos sus datos, pujas y reservas realizadas.</p>
+		</div>
+		<div class="modal-footer">
+			<a class="modal-close waves-effect waves-light btn-small">Cancelar</a>
+			<a href="/eliminar_usuario" class="modal-close waves-effect waves-light btn-small">
+				Sí, eliminar</a>
+		</div>
 	<p></p>
-
+	<script src="{% static 'scripts/pop_up.js' %}"></script>
 </body>
 
 {% endblock %}
