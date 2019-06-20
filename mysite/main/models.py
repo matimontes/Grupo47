@@ -137,13 +137,13 @@ class User(AbstractBaseUser, PermissionsMixin):
 		#Eliminar usuario de base de datos
 		self.delete()
 
-    def reservar_premium(self, semana):
-        if self.premium and self.tiene_creditos():
-            semana.reservar(self, semana.precio_reserva)
-            self.creditos -= 1
-            self.save()
-            return True
-        return False
+	def reservar_premium(self, semana):
+		if self.premium and self.tiene_creditos():
+			semana.reservar(self, semana.precio_reserva)
+			self.creditos -= 1
+			self.save()
+			return True
+		return False
 
 
 
@@ -318,5 +318,5 @@ class Suscripcion(models.Model):
 	def __str__(self):
 		return "Suscripciones"
 
-    class Meta:
-        verbose_name_plural = "Precios de Suscripciones"
+	class Meta:
+		verbose_name_plural = "Precios de Suscripciones"
