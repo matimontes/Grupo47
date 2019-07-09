@@ -334,3 +334,8 @@ def reserva(request, id_subasta):
     request.user.reservar_premium(semana)
     #vuelve a la residencia porque la subasta fue borrada
     return redirect(f"/ver_residencia/{semana.residencia.id}/")
+
+def reserva_hotsale(request, id_hotsale):
+    semana=HotSale.objects.get(id=id_hotsale)
+    semana.reservar(request.user, semana.precio_reserva)
+    return redirect(f"/ver_residencia/{semana.residencia.id}/hotsales/")

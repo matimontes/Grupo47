@@ -39,25 +39,22 @@
       <th>Semana</th>
       <th>Precio</th>
       <th></th>
-      <th></th>
-      <th></th>
     </tr>
     {% for h in hotsales %}
     <tr>
       <td>De {{h.dia_inicial}} a {{h.dia_final}}</td>
       <td>${{h.precio_reserva}}</td>
       <td>
-        <button data-target="{{s.id}}" class="waves-effect waves-light btn-small modal-trigger">Reservar</button>
-        <div id="{{s.id}}" class="modal">
+        <button data-target="{{h.id}}" class="waves-effect waves-light btn-small modal-trigger">Reservar</button>
+        <div id="{{h.id}}" class="modal">
           <div class="modal-content">
-            <h4>¿Seguro que quiere reservar la semana en {{s.residencia}}?</h4>
-            <p>Semana de reserva: {{s.dia_inicial}} - {{s.dia_final}}</p>
-            <p>Precio de reserva: ${{s.precio_reserva}}</p>
-            <p>Créditos disponibles: {{user.creditos}}</p>
+            <h4>¿Seguro que quiere reservar la semana en {{h.residencia}}?</h4>
+            <p>Semana de reserva: {{h.dia_inicial}} - {{h.dia_final}}</p>
+            <p>Precio de reserva: ${{h.precio_reserva}}</p>
           </div>
           <div class="modal-footer">
             <a class="modal-close waves-effect waves-light btn-small">Cancelar</a>
-            <a href="/reserva/{{s.id}}" class="modal-close waves-effect waves-light btn-small">
+            <a href="/reserva_hotsale/{{h.id}}" class="modal-close waves-effect waves-light btn-small">
               Sí, reservar</a>
           </div>
         </div>
