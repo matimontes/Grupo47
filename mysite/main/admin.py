@@ -245,6 +245,7 @@ class SemanaEnEperaAdmin(ModelAdminObjectActionsMixin, admin.ModelAdmin):
 			'slug': 'volver_hotsale',
 			'verbose_name': 'Volver HotSale',
 			'verbose_name_past': 'volvió HotSale',
+			'verbose_name_title': 'Opción 1',
 			'form_method': 'GET',
 			'function': 'volver_hotsale',
 			'list_only': True,
@@ -257,6 +258,9 @@ class SemanaEnEperaAdmin(ModelAdminObjectActionsMixin, admin.ModelAdmin):
 			'function': 'eliminar_semana',
 		},
 	]
+	def display_object_actions_list(self, obj=None):
+		return self.display_object_actions(obj, list_only=True)
+	display_object_actions_list.short_description = "Acciones"
 
 	def response_object_action(self, request, obj, form, action, exception=None):
 		opts = self.model._meta
