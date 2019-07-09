@@ -36,5 +36,6 @@ urlpatterns = [
     path("reserva/<id_subasta>/", views.reserva, name="reserva"),
     path("hotsales/", views.ver_hotsales, name="ver_hotsales"),
     path("ver_residencia/<id_residencia>/hotsales/", views.residencia_hotsales, name="residencia_hotsales"),
-    path("reserva_hotsale/<id_hotsale>/", views.reserva_hotsale, name="reserva_hotsale")
+    path("reserva_hotsale/<id_hotsale>/", views.reserva_hotsale, name="reserva_hotsale"),
+    path("perfil/mis_semanas/", views.mis_semanas, name="mis_semanas"),
 ]

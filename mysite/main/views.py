@@ -329,6 +329,11 @@ def eliminar_usuario_exito(request):
                   template_name="main/user/eliminar_usuario_exito.html",
                   context={})
 
+def mis_semanas(request):
+    return render(request=request,
+                  template_name="main/user/mis_semanas.html",
+                  context={})
+
 def reserva(request, id_subasta):
     semana=Subasta.objects.get(id=id_subasta)
     request.user.reservar_premium(semana)

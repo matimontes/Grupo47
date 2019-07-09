@@ -1,0 +1,53 @@
+{% extends "main/headers/header_logged_in.html" %}
+{% load static %}
+{% block content %}
+
+<body>
+	<p>
+	<a href="/perfil/">Volver</a>
+	</p>
+	<h2 class="centrar">Mis semanas</h2>
+	<h3>Semanas Reservadas</h3>
+	<table>
+		<th width="40%">Semana</th>
+		<th width="55%">Residencia</th>
+		<th>Precio</th>
+		{% for r in request.user.semanas_reservadas.all %}
+		<tr>
+			<td>{{r.dia_inicial}} a {{r.dia_final}}</td>
+			<td>{{r.residencia}}</td>
+			<td>{{r.precio_reserva}}</td>
+		</tr>
+		{% endfor %}
+	</table>
+	<h3>Inscripciones a subastas</h3>
+	<table>
+		<th width="40%">Semana</th>
+		<th width="30%">Residencia</th>
+		<th width="25%">Inicio de subasta</th>
+		<th>Precio</th>
+		{% for r in request.user.inscripciones.all %}
+		<tr>
+			<td>{{r.dia_inicial}} a {{r.dia_final}}</td>
+			<td>{{r.residencia}}</td>
+			<td>{{r.inicio_de_subasta}}</td>
+			<td>{{r.precio_inicial}}</td>
+		</tr>
+		{% endfor %}
+	</table>
+	<h3>Reservas pasadas</h3>
+	<!-- <table>
+		<th width="40%">Semana</th>
+		<th width="45%">Residencia</th>
+		<th>Precio</th>
+		{% for r in request.user.semanas_pasadas.all %}
+		<tr>
+			<td>{{r.dia_inicial}} a {{r.dia_final}}</td>
+			<td>{{r.residencia}}</td>
+			<td>{{r.precio_reserva}}</td>
+		</tr>
+		{% endfor %}
+	</table> -->
+</body>
+
+{% endblock %}
