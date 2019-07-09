@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, Pass
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate, get_user_model
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import Residencia, Subasta, Suscripcion
+from .models import Residencia, Subasta, Suscripcion, HotSale
 from main.forms import RegistrationForm, MontoPujaForm, BuscarResidenciaForm, InvertirTipoForm, EditarPerfilForm, PaymentForm
 from django.forms import ValidationError
 import datetime
@@ -151,6 +151,68 @@ def buscar_residencias(request):
                            "ciudades": ciudades,
                            "form": form})
 
+
+def ver_hotsales(request):
+    hotsales = []
+    if request.method == 'POST':
+        form = BuscarResidenciaForm(request.POST)
+        if form.is_valid():
+            fecha_inicio = form.cleaned_data.get("inicio")
+            fecha_fin = form.cleaned_data.get("fin")
+            pasa_form = form.cleaned_data.get("pasajeros")
+            pais_form = form.cleaned_data.get("pais")
+            ciudad_form = form.cleaned_data.get("ciudad")
+            #si se completan todos los campos
+            if pasa_form != None and pais_form != "" and ciudad_form != "":
+                hotsales = HotSale.objects.filter(dia_inicial__gte = fecha_inicio,
+                dia_inicial__lte = fecha_fin, residencia__personas = pasa_form,
+                residencia__pais = pais_form, residencia__ciudad = ciudad_form)
+            #si no se completan los pasajeros
+            elif pais_form != "" and ciudad_form != "":
+                hotsales = HotSale.objects.filter(dia_inicial__gte = fecha_inicio,
+                dia_inicial__lte = fecha_fin, residencia__pais = pais_form,
+                residencia__ciudad = ciudad_form)
+            #si no se completa el pais
+            elif pasa_form != None and ciudad_form != "":
+                hotsales = HotSale.objects.filter(dia_inicial__gte = fecha_inicio,
+                dia_inicial__lte = fecha_fin, residencia__personas = pasa_form,
+                residencia__ciudad = ciudad_form)
+            #si no se completa la ciudad
+            elif pais_form != "" and pasa_form != None:
+                hotsales = HotSale.objects.filter(dia_inicial__gte = fecha_inicio,
+                dia_inicial__lte = fecha_fin, residencia__personas = pasa_form,
+                residencia__pais = pais_form)
+            #solo se completa pasajeros
+            elif pasa_form != None:
+                hotsales = HotSale.objects.filter(dia_inicial__gte = fecha_inicio,
+                dia_inicial__lte = fecha_fin, residencia__personas = pasa_form)
+            #solo se completa pais
+            elif pais_form != "":
+                hotsales = HotSale.objects.filter(dia_inicial__gte = fecha_inicio,
+                dia_inicial__lte = fecha_fin, residencia__pais = pais_form)
+            #solo se completa ciudad:
+            elif ciudad_form != "":
+                hotsales = HotSale.objects.filter(dia_inicial__gte = fecha_inicio,
+                dia_inicial__lte = fecha_fin, residencia__ciudad = ciudad_form)
+            #si no se completa ningún otro campo
+            else:
+                hotsales = HotSale.objects.filter(dia_inicial__gte = fecha_inicio,
+                                                  dia_inicial__lte = fecha_fin)
+        residencias = set([Residencia.objects.get(id=h.residencia.id) for h in hotsales])
+    else:
+        form = BuscarResidenciaForm()
+        residencias = Residencia.objects.all()
+    paises = set(r.pais for r in Residencia.objects.all())
+    ciudades = set(r.ciudad for r in Residencia.objects.all())
+    pasajeros = set(r.personas for r in Residencia.objects.all())
+    return render(request=request,
+                  template_name="main/residencias/buscar_residencias.html",
+                  context={"residencias": residencias,
+                           "paises": paises,
+                           "pasajeros": pasajeros,
+                           "ciudades": ciudades,
+                           "form": form})
+
 def residencia(request, id_residencia):
     import datetime
     res = Residencia.objects.get(id=id_residencia)
@@ -163,6 +225,16 @@ def residencia(request, id_residencia):
                   template_name="main/residencias/ver_residencia.html",
                   context={"residencia": res,
                            "inscripto": inscripto,
+                           "usuario": user})
+
+def residencia_hotsales(request, id_residencia):
+    res = Residencia.objects.get(id=id_residencia)
+    hotsales = HotSale.objects.filter(residencia=id_residencia)
+    user = request.user
+    return render(request=request,
+                  template_name="main/residencias/ver_residencia_hotsales.html",
+                  context={"residencia": res,
+                           "hotsales": hotsales,
                            "usuario": user})
 
 def subasta(request, id_subasta):

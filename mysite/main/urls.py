@@ -34,4 +34,6 @@ urlpatterns = [
     path("eliminar_usuario/", views.eliminar_usuario, name="eliminar_usuario"),
     path("eliminar_exito/", views.eliminar_usuario_exito, name="eliminar_usuario_exito"),
     path("reserva/<id_subasta>/", views.reserva, name="reserva"),
+    path("hotsales/", views.ver_hotsales, name="ver_hotsales"),
+    path("ver_residencia/<id_residencia>/hotsales/", views.residencia_hotsales, name="residencia_hotsales"),
 ]

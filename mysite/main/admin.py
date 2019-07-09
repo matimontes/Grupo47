@@ -248,7 +248,6 @@ class SemanaEnEperaAdmin(ModelAdminObjectActionsMixin, admin.ModelAdmin):
 			'verbose_name_title': 'Opción 1',
 			'form_method': 'GET',
 			'function': 'volver_hotsale',
-			'list_only': True,
 		},
 		{
 			'slug': 'eliminar_semana',

@@ -1,0 +1,75 @@
+{% extends "main/headers/header_logged_in.html" %}
+{% load static %}
+{% load staticfiles %}
+{% block content %}
+
+<body>
+  <p>
+    <a href="/">Home</a>
+      >
+      <a href="/buscar_residencias">Volver</a>
+    </p>
+  <h1 class="centrar">{{residencia.nombre}}</h1>
+  <section>
+    <div class="columna-grande">
+      <img class="imagen-residencia"
+      src="{% static residencia.primerFoto %}" alt="Imagen Residencia: {{ residencia.primerFoto }}">
+    </div>
+    <h5>Resumen:</h5>
+    <div class="columna-chica">
+      <div class="compacto scrollable">
+        <p style="font-size: 20">{{residencia.descripcion}}</p>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="columna-grande" style="width: 100%; font-size: 150%">
+      <div style="float: left; margin: 8px 12px 3px 0px">{{residencia.ciudad}}, {{residencia.pais}} </div>
+      <div style="float: left; margin: 8px 10px 3px 0px">Dirección: {{residencia.dirección}} </div>
+      <div style="float: left; margin: 8px 10px 3px 0px">Pasajeros: {{residencia.personas}} </div>
+      <div style="float: left; margin: 8px 10px 3px 0px">Baños: {{residencia.baños}}</div>
+    </div>
+  </section>
+  {% if hotsales %}
+  <div style="float: left; width: 100%">
+    <h5 class="centrar">Semanas en Hotsale:</h5>
+  </div>
+  <table style="width:100%">
+    <tr>
+      <th>Semana</th>
+      <th>Precio</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+    {% for h in hotsales %}
+    <tr>
+      <td>De {{h.dia_inicial}} a {{h.dia_final}}</td>
+      <td>${{h.precio_reserva}}</td>
+      <td>
+        <button data-target="{{s.id}}" class="waves-effect waves-light btn-small modal-trigger">Reservar</button>
+        <div id="{{s.id}}" class="modal">
+          <div class="modal-content">
+            <h4>¿Seguro que quiere reservar la semana en {{s.residencia}}?</h4>
+            <p>Semana de reserva: {{s.dia_inicial}} - {{s.dia_final}}</p>
+            <p>Precio de reserva: ${{s.precio_reserva}}</p>
+            <p>Créditos disponibles: {{user.creditos}}</p>
+          </div>
+          <div class="modal-footer">
+            <a class="modal-close waves-effect waves-light btn-small">Cancelar</a>
+            <a href="/reserva/{{s.id}}" class="modal-close waves-effect waves-light btn-small">
+              Sí, reservar</a>
+          </div>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+    {% else %}
+      <div style="float: left; width: 100%">
+        <h5 class="centrar">No hay hotsales disponibles</h5>
+      </div>
+    {% endif %}
+  <script src="{% static 'scripts/pop_up.js' %}"></script>
+</body>
+
+{% endblock %}
