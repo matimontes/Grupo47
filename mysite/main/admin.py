@@ -140,6 +140,7 @@ class SubastaInLine(admin.TabularInline):
 	model = Subasta
 	form = SubastaAdminForm
 	formset = SemanasAdminInlineFormSet
+	verbose_name_plural = "Cargar Subastas"
 	extra = 0
 	fields = ["precio_reserva","precio_inicial","dia_inicial","inicio_de_subasta"]
 
@@ -166,16 +167,8 @@ class HotSaleAdmin(admin.ModelAdmin):
 	list_editable = ('precio_reserva',)
 	list_per_page = 30
 
-class HotSaleInLine(admin.TabularInline):
-	"""
-		Clase Inline de HotSales.
-		Utiliza la clase HotSaleAdminForm como form y SemanasAdminInlineFormSet como formset.
-	"""
-	model = HotSale
-	form = HotSaleAdminForm
-	formset = SemanasAdminInlineFormSet
-	extra = 0
-	fields = ["precio_reserva","dia_inicial"]
+	def has_add_permission(self, request):
+		return False
 
 class SubastaAdminView(admin.TabularInline):
 	"""
@@ -210,6 +203,18 @@ class SemanaReservadaView(admin.TabularInline):
 	can_delete = False
 	show_change_link = True
 
+class SemanaEnEsperaView(admin.TabularInline):
+	"""
+		Clase Inline de SemanaEnEspera.
+	"""
+
+	model = SemanaEnEspera
+	readonly_fields = ['dia_inicial','precio_reserva']
+	verbose_name_plural = "Semanas en espera"
+	max_num = 0
+	can_delete = False
+	show_change_link = True
+
 class SemanaReservadaAdmin(admin.ModelAdmin):
 	list_filter = ('residencia', MesInicioListFilter,)
 	search_fields = ('residencia',)
@@ -222,16 +227,71 @@ class SemanaReservadaAdmin(admin.ModelAdmin):
 	def has_change_permission(self, request, obj=None):
 		return False
 
-class SemanaEnEperaAdmin(admin.ModelAdmin):
+from admin_object_actions.admin import ModelAdminObjectActionsMixin
+from admin_object_actions.forms import AdminObjectActionForm
+from django.utils.html import format_html
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+
+class SemanaEnEperaAdmin(ModelAdminObjectActionsMixin, admin.ModelAdmin):
 	list_filter = ('residencia', MesInicioListFilter,)
 	search_fields = ('residencia',)
-	list_display = ('residencia','dia_inicial','dia_final','precio_reserva')
+	list_display = ('residencia','dia_inicial','dia_final','precio_reserva','display_object_actions_list')
+	readonly_fields = ('residencia', 'dia_inicial')
 	list_per_page = 30
+
+	object_actions = [
+		{
+			'slug': 'volver_hotsale',
+			'verbose_name': 'Volver HotSale',
+			'verbose_name_past': 'volvió HotSale',
+			'form_method': 'GET',
+			'function': 'volver_hotsale',
+			'list_only': True,
+		},
+		{
+			'slug': 'eliminar_semana',
+			'verbose_name': 'Eliminar semana',
+			'verbose_name_past': 'eliminó',
+			'form_method': 'GET',
+			'function': 'eliminar_semana',
+		},
+	]
+
+	def response_object_action(self, request, obj, form, action, exception=None):
+		opts = self.model._meta
+		verbose_name_past = self.get_object_action_option(action, 'verbose_name_past', 'acted upon')
+		msg_dict = {
+			'name': opts.verbose_name,
+			'obj': obj,
+			'verbose_name_past': verbose_name_past,
+			'exception': exception,
+		}
+		if exception:
+			msg = format_html(
+				'La {name} "{obj}" no se {verbose_name_past}: {exception}.',
+				**msg_dict
+			)
+			self.message_user(request, msg, messages.ERROR)
+		else:
+			msg = format_html(
+				'La {name} "{obj}" se {verbose_name_past} con éxito.',
+				**msg_dict
+			)
+			self.message_user(request, msg, messages.SUCCESS)
+		redirect_url = self.get_object_action_redirect_url(request, obj, action)
+		return HttpResponseRedirect(redirect_url)
+
+	def volver_hotsale(self, obj, form):
+		obj.convertir_en_hotsale()
+
+	def eliminar_semana(self, obj, form):
+		obj.delete()
 
 	def has_add_permission(self, request):
 		return False
 
-	def has_change_permission(self, request, obj=None):
+	def has_delete_permission(self, request, obj=None):
 		return False
 
 class ResidenciaAdmin(admin.ModelAdmin):
@@ -242,7 +302,6 @@ class ResidenciaAdmin(admin.ModelAdmin):
 			SubastaAdminView
 			HotSaleAdminView
 			SubastaInLine
-			HotSaleInLine
 			ImagenInline
 		Están ordenadas por (en orden de prioridad):
 			nombre
@@ -260,7 +319,7 @@ class ResidenciaAdmin(admin.ModelAdmin):
 	search_fields = ('nombre', 'dirección',)
 	ordering = ('nombre','dirección','ciudad','pais',)
 	inlines = [
-		SemanaReservadaView, SubastaAdminView, HotSaleAdminView, SubastaInLine, HotSaleInLine, ImagenInline,
+		SemanaReservadaView, SubastaAdminView, SemanaEnEsperaView, HotSaleAdminView, SubastaInLine, ImagenInline,
 	]
 	list_display = ('nombre','ciudad','pais','dirección','personas')
 	list_per_page = 30
