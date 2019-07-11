@@ -344,3 +344,6 @@ def reserva_hotsale(request, id_hotsale):
     semana=HotSale.objects.get(id=id_hotsale)
     semana.reservar(request.user, semana.precio_reserva)
     return redirect(f"/ver_residencia/{semana.residencia.id}/hotsales/")
+
+def opinar(request, id_semana):
+    pass

@@ -10,6 +10,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
 from creditcards.models import CardNumberField, CardExpiryField, SecurityCodeField
 from creditcards import types
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 from django.contrib.auth.base_user import BaseUserManager
 
@@ -309,6 +310,15 @@ class HotSale(Semana):
 class SemanaReservada(Semana):
 	usuario = models.ForeignKey('User',on_delete=models.CASCADE,related_name='semanas_reservadas')
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='semanas_reservadas')
+	credito = models.BooleanField(default=True)
+
+	def convertir_en_semana_en_espera(self):
+		SemanaEnEspera.objects.create(dia_inicial=self.dia_inicial,precio_reserva=self.precio_reserva,residencia=self.residencia)
+		self.delete()
+
+class SemanaPasada(Semana):
+	usuario = models.ForeignKey('User',on_delete=models.CASCADE,related_name='semanas_pasadas')
+	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='semanas_pasadas')
 
 	def convertir_en_semana_en_espera(self):
 		SemanaEnEspera.objects.create(dia_inicial=self.dia_inicial,precio_reserva=self.precio_reserva,residencia=self.residencia)
@@ -342,3 +352,12 @@ class Suscripcion(models.Model):
 
 	class Meta:
 		verbose_name_plural = "Precios de Suscripciones"
+
+class Opinion(models.Model):
+	semana = models.OneToOneField(
+		'SemanaPasada',
+		on_delete=models.CASCADE,
+		related_name='opinion'
+		)
+	puntaje = models.IntegerField(default=10,validators=[MaxValueValidator(10), MinValueValidator(1)])
+	descripcion = models.TextField(default="",max_length=1000)
