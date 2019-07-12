@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, Pass
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate, get_user_model
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import Residencia, Subasta, Suscripcion, HotSale, SemanaPasada
+from .models import Residencia, Subasta, Suscripcion, HotSale, SemanaPasada, Notificacion
 from main.forms import RegistrationForm, MontoPujaForm, BuscarResidenciaForm, InvertirTipoForm, EditarPerfilForm, PaymentForm, OpinarForm
 from django.forms import ValidationError
 import datetime
@@ -13,7 +13,8 @@ def homepage(request):
     if request.user.is_authenticated: #si hay una sesion iniciada
         return render(request=request,
                       template_name="main/homes/home_logged_in.html",
-                      context={"residencias": Residencia.objects.all()[:3]})
+                      context={"residencias": Residencia.objects.all()[:3],
+                               "notificaciones": request.user.notificaciones.all()})
     else: #si no hay una sesion iniciada
         return render(request=request,
                       template_name="main/homes/home.html",
@@ -86,7 +87,8 @@ def update_profile(request):
         profile_form = ProfileForm(instance=request.user.profile)
     return render(request, 'main/authentication/profile.html', {
         'user_form': user_form,
-        'profile_form': profile_form
+        'profile_form': profile_form,
+        "notificaciones": request.user.notificaciones.all()
     })
 
 def buscar_residencias(request):
@@ -149,7 +151,8 @@ def buscar_residencias(request):
                            "paises": paises,
                            "pasajeros": pasajeros,
                            "ciudades": ciudades,
-                           "form": form})
+                           "form": form,
+                           "notificaciones": request.user.notificaciones.all()})
 
 
 def ver_hotsales(request):
@@ -211,7 +214,8 @@ def ver_hotsales(request):
                            "paises": paises,
                            "pasajeros": pasajeros,
                            "ciudades": ciudades,
-                           "form": form})
+                           "form": form,
+                           "notificaciones": request.user.notificaciones.all()})
 
 def residencia(request, id_residencia):
     import datetime
@@ -225,7 +229,8 @@ def residencia(request, id_residencia):
                   template_name="main/residencias/ver_residencia.html",
                   context={"residencia": res,
                            "inscripto": inscripto,
-                           "usuario": user})
+                           "usuario": user,
+                           "notificaciones": request.user.notificaciones.all()})
 
 def residencia_hotsales(request, id_residencia):
     res = Residencia.objects.get(id=id_residencia)
@@ -235,7 +240,8 @@ def residencia_hotsales(request, id_residencia):
                   template_name="main/residencias/ver_residencia_hotsales.html",
                   context={"residencia": res,
                            "hotsales": hotsales,
-                           "usuario": user})
+                           "usuario": user,
+                           "notificaciones": request.user.notificaciones.all()})
 
 def subasta(request, id_subasta):
     try:
@@ -254,11 +260,12 @@ def subasta(request, id_subasta):
                       template_name="main/subastas/ver_subasta.html",
                       context={"subasta": sub,
                                "inscripto": inscripto,
-                               "form": form})
+                               "form": form,
+                               "notificaciones": request.user.notificaciones.all()})
     except:
         return render(request=request,
                       template_name="main/subastas/no_existe.html",
-                      context={})
+                      context={"notificaciones": request.user.notificaciones.all()})
 
 def inscribirse(request, id_residencia, id_subasta):
     if not request.user.is_staff:
@@ -289,7 +296,8 @@ def perfil(request):
     return render(request=request,
                   template_name="main/user/profile.html",
                   context={"user_type_form": user_type_form,
-                           "suscripciones": suscripciones[0]})
+                           "suscripciones": suscripciones[0],
+                           "notificaciones": request.user.notificaciones.all()})
 
 def editar_perfil(request):
     if request.method == "POST":
@@ -303,7 +311,8 @@ def editar_perfil(request):
         form = EditarPerfilForm(instance=request.user)
     return render(request=request,
                   template_name="main/user/editar_perfil.html",
-                  context={"form":form})
+                  context={"form":form,
+                  "notificaciones": request.user.notificaciones.all()})
 
 def cambiar_contraseña(request):
     if request.method == "POST":
@@ -317,7 +326,8 @@ def cambiar_contraseña(request):
         form = PasswordChangeForm(user=request.user)
     return render(request=request,
                   template_name="main/user/cambiar_contraseña.html",
-                  context={"form":form})
+                  context={"form":form,
+                  "notificaciones": request.user.notificaciones.all()})
 
 def eliminar_usuario(request):
     request.user.eliminar_usuario()
@@ -332,10 +342,13 @@ def eliminar_usuario_exito(request):
 def mis_semanas(request):
     return render(request=request,
                   template_name="main/user/mis_semanas.html",
-                  context={})
+                  context={"notificaciones": request.user.notificaciones.all()})
 
 def reserva(request, id_subasta):
     semana=Subasta.objects.get(id=id_subasta)
+    for inscripto in semana.usuarios_inscriptos.all():
+        Notificacion.objects.create(usuario=inscripto,
+        info="Alguien reservó una semana para la que estabas inscripto!")
     request.user.reservar_premium(semana)
     #vuelve a la residencia porque la subasta fue borrada
     return redirect(f"/ver_residencia/{semana.residencia.id}/")
@@ -358,4 +371,12 @@ def opinar(request, id_semana):
     return render(request=request,
                   template_name="main/user/opinar.html",
                   context={"form":form,
-                  "semana":semana})
+                  "semana":semana,
+                  "notificaciones": request.user.notificaciones.all()})
+
+def leer_notificaciones(request):
+    notificaciones = Notificacion.objects.filter(usuario=request.user)
+    for n in notificaciones.all():
+        n.delete()
+    referer = request.META.get("HTTP_REFERER")
+    return redirect(referer)

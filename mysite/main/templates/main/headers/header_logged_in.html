@@ -12,13 +12,32 @@
           <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li><a href="/perfil">{{request.user.first_name}}</a></li>
             <li><a href="/logout">Cerrar sesión</a></li>
+            <li>
+              <a class="btn dropdown-trigger" data-target="dropdown2">
+                Notificaciones<span class="new badge" data-badge-caption="sin leer">
+                {{notificaciones.count}}</span>
+              </a>
+              <ul id="dropdown2" class="dropdown-content">
+                {% if notificaciones %}
+                  {% for n in notificaciones %}
+                      <li><a href="#!">{{n}}</a></li>
+                  {% endfor %}
+                   <li><a href="/leer_notificaciones">Marcar como leídas</a></li>
+                {% else %}
+                  <li><h6>&ensp;Sin notificaciones nuevas<h6></li>
+                {% endif %}
+               </ul>
+            </li>
           </ul>
-        </div>
       </nav>
     </div>
     <div class="container">
       {% block content %}
       {% endblock %}
     </div>
+    <script>
+      var elems = document.querySelectorAll('.dropdown-trigger');
+      M.Dropdown.init(elems, {});
+    </script>
   </header>
 {% endblock %}

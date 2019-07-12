@@ -2,15 +2,6 @@
 {% load staticfiles %}
 {% block content %}
 <body>
-  <p>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-  </p>
   <h5 class="centrar">Recomendaciones</h5>
     <div class="row">
       {% for r in residencias %}

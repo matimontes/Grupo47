@@ -39,4 +39,5 @@ urlpatterns = [
     path("reserva_hotsale/<id_hotsale>/", views.reserva_hotsale, name="reserva_hotsale"),
     path("perfil/mis_semanas/", views.mis_semanas, name="mis_semanas"),
     path("opinar/<id_semana>/", views.opinar, name="opinar"),
+    path("leer_notificaciones", views.leer_notificaciones, name="leer_notificaciones"),
 ]

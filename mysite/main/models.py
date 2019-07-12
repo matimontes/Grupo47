@@ -159,7 +159,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 			return True
 		return False
 
+class Notificacion(models.Model):
+	info = models.CharField(max_length=200)
+	usuario = models.ForeignKey('User', on_delete=models.CASCADE,related_name='notificaciones')
 
+	def __str__(self):
+		return self.info
 
 from django.conf import settings
 
