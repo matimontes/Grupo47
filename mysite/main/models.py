@@ -244,12 +244,16 @@ class Subasta(Semana):
 		return self.pujas.first()
 
 	def pujar(self,usuario_pujador,dinero_a_pujar):
+		Notificacion.objects.create(usuario=self.puja_actual().usuario,
+		info="Alguien superó tu puja en una subasta!")
 		Puja.objects.create(usuario=usuario_pujador,dinero_pujado=dinero_a_pujar,subasta=self)
 
 	def cancelar_puja(self,usuario):
 		puja = self.puja_actual()
 		if puja.usuario == usuario:
 			puja.delete()
+			Notificacion.objects.create(usuario=self.puja_actual().usuario,
+			info="Alguien canceló su puja, estas primero de nuevo!")
 		else:
 			#AGREGAR FUNCIONALIDAD
 			pass
@@ -275,10 +279,17 @@ class Subasta(Semana):
 
 	def abandonar_subasta(self,usuario):
 		self.anular_inscripcion_usuario(usuario)
+		primero = False
+		if self.puja_actual().usuario == usuario:
+			primero = True
 		for puja in self.pujas.filter(usuario=usuario):
 			puja.delete()
 		if self.cantidad_de_inscriptos() == 0:
 			self.convertir_en_semana_en_espera()
+		else:
+			if primero:
+				Notificacion.objects.create(usuario=self.puja_actual().usuario,
+				info="Alguien canceló su puja, estas primero de nuevo!")
 
 	def comenzar(self):
 		self.iniciada = True
@@ -293,6 +304,8 @@ class Subasta(Semana):
 		else:
 			puja.usuario.quitar_credito()
 			self.reservar(puja.usuario,puja.dinero_pujado)
+			Notificacion.objects.create(usuario=puja.usuario,
+			info="Ganaste la subasta y se te adjudicó una semana!")
 
 	def forzar_comienzo(self):
 		if self.cantidad_de_inscriptos() == 0:
