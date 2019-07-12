@@ -4,6 +4,12 @@ from django import forms
 from django.db.models.query import EmptyQuerySet
 from datetime import timedelta
 from .filters import MesInicioListFilter, InicialDelNombreListFilter, TipoDeUsuarioListFilter
+
+from admin_object_actions.admin import ModelAdminObjectActionsMixin
+from admin_object_actions.forms import AdminObjectActionForm
+from django.utils.html import format_html
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 # Register your models here.
 
 def iniciar_subasta(modeladmin, request, queryset):
@@ -215,23 +221,69 @@ class SemanaEnEsperaView(admin.TabularInline):
 	can_delete = False
 	show_change_link = True
 
-class SemanaReservadaAdmin(admin.ModelAdmin):
+class SemanaReservadaAdmin(ModelAdminObjectActionsMixin, admin.ModelAdmin):
 	list_filter = ('residencia', MesInicioListFilter,)
 	search_fields = ('residencia',)
-	list_display = ('residencia','dia_inicial','dia_final','precio_reserva','usuario')
+	list_display = ('residencia','dia_inicial','dia_final','precio_reserva','usuario','display_object_actions_list')
+	readonly_fields = ('residencia','dia_inicial','dia_final','precio_reserva','usuario')
 	list_per_page = 30
+
+	object_actions = [
+		{
+			'slug': 'quitar_reembolso',
+			'verbose_name': 'Quitar reembolseo',
+			'verbose_name_past': 'quitó el reembolso',
+			'verbose_name_title': 'Opción 1',
+			'form_method': 'GET',
+			'function': 'quitar_reembolso',
+		},
+		{
+			'slug': 'terminar_la_semana',
+			'verbose_name': 'Terminar semana',
+			'verbose_name_past': 'terminó la semana',
+			'form_method': 'GET',
+			'function': 'terminar_semana',
+		},
+	]
+	def display_object_actions_list(self, obj=None):
+		return self.display_object_actions(obj, list_only=True)
+	display_object_actions_list.short_description = "Acciones"
+
+	def response_object_action(self, request, obj, form, action, exception=None):
+		opts = self.model._meta
+		verbose_name_past = self.get_object_action_option(action, 'verbose_name_past', 'acted upon')
+		msg_dict = {
+			'name': opts.verbose_name,
+			'obj': obj,
+			'verbose_name_past': verbose_name_past,
+			'exception': exception,
+		}
+		if exception:
+			msg = format_html(
+				'La {name} "{obj}" no se {verbose_name_past}: {exception}.',
+				**msg_dict
+			)
+			self.message_user(request, msg, messages.ERROR)
+		else:
+			msg = format_html(
+				'La {name} "{obj}" se {verbose_name_past} con éxito.',
+				**msg_dict
+			)
+			self.message_user(request, msg, messages.SUCCESS)
+		redirect_url = self.get_object_action_redirect_url(request, obj, action)
+		return HttpResponseRedirect(redirect_url)
+
+	def quitar_reembolso(self, obj, form):
+		obj.quitar_credito()
+
+	def terminar_semana(self, obj, form):
+		obj.terminar_semana()
 
 	def has_add_permission(self, request):
 		return False
 
-	def has_change_permission(self, request, obj=None):
+	def has_delete_permission(self, request, obj=None):
 		return False
-
-from admin_object_actions.admin import ModelAdminObjectActionsMixin
-from admin_object_actions.forms import AdminObjectActionForm
-from django.utils.html import format_html
-from django.contrib import messages
-from django.http import HttpResponseRedirect
 
 class SemanaEnEperaAdmin(ModelAdminObjectActionsMixin, admin.ModelAdmin):
 	list_filter = ('residencia', MesInicioListFilter,)

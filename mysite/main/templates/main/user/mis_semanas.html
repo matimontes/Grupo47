@@ -46,7 +46,7 @@
 			<td>{{r.dia_inicial}} a {{r.dia_final}}</td>
 			<td>{{r.residencia}}</td>
 			<td>
-				{% if r.opino %}
+				{% if not r.opino %}
 				<a href="/opinar/{{r.id}}">Opinar</a>
 				{% else %}
 				{{r.opinion.puntaje}}/10

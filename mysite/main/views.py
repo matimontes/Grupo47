@@ -3,8 +3,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, Pass
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate, get_user_model
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import Residencia, Subasta, Suscripcion, HotSale
-from main.forms import RegistrationForm, MontoPujaForm, BuscarResidenciaForm, InvertirTipoForm, EditarPerfilForm, PaymentForm
+from .models import Residencia, Subasta, Suscripcion, HotSale, SemanaPasada
+from main.forms import RegistrationForm, MontoPujaForm, BuscarResidenciaForm, InvertirTipoForm, EditarPerfilForm, PaymentForm, OpinarForm
 from django.forms import ValidationError
 import datetime
 from django.contrib.auth.views import update_session_auth_hash
@@ -346,4 +346,16 @@ def reserva_hotsale(request, id_hotsale):
     return redirect(f"/ver_residencia/{semana.residencia.id}/hotsales/")
 
 def opinar(request, id_semana):
-    pass
+    semana = SemanaPasada.objects.get(id=id_semana)
+    if request.method == "POST":
+        form = OpinarForm(request=request.POST,semana=SemanaPasada.objects.get(id=id_semana))
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'opinión realizada con éxito.')
+            return redirect("main:mis_semanas")
+    else:
+        form = OpinarForm(semana=semana)
+    return render(request=request,
+                  template_name="main/user/opinar.html",
+                  context={"form":form,
+                  "semana":semana})

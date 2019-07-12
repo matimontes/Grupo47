@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from main.models import User, Tarjeta
+from main.models import User, Tarjeta, Opinion
 from datetime import date, timedelta
 from creditcards.forms import CardNumberField, CardExpiryField, SecurityCodeField
 
@@ -121,3 +121,13 @@ class PaymentForm(forms.ModelForm):
 	class Meta:
 		model = Tarjeta
 		fields = ("cc_number","cc_expiry","cc_code")
+
+class OpinarForm(forms.ModelForm):
+
+	class Meta:
+		model = Opinion
+		fields = ("puntaje","descripcion")
+
+	def __init__(self, semana, *args, **kwargs):
+		self.semana = semana
+		super().__init__(*args, **kwargs)

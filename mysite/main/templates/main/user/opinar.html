@@ -1,0 +1,50 @@
+{% extends "main/headers/header_logged_in.html" %}
+{% load static %}
+{% block content %}
+
+<body>
+  <p>
+    <a href="/">Home</a>
+    <a href="/perfil/mis_semanas">Volver</a>
+  </p>
+  <h1 class="centrar">{{semana.residencia.nombre}}</h1>
+  <section>
+    <div class="columna-grande">
+      <img class="imagen-residencia"
+      src="{% static semana.residencia.primerFoto %}" alt="Imagen Residencia: {{ semana.residencia.primerFoto }}">
+    </div>
+    <h5>Resumen:</h5>
+    <div class="columna-chica">
+      <div class="compacto scrollable">
+        <p style="font-size: 20">{{semana.residencia.descripcion}}</p>
+      </div>
+    </div>
+	</section>
+	<section>
+	    <div class="columna-grande" style="width: 100%; font-size: 150%">
+	      <div style="float: left; margin: 8px 12px 3px 0px">{{semana.residencia.ciudad}}, {{semana.residencia.pais}} </div>
+	      <div style="float: left; margin: 8px 10px 3px 0px">Dirección: {{semana.residencia.dirección}} </div>
+	      <div style="float: left; margin: 8px 10px 3px 0px">Pasajeros: {{semana.residencia.personas}} </div>
+	      <div style="float: left; margin: 8px 10px 3px 0px">Baños: {{semana.residencia.baños}}</div>
+	    </div>
+	</section>
+	<table>
+		<tr>
+			<th>Opinión:</th>
+	<form method="POST">
+		<td>
+		{% csrf_token %}
+		{{form}}
+		<p></p>
+	</td>
+		<td>
+		<button type="submit" class="waves-effect waves-light btn-small">Enviar opinión</button>
+	</td>
+	</form>
+</tr>
+	</table>
+	<p></p>
+</body>
+
+
+{% endblock %}

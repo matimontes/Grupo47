@@ -316,6 +316,14 @@ class SemanaReservada(Semana):
 		SemanaEnEspera.objects.create(dia_inicial=self.dia_inicial,precio_reserva=self.precio_reserva,residencia=self.residencia)
 		self.delete()
 
+	def terminar_semana(self):
+		SemanaPasada.objects.create(dia_inicial=self.dia_inicial,precio_reserva=self.precio_reserva,residencia=self.residencia,usuario=self.usuario)
+		self.usuario.quitar_credito()
+		self.delete()
+
+	def quitar_credito(self):
+		self.credito = False
+
 class SemanaPasada(Semana):
 	usuario = models.ForeignKey('User',on_delete=models.CASCADE,related_name='semanas_pasadas')
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='semanas_pasadas')
@@ -323,6 +331,11 @@ class SemanaPasada(Semana):
 	def convertir_en_semana_en_espera(self):
 		SemanaEnEspera.objects.create(dia_inicial=self.dia_inicial,precio_reserva=self.precio_reserva,residencia=self.residencia)
 		self.delete()
+
+	def opino(self):
+		if self.opinion.exists():
+			True
+		False
 
 class SemanaEnEspera(Semana):
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='semanas_en_espera')
