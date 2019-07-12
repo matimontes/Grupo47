@@ -121,8 +121,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 		send_mail(subject, message, from_email, [self.email], **kwargs)
 
 	def notificar_comienzo_subasta(self,subasta):
-		#AGREGAR FUNCIONALIDAD PARA NOTIFICAR POR MAIL QUE COMENZÓ LA SUBASTA
-		pass
+		Notificacion.objects.create(
+		usuario=self,
+		info="Comenzó una subasta a la que te habias inscripto!"
+		)
 
 	def tiene_creditos(self):
 		return self.creditos > 0
@@ -216,6 +218,8 @@ class Semana(models.Model):
 			precio_reserva=precio_reserva,
 			residencia=self.residencia,
 			dia_inicial=self.dia_inicial)
+		Notificacion.objects.create(usuario=usuario,
+		info="La reserva se realizó correctamente.")
 		self.delete()
 
 	class Meta:
