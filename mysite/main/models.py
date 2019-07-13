@@ -161,6 +161,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 			return True
 		return False
 
+	def dar_credito(self):
+		self.creditos += 1
+
 class Notificacion(models.Model):
 	info = models.CharField(max_length=200)
 	usuario = models.ForeignKey('User', on_delete=models.CASCADE,related_name='notificaciones')
@@ -213,11 +216,12 @@ class Semana(models.Model):
 	def coincide(self,fecha):
 		return ((fecha > self.dia_inicial - timedelta(days=7)) and (fecha < self.dia_final()))
 
-	def reservar(self,usuario,precio_reserva):
+	def reservar(self,usuario,precio_reserva,credito=True):
 		SemanaReservada.objects.create(usuario=usuario,
 			precio_reserva=precio_reserva,
 			residencia=self.residencia,
-			dia_inicial=self.dia_inicial)
+			dia_inicial=self.dia_inicial,
+			credito=credito)
 		Notificacion.objects.create(usuario=usuario,
 		info="La reserva se realizó correctamente.")
 		self.delete()
@@ -340,11 +344,18 @@ class SemanaReservada(Semana):
 
 	def terminar_semana(self):
 		SemanaPasada.objects.create(dia_inicial=self.dia_inicial,precio_reserva=self.precio_reserva,residencia=self.residencia,usuario=self.usuario)
-		self.usuario.quitar_credito()
 		self.delete()
 
 	def quitar_credito(self):
 		self.credito = False
+
+	def cancelar_semana(self):
+		if self.credito:
+			self.usuario.dar_credito()
+			self.usuario.save()
+		Notificacion.objects.create(usuario=self.usuario,
+			info="Cancelaste la semana en "+self.residencia.nombre+"la semana del "+self.dia_inicial.isoformat()+" al "+self.dia_final().isoformat())
+		self.convertir_en_semana_en_espera()
 
 class SemanaPasada(Semana):
 	usuario = models.ForeignKey('User',on_delete=models.CASCADE,related_name='semanas_pasadas')

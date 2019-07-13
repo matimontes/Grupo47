@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, Pass
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate, get_user_model
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import Residencia, Subasta, Suscripcion, HotSale, SemanaPasada, Notificacion
+from .models import Residencia, Subasta, Suscripcion, HotSale, SemanaPasada, Notificacion, SemanaReservada
 from main.forms import RegistrationForm, MontoPujaForm, BuscarResidenciaForm, InvertirTipoForm, EditarPerfilForm, PaymentForm, OpinarForm
 from django.forms import ValidationError
 import datetime
@@ -355,7 +355,7 @@ def reserva(request, id_subasta):
 
 def reserva_hotsale(request, id_hotsale):
     semana=HotSale.objects.get(id=id_hotsale)
-    semana.reservar(request.user, semana.precio_reserva)
+    semana.reservar(request.user, semana.precio_reserva, False)
     return redirect(f"/ver_residencia/{semana.residencia.id}/hotsales/")
 
 def opinar(request, id_semana):
@@ -380,3 +380,8 @@ def leer_notificaciones(request):
         n.delete()
     referer = request.META.get("HTTP_REFERER")
     return redirect(referer)
+
+def cancelar_reserva(request,id_reserva):
+    semana=SemanaReservada.objects.get(id=id_reserva)
+    semana.cancelar_semana()
+    return redirect("main:mis_semanas")

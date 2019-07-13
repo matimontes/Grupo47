@@ -40,4 +40,5 @@ urlpatterns = [
     path("perfil/mis_semanas/", views.mis_semanas, name="mis_semanas"),
     path("opinar/<id_semana>/", views.opinar, name="opinar"),
     path("leer_notificaciones", views.leer_notificaciones, name="leer_notificaciones"),
+    path("cancelar_reserva/<id_reserva>/", views.cancelar_reserva, name="cancelar_reserva"),
 ]

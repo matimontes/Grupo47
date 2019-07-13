@@ -3,67 +3,88 @@
 {% block content %}
 
 <body>
-	<p>
-	<a href="/perfil/">Volver</a>
-	</p>
-	<h2 class="centrar">Mis semanas</h2>
-	<h3>Semanas Reservadas</h3>
-	<table>
-		<th width="40%">Semana</th>
-		<th width="30%">Residencia</th>
-		<th width="25%"></th>
-		<th>Precio</th>
-		{% for r in request.user.semanas_reservadas.all %}
-		<tr>
-			<td>{{r.dia_inicial}} a {{r.dia_final}}</td>
-			<td>{{r.residencia}}</td>
-			<td><a href="#" class="modal-close waves-effect waves-light btn-small">Cancelar semana</a></td>
-			<td>{{r.precio_reserva}}</td>
-		</tr>
-		{% endfor %}
-	</table>
-	<h3>Inscripciones a subastas</h3>
-	<table>
-		<th width="40%">Semana</th>
-		<th width="30%">Residencia</th>
-		<th width="25%">Inicio de subasta</th>
-		<th>Precio</th>
-		{% for r in request.user.inscripciones.all %}
-		<tr>
-			<td>{{r.dia_inicial}} a {{r.dia_final}}</td>
-			<td>{{r.residencia}}</td>
-			<td>
-				{% if r.iniciada %}
-					<a href="/subasta/{{r.id}}" class="modal-close waves-effect waves-light btn-small">Ya comenzó</a>
-				{% else %}
-					{{r.inicio_de_subasta}}
-				{% endif %}
-			</td>
-			<td>{{r.precio_inicial}}</td>
-		</tr>
-		{% endfor %}
-	</table>
-	<h3>Reservas pasadas</h3>
-	<table>
-		<th width="40%">Semana</th>
-		<th width="30%">Residencia</th>
-		<th width="25%">Opinión</th>
-		<th>Precio</th>
-		{% for r in request.user.semanas_pasadas.all %}
-		<tr>
-			<td>{{r.dia_inicial}} a {{r.dia_final}}</td>
-			<td>{{r.residencia}}</td>
-			<td>
-				{% if not r.opino %}
-				<a href="/opinar/{{r.id}}" class="modal-close waves-effect waves-light btn-small">Opinar</a>
-				{% else %}
-				{{r.opinion.puntaje}}/10
-				{% endif %}
-			</td>
-			<td>{{r.precio_reserva}}</td>
-		</tr>
-		{% endfor %}
-	</table>
+  <p>
+  <a href="/perfil/">Volver</a>
+  </p>
+  <h2 class="centrar">Mis semanas</h2>
+  <h3>Semanas Reservadas</h3>
+  <table>
+    <th width="40%">Semana</th>
+    <th width="30%">Residencia</th>
+    <th width="25%"></th>
+    <th>Precio</th>
+    {% for r in request.user.semanas_reservadas.all %}
+    <tr>
+      <td>{{r.dia_inicial}} a {{r.dia_final}}</td>
+      <td>{{r.residencia}}</td>
+      <td>
+        <button data-target="{{r.id}}" class="waves-effect waves-light btn-small modal-trigger">Cancelar semana</button>
+        <div id="{{r.id}}" class="modal">
+          <div class="modal-content">
+          <h4>¿Seguro que quiere cancelar la semana en {{r.residencia}}?</h4>
+          <p>Semana de reserva: {{r.dia_inicial}} - {{r.dia_final}}</p>
+          <p>Precio de reserva: ${{r.precio_reserva}}</p>
+          <p>
+            {% if r.credito %}
+              Se te devolverá el crédito.
+            {% else %}
+              No se te devolverá el crédito.
+            {% endif %}
+          </p>
+          </div>
+          <div class="modal-footer">
+          <a class="modal-close waves-effect waves-light btn-small">Cerrar</a>
+          <a href="/cancelar_reserva/{{r.id}}" class="modal-close waves-effect waves-light btn-small">Sí, cancelar semana</a>
+          </div>
+        </div>
+      </td>
+      <td>{{r.precio_reserva}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <h3>Inscripciones a subastas</h3>
+  <table>
+    <th width="40%">Semana</th>
+    <th width="30%">Residencia</th>
+    <th width="25%">Inicio de subasta</th>
+    <th>Precio</th>
+    {% for r in request.user.inscripciones.all %}
+    <tr>
+      <td>{{r.dia_inicial}} a {{r.dia_final}}</td>
+      <td>{{r.residencia}}</td>
+      <td>
+        {% if r.iniciada %}
+          <a href="/subasta/{{r.id}}" class="modal-close waves-effect waves-light btn-small">Ya comenzó</a>
+        {% else %}
+          {{r.inicio_de_subasta}}
+        {% endif %}
+      </td>
+      <td>{{r.precio_inicial}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <h3>Reservas pasadas</h3>
+  <table>
+    <th width="40%">Semana</th>
+    <th width="30%">Residencia</th>
+    <th width="25%">Opinión</th>
+    <th>Precio</th>
+    {% for r in request.user.semanas_pasadas.all %}
+    <tr>
+      <td>{{r.dia_inicial}} a {{r.dia_final}}</td>
+      <td>{{r.residencia}}</td>
+      <td>
+        {% if not r.opino %}
+        <a href="/opinar/{{r.id}}" class="modal-close waves-effect waves-light btn-small">Opinar</a>
+        {% else %}
+        {{r.opinion.puntaje}}/10
+        {% endif %}
+      </td>
+      <td>{{r.precio_reserva}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <script src="{% static 'scripts/pop_up.js' %}"></script>
 </body>
 
 {% endblock %}
