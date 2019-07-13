@@ -20,7 +20,7 @@
               <ul id="dropdown2" class="dropdown-content">
                 {% if notificaciones %}
                   {% for n in notificaciones %}
-                      <li><a href="#!">{{n}}</a></li>
+                      <li><a href="{{n.url}}">{{n}}</a></li>
                   {% endfor %}
                    <li><a href="/leer_notificaciones">Marcar como leídas</a></li>
                 {% else %}

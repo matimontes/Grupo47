@@ -123,7 +123,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 	def notificar_comienzo_subasta(self,subasta):
 		Notificacion.objects.create(
 		usuario=self,
-		info="Comenzó una subasta a la que te habias inscripto!"
+		info="Comenzó una subasta a la que te habias inscripto!",
+		url=f"/subasta/{subasta.id}/"
 		)
 
 	def tiene_creditos(self):
@@ -167,6 +168,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Notificacion(models.Model):
 	info = models.CharField(max_length=200)
 	usuario = models.ForeignKey('User', on_delete=models.CASCADE,related_name='notificaciones')
+	url = models.CharField(max_length=200, default="#!")
 
 	def __str__(self):
 		return self.info
@@ -223,7 +225,8 @@ class Semana(models.Model):
 			dia_inicial=self.dia_inicial,
 			credito=credito)
 		Notificacion.objects.create(usuario=usuario,
-		info="La reserva se realizó correctamente.")
+		info="La reserva se realizó correctamente.",
+		url="/perfil/mis_semanas/")
 		self.delete()
 
 	class Meta:
@@ -249,7 +252,8 @@ class Subasta(Semana):
 
 	def pujar(self,usuario_pujador,dinero_a_pujar):
 		Notificacion.objects.create(usuario=self.puja_actual().usuario,
-		info="Alguien superó tu puja en una subasta!")
+		info="Alguien superó tu puja en una subasta!",
+		url=f"/subasta/{self.id}/")
 		Puja.objects.create(usuario=usuario_pujador,dinero_pujado=dinero_a_pujar,subasta=self)
 
 	def cancelar_puja(self,usuario):
@@ -257,7 +261,8 @@ class Subasta(Semana):
 		if puja.usuario == usuario:
 			puja.delete()
 			Notificacion.objects.create(usuario=self.puja_actual().usuario,
-			info="Alguien canceló su puja, estas primero de nuevo!")
+			info="Alguien canceló su puja, estas primero de nuevo!",
+			url=f"/subasta/{self.id}/")
 		else:
 			#AGREGAR FUNCIONALIDAD
 			pass
@@ -293,7 +298,8 @@ class Subasta(Semana):
 		else:
 			if primero:
 				Notificacion.objects.create(usuario=self.puja_actual().usuario,
-				info="Alguien canceló su puja, estas primero de nuevo!")
+				info="Alguien canceló su puja, estas primero de nuevo!",
+				url=f"/subasta/{self.id}/")
 
 	def comenzar(self):
 		self.iniciada = True
@@ -309,7 +315,8 @@ class Subasta(Semana):
 			puja.usuario.quitar_credito()
 			self.reservar(puja.usuario,puja.dinero_pujado)
 			Notificacion.objects.create(usuario=puja.usuario,
-			info="Ganaste la subasta y se te adjudicó una semana!")
+			info="Ganaste la subasta y se te adjudicó una semana!",
+			url="perfil/mis_semanas/")
 
 	def forzar_comienzo(self):
 		if self.cantidad_de_inscriptos() == 0:
