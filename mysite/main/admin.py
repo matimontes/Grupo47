@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Residencia, Subasta, HotSale, Imagen, SemanaReservada, Puja, Suscripcion, SemanaEnEspera
+from .models import Residencia, Subasta, HotSale, Imagen, SemanaReservada, Puja, Suscripcion, SemanaEnEspera, Opinion, SemanaPasada
 from django import forms
 from django.db.models.query import EmptyQuerySet
 from datetime import timedelta
@@ -484,3 +484,5 @@ admin.site.register(HotSale,HotSaleAdmin)
 admin.site.register(Puja)
 admin.site.register(SemanaEnEspera,SemanaEnEperaAdmin)
 admin.site.register(Suscripcion, SuscripcionAdmin)
+admin.site.register(Opinion)
+admin.site.register(SemanaPasada)

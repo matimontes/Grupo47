@@ -127,7 +127,3 @@ class OpinarForm(forms.ModelForm):
 	class Meta:
 		model = Opinion
 		fields = ("puntaje","descripcion")
-
-	def __init__(self, semana, *args, **kwargs):
-		self.semana = semana
-		super().__init__(*args, **kwargs)

@@ -6,7 +6,6 @@
 <body>
   <p>
     <a href="/">Home</a>
-      >
       <a href="/buscar_residencias">Volver</a>
     </p>
   <h1 class="centrar">{{residencia.nombre}}</h1>
@@ -30,6 +29,23 @@
       <div style="float: left; margin: 8px 10px 3px 0px">Baños: {{residencia.baños}}</div>
     </div>
   </section>
+  {% if opiniones %}
+    <div style="float: left; width: 100%">
+      <h5 class="centrar">Opiniones pendientes:</h5>
+    </div>
+    <table style="float: left; width:100%">
+      <tr>
+        <th>Semana</th>
+        <th></th>
+      </tr>
+      {% for s in opiniones %}
+      <tr>
+        <td>{{s.dia_inicial}} - {{s.dia_final}}</td>
+        <td><a href="/opinar/{{s.id}}" class="modal-close waves-effect waves-light btn-small">Opinar</a></td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
   {% if inscripto %}
     <div style="float: left; width: 100%">
       <h5 class="centrar">Proximas subastas:</h5>
@@ -38,7 +54,7 @@
     <tr>
       <th>Semana subastada</th>
       <th>Período de subasta</th>
-      <th>Precio Incial</th>
+      <th>Precio Inicial</th>
       <th>Precio Reserva</th>
       <th></th>
       <th></th>
@@ -70,25 +86,25 @@
             </div>
           </td>
           {% else %}
-          <td><a href="#" class="waves-effect waves-light disabled btn-small">Reservar<a></td>
+          <td><a href="#" class="waves-effect waves-light disabled btn-small">Reservar</a></td>
           {% endif %}
         {% else %}
-          <td><a href="#" class="waves-effect waves-light disabled btn-small">Reservar<a></td>
+          <td><a href="#" class="waves-effect waves-light disabled btn-small">Reservar</a></td>
         {% endif %}
         {% if i %}
-          <td><a href="" class="waves-effect waves-light btn-small disabled">Inscripto<a></td>
+          <td><a href="" class="waves-effect waves-light btn-small disabled">Inscripto</a></td>
         {% else %}
-          <td><a href="/inscribirse/{{residencia.id}}/{{s.id}}" class="waves-effect waves-light btn-small">Inscribirse<a></td>
+          <td><a href="/inscribirse/{{residencia.id}}/{{s.id}}" class="waves-effect waves-light btn-small">Inscribirse</a></td>
         {% endif %}
       {% else %}
-        <td><a href="#" class="waves-effect waves-light disabled btn-small">Reservar<a></td>
+        <td><a href="#" class="waves-effect waves-light disabled btn-small">Reservar</a></td>
         {% if i %}
-          <td><a href="" class="waves-effect waves-light btn-small disabled">Inscripto<a></td>
+          <td><a href="" class="waves-effect waves-light btn-small disabled">Inscripto</a></td>
         {% else %}
-          <td><a href="#" class="waves-effect waves-light disabled btn-small">Caducada<a></td>
+          <td><a href="#" class="waves-effect waves-light disabled btn-small">Caducada</a></td>
         {% endif %}
       {% endif %}
-        <td><a href="/subasta/{{s.id}}" class="waves-effect waves-light btn-small">Ver<a></td>
+        <td><a href="/subasta/{{s.id}}" class="waves-effect waves-light btn-small">Ver</a></td>
       </tr>
       {% endfor %}
     {% else %}
@@ -96,6 +112,7 @@
         <h5 class="centrar">No hay subastas disponibles</h5>
       </div>
     {% endif %}
+  </table>
   <script src="{% static 'scripts/pop_up.js' %}"></script>
 </body>
 

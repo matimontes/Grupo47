@@ -165,6 +165,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 	def dar_credito(self):
 		self.creditos += 1
 
+	def opiniones_disponibles(self, residencia):
+		for s in self.semanas_pasadas.filter(residencia=residencia):
+			if not s.opino():
+				yield s
+
 class Notificacion(models.Model):
 	info = models.CharField(max_length=200)
 	usuario = models.ForeignKey('User', on_delete=models.CASCADE,related_name='notificaciones')
@@ -367,15 +372,16 @@ class SemanaReservada(Semana):
 class SemanaPasada(Semana):
 	usuario = models.ForeignKey('User',on_delete=models.CASCADE,related_name='semanas_pasadas')
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='semanas_pasadas')
+	opinion = models.OneToOneField('Opinion',on_delete=models.CASCADE,related_name='semana',null=True)
 
 	def convertir_en_semana_en_espera(self):
 		SemanaEnEspera.objects.create(dia_inicial=self.dia_inicial,precio_reserva=self.precio_reserva,residencia=self.residencia)
 		self.delete()
 
 	def opino(self):
-		if self.opinion.exists():
-			True
-		False
+		if self.opinion == None:
+			return False
+		return True
 
 class SemanaEnEspera(Semana):
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='semanas_en_espera')
@@ -407,10 +413,5 @@ class Suscripcion(models.Model):
 		verbose_name_plural = "Precios de Suscripciones"
 
 class Opinion(models.Model):
-	semana = models.OneToOneField(
-		'SemanaPasada',
-		on_delete=models.CASCADE,
-		related_name='opinion'
-		)
 	puntaje = models.IntegerField(default=10,validators=[MaxValueValidator(10), MinValueValidator(1)])
 	descripcion = models.TextField(default="",max_length=1000)

@@ -225,12 +225,17 @@ def residencia(request, id_residencia):
     inscripto = {}
     for s in subastas:
         inscripto[s] = s.esta_inscripto(user)
+    opiniones = []
+    for o in user.opiniones_disponibles(res):
+        print(o)
+        opiniones.append(o)
     return render(request=request,
                   template_name="main/residencias/ver_residencia.html",
                   context={"residencia": res,
                            "inscripto": inscripto,
                            "usuario": user,
-                           "notificaciones": request.user.notificaciones.all()})
+                           "notificaciones": request.user.notificaciones.all(),
+                           "opiniones":opiniones})
 
 def residencia_hotsales(request, id_residencia):
     res = Residencia.objects.get(id=id_residencia)
@@ -361,13 +366,15 @@ def reserva_hotsale(request, id_hotsale):
 def opinar(request, id_semana):
     semana = SemanaPasada.objects.get(id=id_semana)
     if request.method == "POST":
-        form = OpinarForm(request=request.POST,semana=SemanaPasada.objects.get(id=id_semana))
+        form = OpinarForm(request.POST)
         if form.is_valid():
             form.save()
+            semana.opinion = form.instance
+            semana.save()
             messages.success(request, 'opinión realizada con éxito.')
             return redirect("main:mis_semanas")
     else:
-        form = OpinarForm(semana=semana)
+        form = OpinarForm()
     return render(request=request,
                   template_name="main/user/opinar.html",
                   context={"form":form,
