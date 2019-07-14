@@ -366,7 +366,7 @@ class SemanaReservada(Semana):
 			self.usuario.dar_credito()
 			self.usuario.save()
 		Notificacion.objects.create(usuario=self.usuario,
-			info="Cancelaste la semana en "+self.residencia.nombre+"la semana del "+self.dia_inicial.isoformat()+" al "+self.dia_final().isoformat())
+			info="Cancelaste la semana en "+self.residencia.nombre+" la semana del "+self.dia_inicial.isoformat()+" al "+self.dia_final().isoformat())
 		self.convertir_en_semana_en_espera()
 
 class SemanaPasada(Semana):
@@ -379,9 +379,7 @@ class SemanaPasada(Semana):
 		self.delete()
 
 	def opino(self):
-		if self.opinion == None:
-			return False
-		return True
+		return self.opinion != None
 
 class SemanaEnEspera(Semana):
 	residencia = models.ForeignKey('Residencia',on_delete=models.CASCADE,related_name='semanas_en_espera')

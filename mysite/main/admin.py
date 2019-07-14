@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Residencia, Subasta, HotSale, Imagen, SemanaReservada, Puja, Suscripcion, SemanaEnEspera, Opinion, SemanaPasada
 from django import forms
 from django.db.models.query import EmptyQuerySet
-from datetime import timedelta
+from datetime import timedelta, datetime
 from .filters import MesInicioListFilter, InicialDelNombreListFilter, TipoDeUsuarioListFilter
 
 from admin_object_actions.admin import ModelAdminObjectActionsMixin
@@ -11,6 +11,21 @@ from django.utils.html import format_html
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 # Register your models here.
+
+def control_automatico():
+	''' Funcion que chequea si hay subastas para iniciar, finalizar, etc '''
+	hoy = datetime.today.date()
+	for s in Subasta.objects.all():
+		if s.inicio_de_subasta() == hoy:
+			if s.cantidad_de_inscriptos() > 0:
+				s.comenzar()
+			else:
+				s.convertir_en_semana_en_espera()
+		elif s.fin_de_subasta() == hoy:
+			s.finalizar()
+control_automatico.short_description = "Ejecutar control automático"
+
+
 
 def iniciar_subasta(modeladmin, request, queryset):
 	for subasta in queryset:
