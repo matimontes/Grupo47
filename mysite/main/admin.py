@@ -391,6 +391,11 @@ def control_automatico():
 				s.convertir_en_semana_en_espera()
 		elif s.fin_de_subasta() <= hoy:
 			s.finalizar()
+	for r in SemanaReservada.objects.all():
+		if r.dia_final() <= hoy:
+			r.terminar_semana()
+		if r.dia_inicial < hoy + timedelta(days=30) and r.credito:
+			r.quitar_credito()
 control_automatico.short_description = "Ejecutar control"
 
 class SuscripcionAdmin(ModelAdminObjectActionsMixin, admin.ModelAdmin):
