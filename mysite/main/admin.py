@@ -12,21 +12,6 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 # Register your models here.
 
-def control_automatico():
-	''' Funcion que chequea si hay subastas para iniciar, finalizar, etc '''
-	hoy = datetime.today.date()
-	for s in Subasta.objects.all():
-		if s.inicio_de_subasta() == hoy:
-			if s.cantidad_de_inscriptos() > 0:
-				s.comenzar()
-			else:
-				s.convertir_en_semana_en_espera()
-		elif s.fin_de_subasta() == hoy:
-			s.finalizar()
-control_automatico.short_description = "Ejecutar control automático"
-
-
-
 def iniciar_subasta(modeladmin, request, queryset):
 	for subasta in queryset:
 		if subasta.cantidad_de_inscriptos() == 0:
@@ -394,12 +379,29 @@ class ResidenciaAdmin(admin.ModelAdmin):
 	list_display = ('nombre','ciudad','pais','dirección','personas')
 	list_per_page = 30
 
+def control_automatico(a,b,c):
+	''' Funcion que chequea si hay subastas para iniciar, finalizar, etc '''
+	hoy = datetime.now().date()
+	for s in Subasta.objects.all():
+		print(s.inicio_de_subasta, hoy)
+		if s.inicio_de_subasta == hoy:
+			if s.cantidad_de_inscriptos() > 0:
+				s.comenzar()
+			else:
+				s.convertir_en_semana_en_espera()
+		elif s.fin_de_subasta() <= hoy:
+			s.finalizar()
+control_automatico.short_description = "Ejecutar control"
+
 class SuscripcionAdmin(admin.ModelAdmin):
+	actions=[control_automatico]
 	def has_delete_permission(self, *args):
 		return False
 
 	def has_add_permission(self, request): #Deniega la posibilidad de añadir rows si ya hay una
 		return self.model.objects.count() < 1
+
+
 
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin

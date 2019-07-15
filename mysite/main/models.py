@@ -408,7 +408,7 @@ class Suscripcion(models.Model):
 		return "Suscripciones"
 
 	class Meta:
-		verbose_name_plural = "Precios de Suscripciones"
+		verbose_name_plural = "Automatización y suscripciones"
 
 class Opinion(models.Model):
 	puntaje = models.IntegerField(default=10,validators=[MaxValueValidator(10), MinValueValidator(1)])
