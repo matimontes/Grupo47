@@ -379,7 +379,7 @@ class ResidenciaAdmin(admin.ModelAdmin):
 	list_display = ('nombre','ciudad','pais','dirección','personas')
 	list_per_page = 30
 
-def control_automatico(a,b,c):
+def control_automatico():
 	''' Funcion que chequea si hay subastas para iniciar, finalizar, etc '''
 	hoy = datetime.now().date()
 	for s in Subasta.objects.all():
@@ -393,8 +393,50 @@ def control_automatico(a,b,c):
 			s.finalizar()
 control_automatico.short_description = "Ejecutar control"
 
-class SuscripcionAdmin(admin.ModelAdmin):
-	actions=[control_automatico]
+class SuscripcionAdmin(ModelAdminObjectActionsMixin, admin.ModelAdmin):
+	list_display = ('premium','basico','display_object_actions_list')
+
+	object_actions = [
+		{
+			'slug': 'ejecutar_control',
+			'verbose_name': 'Ejecutar control',
+			'verbose_name_past': 'ejecutó el control',
+			'verbose_name_title': 'Opción 1',
+			'form_method': 'GET',
+			'function': 'ejecutar_control',
+		},
+	]
+	def display_object_actions_list(self, obj=None):
+		return self.display_object_actions(obj, list_only=True)
+	display_object_actions_list.short_description = "Acciones"
+
+	def response_object_action(self, request, obj, form, action, exception=None):
+		opts = self.model._meta
+		verbose_name_past = self.get_object_action_option(action, 'verbose_name_past', 'acted upon')
+		msg_dict = {
+			'name': opts.verbose_name,
+			'obj': obj,
+			'verbose_name_past': verbose_name_past,
+			'exception': exception,
+		}
+		if exception:
+			msg = format_html(
+				'Se {verbose_name_past}: {exception}.',
+				**msg_dict
+			)
+			self.message_user(request, msg, messages.ERROR)
+		else:
+			msg = format_html(
+				'Se {verbose_name_past} con éxito.',
+				**msg_dict
+			)
+			self.message_user(request, msg, messages.SUCCESS)
+		redirect_url = self.get_object_action_redirect_url(request, obj, action)
+		return HttpResponseRedirect(redirect_url)
+
+	def ejecutar_control(self, obj, form):
+		control_automatico()
+
 	def has_delete_permission(self, *args):
 		return False
 
