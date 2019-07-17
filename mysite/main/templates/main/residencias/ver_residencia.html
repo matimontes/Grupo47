@@ -5,7 +5,7 @@
 
 <body>
   <p>
-    <a href="/">Home</a>
+    <a href="/">Home</a> >
       <a href="/buscar_residencias">Volver</a>
     </p>
   <h1 class="centrar">{{residencia.nombre}}</h1>
@@ -29,23 +29,42 @@
       <div style="float: left; margin: 8px 10px 3px 0px">Baños: {{residencia.baños}}</div>
     </div>
   </section>
-  {% if opiniones %}
-    <div style="float: left; width: 100%">
-      <h5 class="centrar">Opiniones pendientes:</h5>
-    </div>
-    <table style="float: left; width:100%">
-      <tr>
-        <th>Semana</th>
-        <th></th>
-      </tr>
-      {% for s in opiniones %}
-      <tr>
-        <td>{{s.dia_inicial}} - {{s.dia_final}}</td>
-        <td><a href="/opinar/{{s.id}}" class="modal-close waves-effect waves-light btn-small">Opinar</a></td>
-      </tr>
-      {% endfor %}
-    </table>
-  {% endif %}
+  <section>
+    <div class="columna-grande">
+      {% if opiniones %}
+        <h5>Opiniones - Puntaje promedio {{promedio}}<h5>
+          <table>
+            <tr>
+              <th>Puntaje</th>
+              <th>Opinión</th>
+            </tr>
+        {% for o in opiniones %}
+        <tr>
+          <td>{{o.puntaje}}</td>
+          <td>{{o.descripcion}}</td>
+        </tr>
+        {% endfor %}
+        </table>
+      {% endif %}
+      {% if opinar %}
+        <div style="float: left; width: 100%">
+          <h5>Dar mi opinion</h5>
+        </div>
+        <table style="float: left; width:100%">
+          <tr>
+            <th>Semana</th>
+            <th></th>
+          </tr>
+          {% for s in opinar %}
+          <tr>
+            <td>{{s.dia_inicial}} - {{s.dia_final}}</td>
+            <td><a href="/opinar/{{s.id}}" class="modal-close waves-effect waves-light btn-small">Opinar</a></td>
+          </tr>
+          {% endfor %}
+        </table>
+      {% endif %}
+  </div>
+</section>
   {% if inscripto %}
     <div style="float: left; width: 100%">
       <h5 class="centrar">Proximas subastas:</h5>

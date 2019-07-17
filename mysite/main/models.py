@@ -413,3 +413,6 @@ class Suscripcion(models.Model):
 class Opinion(models.Model):
 	puntaje = models.IntegerField(default=10,validators=[MaxValueValidator(10), MinValueValidator(1)])
 	descripcion = models.TextField(default="",max_length=1000)
+
+	def __str__(self):
+		return f"{self.puntaje} - {self.descripcion}" 

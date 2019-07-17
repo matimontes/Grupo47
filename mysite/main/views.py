@@ -225,17 +225,26 @@ def residencia(request, id_residencia):
     inscripto = {}
     for s in subastas:
         inscripto[s] = s.esta_inscripto(user)
-    opiniones = []
+    opinar = []
     for o in user.opiniones_disponibles(res):
         print(o)
-        opiniones.append(o)
+        opinar.append(o)
+    opiniones = []
+    promedio = 0
+    for s in SemanaPasada.objects.filter(residencia=id_residencia):
+        if s.opinion != None:
+            opiniones.append(s.opinion)
+            promedio += s.opinion.puntaje
+    promedio /= len(opiniones) if len(opiniones)!= 0 else 1
     return render(request=request,
                   template_name="main/residencias/ver_residencia.html",
                   context={"residencia": res,
                            "inscripto": inscripto,
                            "usuario": user,
                            "notificaciones": request.user.notificaciones.all(),
-                           "opiniones":opiniones})
+                           "opinar":opinar,
+                           "opiniones": opiniones,
+                           "promedio": "%.1f" % promedio})
 
 def residencia_hotsales(request, id_residencia):
     res = Residencia.objects.get(id=id_residencia)
