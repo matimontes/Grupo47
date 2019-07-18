@@ -7,7 +7,7 @@
   <p>
     <a href="/">Home</a>
       >
-      <a href="/buscar_residencias">Volver</a>
+      <a href="/hotsales">Volver</a>
     </p>
   <h1 class="centrar">{{residencia.nombre}}</h1>
   <section>
@@ -30,7 +30,7 @@
       <div style="float: left; margin: 8px 10px 3px 0px">Baños: {{residencia.baños}}</div>
     </div>
   </section>
-  {% if hotsales %}
+  {% if hots %}
   <div style="float: left; width: 100%">
     <h5 class="centrar">Semanas en Hotsale:</h5>
   </div>
@@ -40,7 +40,7 @@
       <th>Precio</th>
       <th></th>
     </tr>
-    {% for h in hotsales %}
+    {% for h in hots %}
     <tr>
       <td>De {{h.dia_inicial}} a {{h.dia_final}}</td>
       <td>${{h.precio_reserva}}</td>

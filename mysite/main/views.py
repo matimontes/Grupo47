@@ -89,7 +89,8 @@ def update_profile(request):
     return render(request, 'main/authentication/profile.html', {
         'user_form': user_form,
         'profile_form': profile_form,
-        "notificaciones": request.user.notificaciones.all()
+        "notificaciones": request.user.notificaciones.all(),
+        "hotsales": HotSale.objects.exists()
     })
 
 def buscar_residencias(request):
@@ -153,7 +154,8 @@ def buscar_residencias(request):
                            "pasajeros": pasajeros,
                            "ciudades": ciudades,
                            "form": form,
-                           "notificaciones": request.user.notificaciones.all()})
+                           "notificaciones": request.user.notificaciones.all(),
+                           "hotsales": HotSale.objects.exists()})
 
 
 def ver_hotsales(request):
@@ -210,13 +212,14 @@ def ver_hotsales(request):
     ciudades = set(r.ciudad for r in Residencia.objects.all())
     pasajeros = set(r.personas for r in Residencia.objects.all())
     return render(request=request,
-                  template_name="main/residencias/buscar_residencias.html",
+                  template_name="main/residencias/buscar_residencias_hotsales.html",
                   context={"residencias": residencias,
                            "paises": paises,
                            "pasajeros": pasajeros,
                            "ciudades": ciudades,
                            "form": form,
-                           "notificaciones": request.user.notificaciones.all()})
+                           "notificaciones": request.user.notificaciones.all(),
+                           "hotsales": HotSale.objects.exists()})
 
 def residencia(request, id_residencia):
     import datetime
@@ -245,18 +248,20 @@ def residencia(request, id_residencia):
                            "notificaciones": request.user.notificaciones.all(),
                            "opinar":opinar,
                            "opiniones": opiniones,
-                           "promedio": "%.1f" % promedio})
+                           "promedio": "%.1f" % promedio,
+                           "hotsales": HotSale.objects.exists()})
 
 def residencia_hotsales(request, id_residencia):
     res = Residencia.objects.get(id=id_residencia)
-    hotsales = HotSale.objects.filter(residencia=id_residencia)
+    hots = HotSale.objects.filter(residencia=id_residencia)
     user = request.user
     return render(request=request,
                   template_name="main/residencias/ver_residencia_hotsales.html",
                   context={"residencia": res,
-                           "hotsales": hotsales,
+                           "hots": hots,
                            "usuario": user,
-                           "notificaciones": request.user.notificaciones.all()})
+                           "notificaciones": request.user.notificaciones.all(),
+                           "hotsales": HotSale.objects.exists()})
 
 def subasta(request, id_subasta):
     try:
@@ -276,11 +281,13 @@ def subasta(request, id_subasta):
                       context={"subasta": sub,
                                "inscripto": inscripto,
                                "form": form,
-                               "notificaciones": request.user.notificaciones.all()})
+                               "notificaciones": request.user.notificaciones.all(),
+                               "hotsales": HotSale.objects.exists()})
     except:
         return render(request=request,
                       template_name="main/subastas/no_existe.html",
-                      context={"notificaciones": request.user.notificaciones.all()})
+                      context={"notificaciones": request.user.notificaciones.all(),
+                      "hotsales": HotSale.objects.exists()})
 
 def inscribirse(request, id_residencia, id_subasta):
     if not request.user.is_staff:
@@ -312,7 +319,8 @@ def perfil(request):
                   template_name="main/user/profile.html",
                   context={"user_type_form": user_type_form,
                            "suscripciones": suscripciones[0],
-                           "notificaciones": request.user.notificaciones.all()})
+                           "notificaciones": request.user.notificaciones.all(),
+                           "hotsales": HotSale.objects.exists()})
 
 def editar_perfil(request):
     if request.method == "POST":
@@ -327,7 +335,8 @@ def editar_perfil(request):
     return render(request=request,
                   template_name="main/user/editar_perfil.html",
                   context={"form":form,
-                  "notificaciones": request.user.notificaciones.all()})
+                  "notificaciones": request.user.notificaciones.all(),
+                  "hotsales": HotSale.objects.exists()})
 
 def cambiar_contraseña(request):
     if request.method == "POST":
@@ -342,7 +351,8 @@ def cambiar_contraseña(request):
     return render(request=request,
                   template_name="main/user/cambiar_contraseña.html",
                   context={"form":form,
-                  "notificaciones": request.user.notificaciones.all()})
+                  "notificaciones": request.user.notificaciones.all(),
+                  "hotsales": HotSale.objects.exists()})
 
 def eliminar_usuario(request):
     request.user.eliminar_usuario()
@@ -357,7 +367,8 @@ def eliminar_usuario_exito(request):
 def mis_semanas(request):
     return render(request=request,
                   template_name="main/user/mis_semanas.html",
-                  context={"notificaciones": request.user.notificaciones.all()})
+                  context={"notificaciones": request.user.notificaciones.all(),
+                  "hotsales": HotSale.objects.exists()})
 
 def reserva(request, id_subasta):
     semana=Subasta.objects.get(id=id_subasta)
@@ -390,7 +401,8 @@ def opinar(request, id_semana):
                   template_name="main/user/opinar.html",
                   context={"form":form,
                   "semana":semana,
-                  "notificaciones": request.user.notificaciones.all()})
+                  "notificaciones": request.user.notificaciones.all(),
+                  "hotsales": HotSale.objects.exists()})
 
 def leer_notificaciones(request):
     notificaciones = Notificacion.objects.filter(usuario=request.user)

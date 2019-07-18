@@ -1,0 +1,95 @@
+{% extends "main/headers/header_logged_in.html" %}
+{% load static %}
+{% block content %}
+<body>
+  <h5 class="centrar">Filtrar Búsqueda de HotSales</h5>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="row centrar">
+      <div class="col">
+        <p class="centrar"><i class="material-icons">date_range</i>
+          &ensp;&ensp;Buscar semanas disponibles en el rango:</p>
+        <div class="col">
+          <div class="fieldWrapper">
+            <label for='{{ form.inicio }}'>Inicio:</label>
+            {{ form.inicio }}
+            {{ form.inicio.errors }}
+          </div>
+        </div>
+        <div class="col">
+          <div class="fieldWrapper">
+            <label for='{{ form.fin }}'>Fin:</label>
+            {{ form.fin }}
+            {{ form.fin.errors }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row centrar">
+    <div class="col">
+      <p class="centrar">&ensp;&ensp;Según información de Residencia:</p>
+      <div class="col">
+        <div class="input-field col s12">
+          <i class="material-icons">hotel</i>
+          <select name="pasajeros">
+            <option value="" disabled selected>Pasajeros</option>
+            {% for p in pasajeros %}
+              <option value={{p}}>{{p}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    <div class="col">
+      <div class="input-field col s12">
+        <i class="material-icons">location_on</i>
+          <select name="ciudad">
+            <option value="" disabled selected>Ciudad</option>
+              {% for c in ciudades %}
+                <option value={{c}}>{{c}}</option>
+              {% endfor %}
+          </select>
+      </div>
+    </div>
+    <div class="col">
+      <div class="input-field col s12">
+        <i class="material-icons">map</i>
+          <select name="pais">
+            <option value="" disabled selected>Pais</option>
+            {% for p in paises %}
+              <option value={{p}}>{{p}}</option>
+            {% endfor %}
+          </select>
+      </div>
+    </div>
+    </div>
+  </div>
+    <div class="centrar">
+      <button type="submit" class="waves-effect waves-light btn-large">Buscar</button>
+    </div>
+  </form>
+    <div class="row">
+      {% if residencias %}
+        {% for r in residencias %}
+          <div class="col s12 m7 l4">
+            <div class="card medium z-depth-3">
+              <div class="card-image">
+                <img src="{% static r.primerFoto %}" height="200">
+                <span class="card-title" style="text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">{{r.nombre}}</span>
+              </div>
+              <div class="card-content" style="overflow: auto">
+                <p>{{r.descripcion}}</p><br>
+              </div>
+              <div class="card-action">
+                <a href="/ver_residencia/{{r.id}}/hotsales/">Conocer</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <h5 class="centrar">No se encontraron resultados</h5>
+      {% endif %}
+    </div>
+  <script src="{% static 'scripts/buscar_residencias.js' %}"></script>
+</body>
+{% endblock %}
