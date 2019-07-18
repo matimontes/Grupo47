@@ -28,23 +28,46 @@
 	      <div style="float: left; margin: 8px 10px 3px 0px">Baños: {{semana.residencia.baños}}</div>
 	    </div>
 	</section>
-	<table>
-		<tr>
-			<th>Opinión:</th>
-	<form method="POST">
-		<td>
-		{% csrf_token %}
-		{{form}}
-		<p></p>
-	</td>
-		<td>
-		<button type="submit" class="waves-effect waves-light btn-small">Enviar opinión</button>
-	</td>
-	</form>
-</tr>
-	</table>
+	<section style="padding-top:400px">
+		<p>Opinión:</p>
+		<form method="POST">
+			{% csrf_token %}
+			<div class="fieldWrapper">
+				<div>
+					<label for="id_puntaje">Puntaje:</label>
+				</div>
+				<div class="row">
+				  <div class="input-field col s1" id="id_puntaje">
+				    <select name="puntaje">
+				      <option value="" disabled selected>-</option>
+				      <option value="1">1</option>
+				      <option value="2">2</option>
+				      <option value="3">3</option>
+				      <option value="4">4</option>
+				      <option value="5">5</option>
+				      <option value="6">6</option>
+				      <option value="7">7</option>
+				      <option value="8">8</option>
+				      <option value="9">9</option>
+				      <option value="10">10</option>
+				    </select>
+				  </div>
+				</div>
+			</div>
+			<div class="fieldWrapper">
+			    {{ form.descripcion.errors }}
+			    {{ form.descripcion.label_tag }}
+			    {{ form.descripcion }}
+			</div>
+			<p></p>
+			<button type="submit" class="waves-effect waves-light btn-small">Enviar opinión</button>
+		</form>
+	</section>
 	<p></p>
 </body>
-
+<script>
+    var elems = document.querySelectorAll('select');
+    M.FormSelect.init(elems, {});
+</script>
 
 {% endblock %}

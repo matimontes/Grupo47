@@ -377,11 +377,12 @@ def opinar(request, id_semana):
     if request.method == "POST":
         form = OpinarForm(request.POST)
         if form.is_valid():
+            form.instance.puntaje = form.cleaned_data.get("puntaje")
             form.save()
             semana.opinion = form.instance
             semana.save()
             messages.success(request, 'opinión realizada con éxito.')
-            return redirect("main:mis_semanas")
+            return redirect("/ver_residencia/"+str(semana.residencia.id))
     else:
         form = OpinarForm()
     return render(request=request,

@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from main.models import User, Tarjeta, Opinion
 from datetime import date, timedelta
 from creditcards.forms import CardNumberField, CardExpiryField, SecurityCodeField
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 class MontoPujaForm(forms.Form):
     monto = forms.DecimalField(label="Monto a pujar")
@@ -123,7 +124,8 @@ class PaymentForm(forms.ModelForm):
 		fields = ("cc_number","cc_expiry","cc_code")
 
 class OpinarForm(forms.ModelForm):
+	puntaje = forms.IntegerField()
 
 	class Meta:
 		model = Opinion
-		fields = ("puntaje","descripcion")
+		fields = ("descripcion",)
