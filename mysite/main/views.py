@@ -14,7 +14,8 @@ def homepage(request):
         return render(request=request,
                       template_name="main/homes/home_logged_in.html",
                       context={"residencias": Residencia.objects.all()[:3],
-                               "notificaciones": request.user.notificaciones.all()})
+                               "notificaciones": request.user.notificaciones.all(),
+                               "hotsales": HotSale.objects.exists()})
     else: #si no hay una sesion iniciada
         return render(request=request,
                       template_name="main/homes/home.html",
